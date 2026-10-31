@@ -14,6 +14,13 @@ npm run build      # typecheck + production build in /dist
 npm run preview    # serve the production build
 ```
 
+## Deployment (GitHub Pages)
+
+`.github/workflows/deploy.yml` builds the site and publishes `dist/` on every
+push to `main`. In **Settings → Pages → Build and deployment → Source**, select
+**GitHub Actions** (the “Deploy from a branch” mode publishes the raw sources,
+which shows a blank page).
+
 ## Structure
 
 ```
