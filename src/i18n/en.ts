@@ -145,7 +145,7 @@ export const en = {
       },
       {
         q: 'Can I drive the car myself?',
-        a: 'Self-drive rental is not offered at this stage.',
+        a: 'The Peugeot 504 and the Mercedes-Benz /8 can be driven without a chauffeur, on enquiry and subject to conditions. The Citroën DS is offered with a chauffeur only.',
       },
     ],
   },

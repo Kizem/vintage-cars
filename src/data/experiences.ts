@@ -1,8 +1,11 @@
 import type { Experience } from './types';
 
 /**
- * All experiences are enquiry-based. Do not present self-drive rental
- * until the operational and regulatory arrangements are confirmed.
+ * All experiences are enquiry-based.
+ * Self-drive is only offered for some cars (see `service` in vehicles.ts:
+ * Peugeot 504 and Mercedes-Benz /8), on enquiry and subject to conditions;
+ * the Citroën DS is chauffeur-only. Do not add a dedicated self-drive
+ * experience here without a confirmed offer.
  */
 export const experiences: Experience[] = [
   {

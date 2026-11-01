@@ -145,7 +145,7 @@ export const fr: Dictionary = {
       },
       {
         q: 'Puis-je conduire la voiture ?',
-        a: 'Non, la location sans chauffeur n’est pas proposée pour le moment.',
+        a: 'Oui pour la Peugeot 504 et la Mercedes-Benz /8, qui peuvent être conduites sans chauffeur, sur demande et sous conditions. La Citroën DS est proposée uniquement avec chauffeur.',
       },
     ],
   },
