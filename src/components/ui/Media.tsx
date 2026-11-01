@@ -66,7 +66,9 @@ export function Media({
           className={`h-full w-full ${fit === 'contain' ? 'object-contain' : 'object-cover'} ${imgClassName}`}
         />
         {image.credit && (
-          <span className="absolute right-3 bottom-2 text-[10px] tracking-wide text-ivory/70">{image.credit}</span>
+          <span className="absolute right-3 bottom-3 rounded-xs bg-forest-deep/70 px-2 py-1 text-[10px] tracking-wide text-ivory/90">
+            {l(image.credit)}
+          </span>
         )}
       </div>
     );

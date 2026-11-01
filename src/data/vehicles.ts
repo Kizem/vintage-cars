@@ -13,7 +13,10 @@ import type { Vehicle } from './types';
 export const vehicles: Vehicle[] = [
   {
     slug: 'citroen-ds',
-    name: { en: 'Citroën DS', fr: 'Citroën DS' },
+    // Provisional: owner believes it is a DS 21 (Henri Chapron). The illustrative photos
+    // show a standard DS 21 saloon. TODO: confirm version and replace the photos with
+    // pictures of the actual car.
+    name: { en: 'Citroën DS 21', fr: 'Citroën DS 21' },
     marque: 'Citroën',
     mark: 'DS',
     category: { en: 'French Icon', fr: 'Icône française' },
@@ -21,20 +24,61 @@ export const vehicles: Vehicle[] = [
       en: 'An icon of French design and engineering. A timeless silhouette that embodies the elegance and innovation of another era.',
       fr: 'Le design et l’audace technique à la française. Une silhouette reconnaissable au premier regard, qui incarne l’élégance et l’esprit d’innovation d’une autre époque.',
     },
-    availability: 'on-request',
-    image: {
-      src: '',
-      alt: {
-        en: 'The Citroën DS of the Époque Motors collection, photographed in Paris',
-        fr: 'La Citroën DS de la collection Époque Motors, photographiée à Paris',
-      },
-      placeholderLabel: { en: 'Citroën DS, collection car', fr: 'Citroën DS, voiture de la collection' },
-      brief: {
-        en: 'Three-quarter front view, Parisian street, soft daylight. 3:2 landscape.',
-        fr: 'Vue trois-quarts avant, rue parisienne, lumière douce. Paysage 3:2.',
-      },
-      focalPoint: '50% 55%',
+    story: {
+      en: [
+        'Unveiled at the 1955 Paris Motor Show, the DS was styled by Flaminio Bertoni and engineered under André Lefèbvre. Its hydropneumatic suspension brought a ride comfort that was new at the time.',
+        'The DS 21 arrived in 1965 with a 2.2-litre engine and was produced until 1972.',
+      ],
+      fr: [
+        'Présentée au Salon de Paris en 1955, la DS a été dessinée par Flaminio Bertoni sous la direction technique d’André Lefèbvre. Sa suspension hydropneumatique lui apportait un confort de roulement inédit pour l’époque.',
+        'La DS 21 apparaît en 1965 avec un moteur de 2,2\u00a0litres et sera produite jusqu’en 1972.',
+      ],
     },
+    // Facts common to every DS 21 saloon. Power and gearbox depend on the version
+    // (carburettor or injection, manual, hydraulic or automatic) and are left out.
+    details: [
+      { label: { en: 'Production', fr: 'Production' }, value: { en: '1965 to 1972', fr: '1965 à 1972' } },
+      { label: { en: 'Body', fr: 'Carrosserie' }, value: { en: 'Saloon', fr: 'Berline' } },
+      { label: { en: 'Seats', fr: 'Places' }, value: { en: '5', fr: '5' } },
+      {
+        label: { en: 'Engine', fr: 'Moteur' },
+        value: { en: '4 cylinders, 2,175 cc', fr: '4 cylindres, 2\u00a0175\u00a0cm³' },
+      },
+      { label: { en: 'Drive', fr: 'Transmission' }, value: { en: 'Front-wheel drive', fr: 'Traction avant' } },
+      { label: { en: 'Suspension', fr: 'Suspension' }, value: { en: 'Hydropneumatic', fr: 'Hydropneumatique' } },
+      { label: { en: 'Design', fr: 'Design' }, value: { en: 'Flaminio Bertoni', fr: 'Flaminio Bertoni' } },
+    ],
+    availability: 'on-request',
+    // Illustrative photos supplied by the owner (third-party, not the collection car).
+    image: {
+      src: 'images/collection/citroen-ds-illustration-1.webp',
+      alt: {
+        en: 'A grey Citroën DS 21 saloon in a Paris street, three-quarter rear view (illustrative photo)',
+        fr: 'Une Citroën DS 21 berline grise dans une rue de Paris, vue de trois-quarts arrière (photo d’illustration)',
+      },
+      placeholderLabel: { en: 'Citroën DS 21, rear', fr: 'Citroën DS 21, arrière' },
+      credit: { en: 'Illustrative photo', fr: 'Photo d’illustration' },
+    },
+    gallery: [
+      {
+        src: 'images/collection/citroen-ds-illustration-2.webp',
+        alt: {
+          en: 'A Citroën DS 21 in front of Les Invalides, Paris (illustrative photo)',
+          fr: 'Une Citroën DS 21 devant les Invalides, à Paris (photo d’illustration)',
+        },
+        placeholderLabel: { en: 'Citroën DS 21, Les Invalides', fr: 'Citroën DS 21, les Invalides' },
+        credit: { en: 'Illustrative photo', fr: 'Photo d’illustration' },
+      },
+      {
+        src: 'images/collection/citroen-ds-illustration-3.webp',
+        alt: {
+          en: 'A Citroën DS 21 in side view, Place Vendôme, Paris (illustrative photo)',
+          fr: 'Une Citroën DS 21 de profil, place Vendôme, à Paris (photo d’illustration)',
+        },
+        placeholderLabel: { en: 'Citroën DS 21, Place Vendôme', fr: 'Citroën DS 21, place Vendôme' },
+        credit: { en: 'Illustrative photo', fr: 'Photo d’illustration' },
+      },
+    ],
   },
   {
     slug: 'peugeot-504',

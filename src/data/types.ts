@@ -17,8 +17,8 @@ export interface MediaAsset {
   brief?: Localized;
   /** CSS object-position for cropping, e.g. '50% 60%'. */
   focalPoint?: string;
-  /** Photo credit, displayed discreetly when provided. */
-  credit?: string;
+  /** Credit or notice shown on the photo, e.g. “Illustrative photo”. */
+  credit?: Localized;
 }
 
 export type AvailabilityStatus = 'on-request' | 'available' | 'limited' | 'unavailable' | 'coming-soon';

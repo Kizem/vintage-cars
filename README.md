@@ -79,7 +79,9 @@ email instead. A honeypot field filters basic bots.
 
 ## Before launch: to do
 
-- Final photography (hero, 3 cars, 3 experiences, 2 story images).
+- Final photography: hero, 3 experiences, 2 story images, and the Citroën DS
+  (current DS photos are third-party illustrations, marked as such on the site).
+- Exact versions of the DS and the Mercedes (provisional names and partial specs in `src/data/vehicles.ts`).
 - Real contact details & Instagram URL in `src/data/site.ts`.
 - Production domain in `index.html` (canonical, Open Graph URLs).
 - Legal Notice & Privacy Policy texts (`legal` keys in `src/i18n/en.ts` and `fr.ts`).
