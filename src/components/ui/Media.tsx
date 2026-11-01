@@ -100,7 +100,7 @@ export function Media({
         </span>
       )}
       <div aria-hidden="true" className={`absolute z-10 flex max-w-[78%] flex-col gap-1 ${captionPos[captionPosition]}`}>
-        <span className={`eyebrow !text-[9.5px] !tracking-[0.22em] ${dark ? 'text-champagne' : 'text-muted-ink'}`}>
+        <span className={`eyebrow !text-[11px] !tracking-[0.2em] ${dark ? 'text-champagne' : 'text-muted-ink'}`}>
           {t.common.imagePlaceholder}
         </span>
         <span className={`text-[12px] leading-snug ${dark ? 'text-ivory/75' : 'text-charcoal/75'}`}>{l(image.placeholderLabel)}</span>

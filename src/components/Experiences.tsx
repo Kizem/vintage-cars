@@ -138,7 +138,7 @@ export function Experiences() {
 
             {/* Tabs + text */}
             <div className="order-2 flex flex-col lg:order-1 lg:col-span-5 lg:py-2">
-              <div role="tablist" aria-label={t.experiences.tabsLabel} className="grid grid-cols-3 gap-4 lg:grid-cols-1 lg:gap-0">
+              <div role="tablist" aria-label={t.experiences.tabsLabel} className="grid grid-cols-3 gap-3 sm:gap-4 lg:grid-cols-1 lg:gap-0">
                 {experiences.map((exp, i) => {
                   const selected = i === active;
                   return (
@@ -162,7 +162,7 @@ export function Experiences() {
                       <span className={`font-display text-[1.6rem] leading-none italic lg:text-[1.9rem] ${selected ? 'text-champagne' : ''}`}>
                         {exp.index}
                       </span>
-                      <span className="eyebrow !text-[10px] leading-snug lg:!text-[11px]">{l(exp.label)}</span>
+                      <span className="eyebrow !text-[11px] leading-snug hyphens-auto max-lg:!tracking-[0.1em]">{l(exp.label)}</span>
                       {/* progress track */}
                       <span
                         aria-hidden="true"
