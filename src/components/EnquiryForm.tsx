@@ -45,7 +45,7 @@ function Field({ name, label, optionalLabel, error, hint, className = '', childr
         </p>
       )}
       {error && (
-        <p id={`${id}-error`} className="mt-2 text-[13px] text-[#8a3b2e]">
+        <p id={`${id}-error`} className="mt-2 text-[13px] text-error">
           {error}
         </p>
       )}
@@ -189,7 +189,7 @@ export function EnquiryForm() {
                 </p>
 
                 {touched && errorCount > 0 && (
-                  <div role="alert" className="mb-10 border-l-2 border-[#8a3b2e] bg-[#8a3b2e]/5 px-5 py-4 text-sm text-[#7a3328]">
+                  <div role="alert" className="mb-10 border-l-2 border-error bg-error/5 px-5 py-4 text-sm text-error">
                     {errorCount === 1 ? f.reviewOne : fill(f.reviewMany, { count: errorCount })}
                   </div>
                 )}
@@ -285,7 +285,7 @@ export function EnquiryForm() {
                     </span>
                   </label>
                   {errors.consent && (
-                    <p id="enquiry-consent-error" className="mt-2 pl-8 text-[13px] text-[#8a3b2e]">
+                    <p id="enquiry-consent-error" className="mt-2 pl-8 text-[13px] text-error">
                       {err('consent')}
                     </p>
                   )}
