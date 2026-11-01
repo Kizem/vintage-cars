@@ -248,3 +248,23 @@ dialog[open] {
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+/* Experiences showcase: progress of the active tab drives the autoplay */
+@keyframes showcase-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.showcase-progress {
+  transform-origin: left;
+  animation: showcase-progress var(--showcase-duration, 7s) linear forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .showcase-progress {
+    animation: none;
+    transform: scaleX(1);
+  }
+}

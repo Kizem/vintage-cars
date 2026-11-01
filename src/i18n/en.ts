@@ -86,6 +86,9 @@ export const en = {
     titleEm: 'a Drive.',
     text: 'Discover Paris and its surroundings through exceptional automobiles and personalised experiences.',
     service: 'Service',
+    tabsLabel: 'Choose an experience',
+    pause: 'Pause the slideshow',
+    play: 'Play the slideshow',
     footLabel: 'Private & by enquiry',
     footText:
       'Every experience is private and arranged on enquiry. Itineraries, timings and arrangements are discussed with you personally and confirmed before your visit.',

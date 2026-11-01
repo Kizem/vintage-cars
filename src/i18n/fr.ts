@@ -88,6 +88,9 @@ export const fr: Dictionary = {
     titleEm: 'qu’un trajet.',
     text: 'Paris et ses environs, à bord d’automobiles de collection, lors d’expériences conçues pour vous.',
     service: 'Prestation',
+    tabsLabel: 'Choisir une expérience',
+    pause: 'Mettre le diaporama en pause',
+    play: 'Relancer le diaporama',
     footLabel: 'Sur mesure et sur demande',
     footText:
       'Toutes nos expériences sont privées. Itinéraire, horaires et déroulé sont définis avec vous, puis confirmés avant votre venue.',
