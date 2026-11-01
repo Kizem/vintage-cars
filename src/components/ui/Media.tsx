@@ -70,7 +70,7 @@ export function Media({
           className={`h-full w-full ${fit === 'contain' ? 'object-contain' : 'object-cover'} ${imgClassName}`}
         />
         {image.credit && (
-          <span className={`absolute rounded-xs bg-forest-deep/70 px-2 py-1 text-[10px] tracking-wide text-ivory/90 ${creditPosition === 'bottom-right' ? 'right-3 bottom-3' : captionPos[creditPosition]}`}>
+          <span className={`absolute rounded-xs bg-forest-deep/70 px-2 py-1 text-[11px] tracking-wide text-ivory/90 ${creditPosition === 'bottom-right' ? 'right-3 bottom-3' : captionPos[creditPosition]}`}>
             {l(image.credit)}
           </span>
         )}

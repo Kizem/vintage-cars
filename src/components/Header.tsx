@@ -91,7 +91,7 @@ export function Header() {
         <div className="flex items-center gap-3 sm:gap-5 lg:gap-3 xl:gap-5">
           <LanguageToggle className="relative z-10" />
           <span className="hidden sm:block">
-            <ButtonLink href="#contact" variant={solid ? 'solid' : 'outline-light'} className="!px-6 !py-3 whitespace-nowrap lg:!px-5 xl:!px-6">
+            <ButtonLink href="#contact" variant={solid ? 'solid' : 'outline-light'} className="!px-6 !py-3 whitespace-nowrap lg:!px-5 lg:tracking-[0.1em] xl:!px-6 xl:tracking-[0.18em]">
               {t.header.enquire}
             </ButtonLink>
           </span>

@@ -28,7 +28,7 @@ export const fr: Dictionary = {
     contact: 'Contact',
   },
   header: {
-    enquire: 'Nous contacter',
+    enquire: 'Faire une demande',
     openMenu: 'Ouvrir le menu',
     closeMenu: 'Fermer le menu',
     language: 'Langue',
@@ -145,7 +145,7 @@ export const fr: Dictionary = {
       },
       {
         q: 'Puis-je conduire la voiture ?',
-        a: 'Oui pour la Peugeot 504 et la Mercedes-Benz /8, qui peuvent être conduites sans chauffeur, sur demande et sous conditions. La Citroën DS est proposée uniquement avec chauffeur.',
+        a: 'Oui pour la Peugeot 504 et la Mercedes-Benz /8, qui peuvent être conduites sans chauffeur, sur demande et sous conditions. La Citroën DS 21 est proposée uniquement avec chauffeur.',
       },
     ],
   },
