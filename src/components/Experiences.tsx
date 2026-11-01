@@ -120,6 +120,24 @@ export function Experiences() {
                   />
                 </div>
               ))}
+              {/* Pause / play, on the image so it never competes with the call to action */}
+              <button
+                type="button"
+                onClick={() => setPlaying((p) => !p)}
+                aria-label={playing ? t.experiences.pause : t.experiences.play}
+                className="absolute bottom-4 left-4 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-ivory/40 bg-forest-deep/60 text-ivory transition-colors hover:bg-ivory hover:text-forest"
+              >
+                {playing ? (
+                  <svg aria-hidden="true" width="10" height="12" viewBox="0 0 10 12" fill="currentColor">
+                    <rect x="1" y="1" width="2.5" height="10" />
+                    <rect x="6.5" y="1" width="2.5" height="10" />
+                  </svg>
+                ) : (
+                  <svg aria-hidden="true" width="10" height="12" viewBox="0 0 10 12" fill="currentColor">
+                    <path d="M1.5 1v10l8-5z" />
+                  </svg>
+                )}
+              </button>
             </div>
 
             {/* Tabs + text */}
@@ -206,29 +224,16 @@ export function Experiences() {
                           <p className="mb-9 max-w-[44ch] text-[1.0625rem] leading-relaxed">{l(exp.description)}</p>
                         </div>
                       )}
-                      <div className="mt-auto flex flex-wrap items-center justify-between gap-6">
-                        <Button variant="outline-light" arrow onClick={() => startEnquiry({ experience: exp.id })} tabIndex={selected ? 0 : -1}>
+                      <div className="mt-auto">
+                        <Button
+                          variant="outline-light"
+                          arrow
+                          onClick={() => startEnquiry({ experience: exp.id })}
+                          tabIndex={selected ? 0 : -1}
+                          className="w-full whitespace-nowrap max-sm:!px-4 max-sm:text-[11px] max-sm:tracking-[0.12em] sm:w-auto [&>svg]:hidden sm:[&>svg]:block"
+                        >
                           {l(exp.cta)}
                         </Button>
-                        {selected && (
-                          <button
-                            type="button"
-                            onClick={() => setPlaying((p) => !p)}
-                            aria-label={playing ? t.experiences.pause : t.experiences.play}
-                            className="flex h-10 w-10 items-center justify-center rounded-full border border-ivory/30 text-ivory/80 transition-colors hover:border-ivory hover:text-ivory"
-                          >
-                            {playing ? (
-                              <svg aria-hidden="true" width="10" height="12" viewBox="0 0 10 12" fill="currentColor">
-                                <rect x="1" y="1" width="2.5" height="10" />
-                                <rect x="6.5" y="1" width="2.5" height="10" />
-                              </svg>
-                            ) : (
-                              <svg aria-hidden="true" width="10" height="12" viewBox="0 0 10 12" fill="currentColor">
-                                <path d="M1.5 1v10l8-5z" />
-                              </svg>
-                            )}
-                          </button>
-                        )}
                       </div>
                     </div>
                   );
