@@ -81,12 +81,14 @@ export const storyImages: { primary: MediaAsset; detail: MediaAsset } = {
       fr: 'Portrait éditorial, volant et chromes, faible profondeur de champ. 4:5.',
     },
   },
+  // Generated image (the “E” of Époque on an ivory bonnet), labelled as an illustration.
   detail: {
-    src: '',
+    src: 'images/story/monogramme.webp',
     alt: {
-      en: 'Chrome badge of a classic French automobile',
-      fr: 'Monogramme chromé d’une automobile française ancienne',
+      en: 'A chrome script “E” monogram on the ivory bonnet of a vintage car (illustrative image)',
+      fr: 'Un monogramme «\u00a0E\u00a0» chromé sur le capot ivoire d’une voiture ancienne (image d’illustration)',
     },
+    credit: { en: 'Illustrative image', fr: 'Image d’illustration' },
     placeholderLabel: { en: 'Story, badge detail', fr: 'Histoire, détail du monogramme' },
     brief: {
       en: 'Macro detail of a badge or emblem, warm neutral tones. 1:1.',
