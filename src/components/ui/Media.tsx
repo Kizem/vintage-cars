@@ -62,6 +62,7 @@ export function Media({
           srcSet={image.srcSet}
           sizes={image.srcSet ? sizes : undefined}
           alt={l(image.alt)}
+          draggable={false}
           loading={priority ? 'eager' : 'lazy'}
           decoding={priority ? 'sync' : 'async'}
           fetchPriority={priority ? 'high' : 'auto'}

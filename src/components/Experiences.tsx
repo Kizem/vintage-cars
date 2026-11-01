@@ -10,23 +10,25 @@ import { Button } from './ui/Button';
 /** Time each experience stays on screen when the slideshow plays. */
 const DURATION_MS = 7000;
 
-const prefersReducedMotion = () =>
-  typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
 /**
  * One experience at a time: large image on one side, text on the other.
- * Autoplays while visible (the progress bar of the active tab drives it),
- * pauses on hover and keyboard focus, stops when the visitor picks a tab,
- * and never autoplays with reduced motion. Accessible tabs pattern.
+ *
+ * Behaviour:
+ * - Plays by default; the progress bar of the active tab drives the timing.
+ * - Clicking another tab shows it and stops there.
+ * - Clicking the active tab (or the pause/play button) toggles: stop on it,
+ *   or resume from where the progress bar was.
+ * - Swipe and keyboard arrows navigate and stop, like a click.
+ * - Only suspended while the section is off screen or the browser tab hidden,
+ *   then resumes by itself. Language changes do not affect it.
  */
 export function Experiences() {
   const { startEnquiry } = useEnquiry();
   const { t, l } = useI18n();
   const [active, setActive] = useState(0);
-  const [playing, setPlaying] = useState(() => !prefersReducedMotion());
-  const [hovered, setHovered] = useState(false);
-  const [focused, setFocused] = useState(false);
+  const [playing, setPlaying] = useState(true);
   const [inView, setInView] = useState(false);
+  const [pageVisible, setPageVisible] = useState(true);
   const stageRef = useRef<HTMLDivElement>(null);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const swipeX = useRef<number | null>(null);
@@ -40,22 +42,38 @@ export function Experiences() {
     return () => io.disconnect();
   }, []);
 
-  const running = playing && inView && !hovered && !focused;
+  useEffect(() => {
+    const onVisibility = () => setPageVisible(document.visibilityState === 'visible');
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => document.removeEventListener('visibilitychange', onVisibility);
+  }, []);
 
-  const go = (i: number, fromUser = true) => {
+  const running = playing && inView && pageVisible;
+
+  /** Visitor chose a slide: show it and stop there. */
+  const showAndStop = (i: number) => {
     setActive((i + count) % count);
-    if (fromUser) setPlaying(false);
+    setPlaying(false);
   };
 
-  const onTabKey = (e: KeyboardEvent) => {
+  /** Click on a tab: another tab stops on it, the active tab toggles play/stop. */
+  const onTabClick = (i: number) => {
+    if (i === active) setPlaying((p) => !p);
+    else showAndStop(i);
+  };
+
+  const advance = () => setActive((a) => (a + 1) % count);
+
+  /** Arrow keys move from the tab that has the focus (roving tabindex). */
+  const onTabKey = (e: KeyboardEvent, from: number) => {
     const keys: Record<string, number> = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
     let next: number | null = null;
-    if (e.key in keys) next = (active + keys[e.key] + count) % count;
+    if (e.key in keys) next = (from + keys[e.key] + count) % count;
     if (e.key === 'Home') next = 0;
     if (e.key === 'End') next = count - 1;
     if (next === null) return;
     e.preventDefault();
-    go(next);
+    showAndStop(next);
     tabRefs.current[next]?.focus();
   };
 
@@ -66,7 +84,7 @@ export function Experiences() {
     if (swipeX.current === null) return;
     const dx = e.clientX - swipeX.current;
     swipeX.current = null;
-    if (Math.abs(dx) > 50) go(active + (dx < 0 ? 1 : -1));
+    if (Math.abs(dx) > 50) showAndStop(active + (dx < 0 ? 1 : -1));
   };
 
   return (
@@ -88,18 +106,14 @@ export function Experiences() {
           <div
             ref={stageRef}
             className="grid gap-10 lg:grid-cols-12 lg:items-stretch lg:gap-14"
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
-            onFocus={() => setFocused(true)}
-            onBlur={(e) => {
-              if (!e.currentTarget.contains(e.relatedTarget as Node)) setFocused(false);
-            }}
           >
             {/* Images: crossfade, slight settle-in zoom on the active one */}
             <div
               className="relative order-1 aspect-[4/3] touch-pan-y overflow-hidden rounded-xs bg-forest-deep select-none lg:order-2 lg:col-span-7 lg:aspect-auto lg:min-h-[560px]"
               onPointerDown={onPointerDown}
               onPointerUp={onPointerUp}
+              onPointerCancel={() => (swipeX.current = null)}
+              onDragStart={(e) => e.preventDefault()}
             >
               {experiences.map((exp, i) => (
                 <div
@@ -157,8 +171,8 @@ export function Experiences() {
                       aria-selected={selected}
                       aria-controls={`exp-panel-${exp.id}`}
                       tabIndex={selected ? 0 : -1}
-                      onClick={() => go(i)}
-                      onKeyDown={onTabKey}
+                      onClick={() => onTabClick(i)}
+                      onKeyDown={(e) => onTabKey(e, i)}
                       className={`group relative flex flex-col gap-2 pb-4 text-left transition-colors duration-500 lg:flex-row lg:items-baseline lg:gap-5 lg:border-b lg:border-line-light lg:py-5 ${
                         selected ? 'text-ivory' : 'text-ivory/50 hover:text-ivory/85'
                       }`}
@@ -168,18 +182,22 @@ export function Experiences() {
                       </span>
                       <span className="eyebrow !text-[10px] leading-snug lg:!text-[11px]">{l(exp.label)}</span>
                       {/* progress track */}
-                      <span aria-hidden="true" className="absolute inset-x-0 bottom-0 h-px bg-line-light lg:-bottom-px">
+                      <span
+                        aria-hidden="true"
+                        className={`absolute inset-x-0 bottom-0 h-px lg:-bottom-px ${selected && !playing ? 'bg-champagne/35' : 'bg-line-light'}`}
+                      >
                         {selected && (
                           <span
-                            key={`${active}-${playing}`}
-                            className={`block h-full bg-champagne ${playing ? 'showcase-progress' : ''}`}
+                            key={active}
+                            data-progress
+                            className="showcase-progress block h-full bg-champagne"
                             style={
                               {
                                 '--showcase-duration': `${DURATION_MS}ms`,
                                 animationPlayState: running ? 'running' : 'paused',
                               } as CSSProperties
                             }
-                            onAnimationEnd={() => go(active + 1, false)}
+                            onAnimationEnd={advance}
                           />
                         )}
                       </span>

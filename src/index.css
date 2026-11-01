@@ -262,9 +262,4 @@ dialog[open] {
   transform-origin: left;
   animation: showcase-progress var(--showcase-duration, 7s) linear forwards;
 }
-@media (prefers-reduced-motion: reduce) {
-  .showcase-progress {
-    animation: none;
-    transform: scaleX(1);
-  }
-}
+/* Kept with reduced motion: a thin linear bar, and it drives the timing. */
