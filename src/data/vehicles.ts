@@ -84,28 +84,76 @@ export const vehicles: Vehicle[] = [
   },
   {
     slug: 'mercedes-benz-classic',
-    name: { en: 'Mercedes-Benz Classic', fr: 'Mercedes-Benz de collection' },
+    // Provisional identification from the photos (tall grille, high headlamps and
+    // double front bumper = first series, before the August 1973 facelift).
+    // TODO: replace with the exact model (e.g. 220, 230, 250…) once confirmed by the owner.
+    name: { en: 'Mercedes-Benz /8', fr: 'Mercedes-Benz /8' },
     marque: 'Mercedes-Benz',
-    mark: 'MB',
+    mark: '/8',
     category: { en: 'German Heritage', fr: 'Tradition allemande' },
     description: {
       en: 'A timeless expression of German engineering, refinement and automotive heritage.',
       fr: 'La rigueur de l’ingénierie allemande, servie par un raffinement qui n’a pas pris une ride.',
     },
+    story: {
+      en: [
+        'Launched in 1968, the Mercedes-Benz /8 owes its nickname, “Strich-Acht”, to the “/8” on its identification plates. Its lines are the work of Paul Bracq, and it remained in production until 1976.',
+        'Nearly 1.9 million were built, most of them saloons. The car in our collection belongs to the first series, recognisable by its tall grille and double front bumper.',
+      ],
+      fr: [
+        'Lancée en 1968, la Mercedes-Benz /8 doit son surnom, «\u00a0Strich-Acht\u00a0», au «\u00a0/8\u00a0» inscrit sur ses plaques d’identification. Ses lignes sont signées Paul Bracq, et elle a été produite jusqu’en 1976.',
+        'Près de 1,9\u00a0million d’exemplaires ont été construits, en grande majorité des berlines. Celle de la collection appartient à la première série, reconnaissable à sa calandre haute et à son double pare-chocs avant.',
+      ],
+    },
+    // Facts common to the whole first series. Engine, power and gearbox depend on
+    // the exact version and are left out until confirmed.
+    details: [
+      { label: { en: 'Series', fr: 'Série' }, value: { en: 'W114/W115', fr: 'W114/W115' } },
+      { label: { en: 'Period', fr: 'Période' }, value: { en: '1968 to 1973', fr: '1968 à 1973' } },
+      { label: { en: 'Body', fr: 'Carrosserie' }, value: { en: 'Saloon', fr: 'Berline' } },
+      { label: { en: 'Seats', fr: 'Places' }, value: { en: '5', fr: '5' } },
+      { label: { en: 'Drive', fr: 'Transmission' }, value: { en: 'Rear-wheel drive', fr: 'Propulsion' } },
+      { label: { en: 'Design', fr: 'Design' }, value: { en: 'Paul Bracq', fr: 'Paul Bracq' } },
+    ],
     availability: 'on-request',
     image: {
-      src: '',
+      src: 'images/collection/mercedes-1-trois-quarts.webp',
+      srcSet: 'images/collection/mercedes-1-trois-quarts-800.webp 800w, images/collection/mercedes-1-trois-quarts.webp 1500w',
       alt: {
-        en: 'The classic Mercedes-Benz of the Époque Motors collection, photographed in Paris',
-        fr: 'La Mercedes-Benz de collection d’Époque Motors, photographiée à Paris',
+        en: 'The ivory Mercedes-Benz /8 saloon of the collection, three-quarter front view',
+        fr: 'La Mercedes-Benz /8 berline ivoire de la collection, vue de trois-quarts avant',
       },
-      placeholderLabel: { en: 'Mercedes-Benz, collection car', fr: 'Mercedes-Benz, voiture de la collection' },
-      brief: {
-        en: 'Three-quarter front view, early evening light. 3:2 landscape.',
-        fr: 'Vue trois-quarts avant, lumière de fin de journée. Paysage 3:2.',
-      },
-      focalPoint: '50% 55%',
+      placeholderLabel: { en: 'Mercedes-Benz /8, front', fr: 'Mercedes-Benz /8, avant' },
     },
+    gallery: [
+      {
+        src: 'images/collection/mercedes-2-phares.webp',
+        srcSet: 'images/collection/mercedes-2-phares-800.webp 800w, images/collection/mercedes-2-phares.webp 1500w',
+        alt: {
+          en: 'The Mercedes-Benz /8 with its headlights on, leaving its garage',
+          fr: 'La Mercedes-Benz /8 phares allumés, à la sortie de son garage',
+        },
+        placeholderLabel: { en: 'Mercedes-Benz /8, headlights', fr: 'Mercedes-Benz /8, phares' },
+      },
+      {
+        src: 'images/collection/mercedes-3-profil.webp',
+        srcSet: 'images/collection/mercedes-3-profil-800.webp 800w, images/collection/mercedes-3-profil.webp 1500w',
+        alt: {
+          en: 'The Mercedes-Benz /8 saloon in side view',
+          fr: 'La Mercedes-Benz /8 berline vue de profil',
+        },
+        placeholderLabel: { en: 'Mercedes-Benz /8, profile', fr: 'Mercedes-Benz /8, profil' },
+      },
+      {
+        src: 'images/collection/mercedes-4-calandre.webp',
+        srcSet: 'images/collection/mercedes-4-calandre-800.webp 800w, images/collection/mercedes-4-calandre.webp 1449w',
+        alt: {
+          en: 'Front grille and headlights of the Mercedes-Benz /8',
+          fr: 'Calandre et phares de la Mercedes-Benz /8',
+        },
+        placeholderLabel: { en: 'Mercedes-Benz /8, grille', fr: 'Mercedes-Benz /8, calandre' },
+      },
+    ],
   },
 ];
 
