@@ -79,7 +79,7 @@ export function VehicleDetail({ vehicle, onClose, onNavigate }: VehicleDetailPro
           />
 
           <div className="flex shrink-0 grow flex-col p-6 sm:p-10 md:shrink md:overflow-y-auto lg:p-14">
-            <p className="eyebrow mb-6 flex items-center gap-4 text-forest">
+            <p className="eyebrow mb-6 flex items-center gap-4 text-forest md:pr-14">
               <span aria-hidden="true" className="h-px w-10 bg-champagne" />
               {t.collection.eyebrow} · {t.collection.number} {String(idx + 1).padStart(2, '0')}
             </p>

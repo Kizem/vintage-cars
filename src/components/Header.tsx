@@ -32,7 +32,9 @@ export function Header() {
         toggleRef.current?.focus();
       }
       if (e.key === 'Tab' && panelRef.current) {
-        const items = [toggleRef.current, ...panelRef.current.querySelectorAll<HTMLElement>('a, button')].filter(Boolean) as HTMLElement[];
+        // Visible while the menu is open: language switch, close button, then the panel.
+        const langButtons = [...(toggleRef.current?.parentElement?.querySelectorAll<HTMLElement>('[role=group] button') ?? [])];
+        const items = [...langButtons, toggleRef.current, ...panelRef.current.querySelectorAll<HTMLElement>('a, button')].filter(Boolean) as HTMLElement[];
         const first = items[0];
         const last = items[items.length - 1];
         if (e.shiftKey && document.activeElement === first) {
