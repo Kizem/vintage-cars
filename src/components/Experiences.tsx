@@ -156,7 +156,7 @@ export function Experiences() {
                       onClick={() => onTabClick(i)}
                       onKeyDown={(e) => onTabKey(e, i)}
                       className={`group relative flex flex-col gap-2 pb-4 text-left transition-colors duration-500 lg:flex-row lg:items-baseline lg:gap-5 lg:border-b lg:border-line-light lg:py-5 ${
-                        selected ? 'text-ivory' : 'text-ivory/50 hover:text-ivory/85'
+                        selected ? 'text-ivory' : 'text-ivory/65 hover:text-ivory/90'
                       }`}
                     >
                       <span className={`font-display text-[1.6rem] leading-none italic lg:text-[1.9rem] ${selected ? 'text-champagne' : ''}`}>

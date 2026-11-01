@@ -12,6 +12,8 @@
    - error (#8A3B2E) on ivory                   6.3:1  → error text, all sizes
    - error (#8A3B2E) on off-white               7.1:1  → error text, all sizes
      (5.9:1 on the 5% error-tinted alert background)
+   - ivory at 65% opacity on forest             6.2:1  → small text on dark (inactive tabs)
+   - ivory at 50% opacity on forest             4.3:1  → avoid for text under 14px
    ========================================================================== */
 
 @theme {
