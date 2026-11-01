@@ -103,6 +103,10 @@ export function VehicleDetail({ vehicle, onClose, onNavigate }: VehicleDetailPro
                 <dt className="eyebrow mb-1.5 text-muted-ink">{t.vehicleDetail.availability}</dt>
                 <dd className="font-display text-xl text-forest">{t.availabilityShort[vehicle.availability]}</dd>
               </div>
+              <div className="border-b border-line py-4">
+                <dt className="eyebrow mb-1.5 text-muted-ink">{t.vehicleDetail.service}</dt>
+                <dd className="font-display text-xl text-forest">{t.service[vehicle.service]}</dd>
+              </div>
               {vehicle.details?.map((d) => (
                 <div key={d.label.en} className="border-b border-line py-4">
                   <dt className="eyebrow mb-1.5 text-muted-ink">{l(d.label)}</dt>

@@ -21,6 +21,9 @@ export interface MediaAsset {
   credit?: Localized;
 }
 
+/** How the car can be booked. */
+export type ServiceMode = 'chauffeur' | 'chauffeur-or-self-drive';
+
 export type AvailabilityStatus = 'on-request' | 'available' | 'limited' | 'unavailable' | 'coming-soon';
 
 export interface Vehicle {
@@ -38,6 +41,7 @@ export interface Vehicle {
   /** Optional verified facts (year, colour, seats…). Only add confirmed information. */
   details?: { label: Localized; value: Localized }[];
   availability: AvailabilityStatus;
+  service: ServiceMode;
   /** Main photograph, used on the card and as the first slide of the detail view. */
   image: MediaAsset;
   /** Additional photographs shown after `image` in the detail view carousel. */

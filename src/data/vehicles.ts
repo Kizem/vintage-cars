@@ -49,6 +49,7 @@ export const vehicles: Vehicle[] = [
       { label: { en: 'Design', fr: 'Design' }, value: { en: 'Flaminio Bertoni', fr: 'Flaminio Bertoni' } },
     ],
     availability: 'on-request',
+    service: 'chauffeur',
     // Illustrative photos supplied by the owner (third-party, not the collection car).
     image: {
       src: 'images/collection/citroen-ds-illustration-1.webp',
@@ -91,6 +92,7 @@ export const vehicles: Vehicle[] = [
       fr: 'Un symbole du savoir-faire automobile français : une élégance sobre et un caractère bien à elle.',
     },
     availability: 'on-request',
+    service: 'chauffeur-or-self-drive',
     image: {
       src: 'images/collection/peugeot-504-avant.webp',
       alt: {
@@ -160,6 +162,7 @@ export const vehicles: Vehicle[] = [
       { label: { en: 'Design', fr: 'Design' }, value: { en: 'Paul Bracq', fr: 'Paul Bracq' } },
     ],
     availability: 'on-request',
+    service: 'chauffeur-or-self-drive',
     image: {
       src: 'images/collection/mercedes-1-trois-quarts.webp',
       srcSet: 'images/collection/mercedes-1-trois-quarts-800.webp 800w, images/collection/mercedes-1-trois-quarts.webp 1500w',

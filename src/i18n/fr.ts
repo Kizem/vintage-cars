@@ -75,9 +75,14 @@ export const fr: Dictionary = {
     prev: 'Photo précédente',
     next: 'Photo suivante',
   },
+  service: {
+    chauffeur: 'Avec chauffeur',
+    'chauffeur-or-self-drive': 'Avec ou sans chauffeur',
+  },
   vehicleDetail: {
     marque: 'Marque',
     availability: 'Disponibilité',
+    service: 'Service',
     note: 'Toutes nos expériences sont privées et se réservent sur demande. Indiquez-nous vos dates et vos envies : nous vous répondons personnellement pour confirmer la disponibilité de la voiture et organiser votre sortie.',
     enquire: 'Demander cette voiture',
     next: 'Voiture suivante\u00a0: {name}',

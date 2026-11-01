@@ -74,9 +74,15 @@ export const en = {
     prev: 'Previous photo',
     next: 'Next photo',
   },
+  /** Service mode badge on the cards and line in the detail view. */
+  service: {
+    chauffeur: 'With chauffeur',
+    'chauffeur-or-self-drive': 'With or without chauffeur',
+  },
   vehicleDetail: {
     marque: 'Marque',
     availability: 'Availability',
+    service: 'Service',
     note: 'Each experience is arranged privately, on enquiry. Tell us your dates and what you have in mind: we will confirm the availability of the car and the details of your journey personally.',
     enquire: 'Enquire about this car',
     next: 'Next: {name}',

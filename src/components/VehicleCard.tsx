@@ -22,7 +22,7 @@ export function VehicleCard({ vehicle, index, onOpen }: VehicleCardProps) {
           className="aspect-[3/2] w-full transition-transform duration-[1.2s] ease-[var(--ease-editorial)] group-hover:scale-[1.025]"
         />
         <span className="eyebrow absolute top-5 left-5 rounded-xs bg-offwhite/92 px-3 py-1.5 !text-[10px] text-forest">
-          {t.availability[vehicle.availability]}
+          {t.service[vehicle.service]}
         </span>
       </div>
 
