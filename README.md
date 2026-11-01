@@ -1,4 +1,4 @@
-# Époque Motors — Website
+# Époque Motors | Website
 
 Landing page for **ÉPOQUE MOTORS**, private vintage car experiences in Paris.
 *Driven by history. Experienced in Paris.*
@@ -21,6 +21,17 @@ push to `main`. In **Settings → Pages → Build and deployment → Source**, s
 **GitHub Actions** (the “Deploy from a branch” mode publishes the raw sources,
 which shows a blank page).
 
+## Languages (EN / FR)
+
+The site is bilingual, with an EN | FR switch in the header and footer.
+Language is chosen from `?lang=fr`, then the visitor's previous choice, then the
+browser language (English by default).
+
+- Interface copy: `src/i18n/en.ts` and `src/i18n/fr.ts` (same keys, type-checked).
+- Content (cars, experiences, image captions): `{ en, fr }` fields in `src/data/*.ts`.
+
+Editorial rules: no long dashes, no superlatives, no unverified vehicle facts.
+
 ## Structure
 
 ```
@@ -28,12 +39,14 @@ src/
   data/            ← all editable content
     vehicles.ts      the collection (single source of truth)
     experiences.ts   the three services
-    site.ts          brand copy, navigation, contact details, hero & story images
+    site.ts          navigation, contact details, hero & story images
     types.ts         MediaAsset / Vehicle / Experience types
+  i18n/            dictionaries (en, fr) + language provider
   lib/enquiry.ts   form validation + submission service
   context/         enquiry pre-fill (vehicle / experience CTAs → form)
   components/      Header, Hero, VehicleCollection, VehicleCard, VehicleDetail,
-                   Experiences, BrandStory, EnquiryForm, Footer, LegalDialog, ui/*
+                   Experiences, BrandStory, PracticalInfo, EnquiryForm, Footer,
+                   LegalDialog, ui/* (Media, Button, LanguageToggle…)
   index.css        design tokens (colours, fonts, radii) + base styles
 ```
 
@@ -64,11 +77,11 @@ Frontend validation is complete. Submissions are sent as JSON (POST) to
 never claims success**: it states that nothing was sent and offers a pre-filled
 email instead. A honeypot field filters basic bots.
 
-## Before launch — to do
+## Before launch: to do
 
 - Final photography (hero, 3 cars, 3 experiences, 2 story images).
 - Real contact details & Instagram URL in `src/data/site.ts`.
 - Production domain in `index.html` (canonical, Open Graph URLs).
-- Legal Notice & Privacy Policy texts in `src/components/LegalDialog.tsx`.
+- Legal Notice & Privacy Policy texts (`legal` keys in `src/i18n/en.ts` and `fr.ts`).
 - Enquiry backend (form service, serverless function or CRM) + `VITE_ENQUIRY_ENDPOINT`.
 - Final logotype, if one replaces the typographic wordmark.

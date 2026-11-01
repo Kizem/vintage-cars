@@ -1,12 +1,14 @@
 import type { Experience } from '../data/types';
 import { experiences } from '../data/experiences';
 import { useEnquiry } from '../context/EnquiryContext';
+import { useI18n } from '../i18n/I18nContext';
 import { SectionIntro } from './ui/SectionIntro';
 import { Reveal } from './ui/Reveal';
 import { Media } from './ui/Media';
 import { Button } from './ui/Button';
 
 function ExperienceText({ exp, onEnquire, compact = false }: { exp: Experience; onEnquire: () => void; compact?: boolean }) {
+  const { t, l } = useI18n();
   return (
     <div>
       <div className="mb-7 flex items-center gap-5">
@@ -15,16 +17,16 @@ function ExperienceText({ exp, onEnquire, compact = false }: { exp: Experience; 
         </span>
         <span aria-hidden="true" className="h-px w-10 bg-champagne/60" />
         <p className="eyebrow text-champagne">
-          <span className="sr-only">Service {exp.index}: </span>
-          {exp.label}
+          <span className="sr-only">{t.experiences.service} {exp.index}: </span>
+          {l(exp.label)}
         </p>
       </div>
       <h3 id={`${exp.id}-title`} className={`mb-6 leading-[1.04] text-ivory ${compact ? 'text-[clamp(2rem,3.4vw,2.9rem)]' : 'text-[clamp(2.1rem,3.8vw,3.25rem)]'}`}>
-        {exp.title}
+        {l(exp.title)}
       </h3>
-      <p className="mb-9 max-w-[44ch] text-[1.0625rem] leading-relaxed text-ivory/75">{exp.description}</p>
+      <p className="mb-9 max-w-[44ch] text-[1.0625rem] leading-relaxed text-ivory/75">{l(exp.description)}</p>
       <Button variant="outline-light" arrow onClick={onEnquire}>
-        {exp.cta}
+        {l(exp.cta)}
       </Button>
     </div>
   );
@@ -32,6 +34,7 @@ function ExperienceText({ exp, onEnquire, compact = false }: { exp: Experience; 
 
 export function Experiences() {
   const { startEnquiry } = useEnquiry();
+  const { t } = useI18n();
   const [tours, chauffeured, events] = experiences;
   const enquire = (exp: Experience) => () => startEnquiry({ experience: exp.id });
 
@@ -41,17 +44,17 @@ export function Experiences() {
         <SectionIntro
           id="experiences-title"
           tone="dark"
-          eyebrow="Our Experiences"
+          eyebrow={t.experiences.eyebrow}
           title={
             <>
-              More Than <em className="italic">a Drive.</em>
+              {t.experiences.titleStart} <em className="italic">{t.experiences.titleEm}</em>
             </>
           }
-          text="Discover Paris and its surroundings through exceptional automobiles and personalised experiences."
+          text={t.experiences.text}
         />
 
         <div className="mt-20 flex flex-col gap-24 sm:gap-32 lg:mt-28 lg:gap-40">
-          {/* 01 — wide landscape image, text to the right */}
+          {/* 01: wide landscape image, text to the right */}
           <article aria-labelledby={`${tours.id}-title`} className="grid gap-10 lg:grid-cols-12 lg:items-center lg:gap-12">
             <Reveal className="lg:col-span-7">
               <Media image={tours.image} tone="charcoal" className="aspect-[3/2] w-full rounded-xs" sizes="(min-width:1024px) 58vw, 100vw" showBrief />
@@ -61,7 +64,7 @@ export function Experiences() {
             </Reveal>
           </article>
 
-          {/* 02 — portrait image to the right, offset; small detail frame */}
+          {/* 02: portrait image to the right, offset; small detail frame */}
           <article aria-labelledby={`${chauffeured.id}-title`} className="grid gap-10 lg:grid-cols-12 lg:items-end lg:gap-12">
             <Reveal delay={120} className="order-2 lg:order-1 lg:col-span-5 lg:col-start-2 lg:pb-16">
               <ExperienceText exp={chauffeured} onEnquire={enquire(chauffeured)} />
@@ -77,7 +80,7 @@ export function Experiences() {
             </Reveal>
           </article>
 
-          {/* 03 — cinematic full-width image with overlaid panel */}
+          {/* 03: cinematic full-width image with overlaid panel */}
           <article aria-labelledby={`${events.id}-title`} className="relative">
             <Reveal>
               <Media
@@ -99,10 +102,9 @@ export function Experiences() {
         </div>
 
         <Reveal className="mt-24 grid gap-6 border-t border-line-light pt-8 sm:grid-cols-2 lg:mt-36">
-          <p className="eyebrow text-champagne">Private &amp; by enquiry</p>
+          <p className="eyebrow text-champagne">{t.experiences.footLabel}</p>
           <p className="max-w-xl text-[0.975rem] leading-relaxed text-ivory/70 sm:justify-self-end">
-            Every experience is private and arranged on enquiry. Itineraries, timings and arrangements are discussed with
-            you personally and confirmed before your visit.
+            {t.experiences.footText}
           </p>
         </Reveal>
       </div>

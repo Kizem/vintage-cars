@@ -3,7 +3,7 @@ interface WordmarkProps {
   size?: 'sm' | 'lg';
 }
 
-/** Typographic wordmark — to be replaced by the final logotype when available. */
+/** Typographic wordmark: to be replaced by the final logotype when available. */
 export function Wordmark({ className = '', size = 'sm' }: WordmarkProps) {
   return (
     <span className={`inline-flex items-baseline gap-[0.55em] whitespace-nowrap ${className}`}>

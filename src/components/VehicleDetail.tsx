@@ -1,10 +1,10 @@
 import { useEffect, useRef } from 'react';
 import type { Vehicle } from '../data/types';
-import { availabilityLabels, vehicles } from '../data/vehicles';
+import { vehicles } from '../data/vehicles';
+import { useI18n } from '../i18n/I18nContext';
 import { useEnquiry } from '../context/EnquiryContext';
 import { Media } from './ui/Media';
 import { Button } from './ui/Button';
-import { vehicleMark } from './VehicleCard';
 
 interface VehicleDetailProps {
   vehicle: Vehicle | undefined;
@@ -16,6 +16,7 @@ interface VehicleDetailProps {
 export function VehicleDetail({ vehicle, onClose, onNavigate }: VehicleDetailProps) {
   const ref = useRef<HTMLDialogElement>(null);
   const { startEnquiry } = useEnquiry();
+  const { t, l } = useI18n();
 
   useEffect(() => {
     const dialog = ref.current;
@@ -61,7 +62,7 @@ export function VehicleDetail({ vehicle, onClose, onNavigate }: VehicleDetailPro
             type="button"
             onClick={() => ref.current?.close()}
             className="fixed top-4 right-4 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-offwhite/90 text-forest transition-colors hover:bg-forest hover:text-ivory md:absolute md:top-5 md:right-5"
-            aria-label="Close vehicle details"
+            aria-label={t.vehicleDetail.close}
           >
             <svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" fill="none">
               <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" />
@@ -70,7 +71,7 @@ export function VehicleDetail({ vehicle, onClose, onNavigate }: VehicleDetailPro
 
           <Media
             image={vehicle.image}
-            mark={vehicleMark(vehicle)}
+            mark={vehicle.mark}
             tone={idx % 2 === 1 ? 'stone' : 'forest'}
             showBrief
             className="aspect-[4/3] w-full shrink-0 md:aspect-auto md:h-full"
@@ -80,39 +81,38 @@ export function VehicleDetail({ vehicle, onClose, onNavigate }: VehicleDetailPro
           <div className="flex shrink-0 grow flex-col p-6 sm:p-10 md:shrink md:overflow-y-auto lg:p-14">
             <p className="eyebrow mb-6 flex items-center gap-4 text-forest">
               <span aria-hidden="true" className="h-px w-10 bg-champagne" />
-              The Collection · N° {String(idx + 1).padStart(2, '0')}
+              {t.collection.eyebrow} · {t.collection.number} {String(idx + 1).padStart(2, '0')}
             </p>
-            <p className="eyebrow mb-3 text-muted-ink">{vehicle.category}</p>
+            <p className="eyebrow mb-3 text-muted-ink">{l(vehicle.category)}</p>
             <h2 id="vehicle-detail-title" className="mb-6 text-[clamp(2.4rem,4.5vw,3.6rem)] leading-[1.02] text-forest">
               {vehicle.name}
             </h2>
 
             <div className="space-y-4 text-[1.0625rem] leading-relaxed text-charcoal/85">
-              {(vehicle.story ?? [vehicle.description]).map((p) => (
+              {(vehicle.story ? l(vehicle.story) : [l(vehicle.description)]).map((p) => (
                 <p key={p}>{p}</p>
               ))}
             </div>
 
             <dl className="my-9 grid grid-cols-2 gap-x-8 border-t border-line">
               <div className="border-b border-line py-4">
-                <dt className="eyebrow mb-1.5 text-muted-ink">Marque</dt>
+                <dt className="eyebrow mb-1.5 text-muted-ink">{t.vehicleDetail.marque}</dt>
                 <dd className="font-display text-xl text-forest">{vehicle.marque}</dd>
               </div>
               <div className="border-b border-line py-4">
-                <dt className="eyebrow mb-1.5 text-muted-ink">Availability</dt>
-                <dd className="font-display text-xl text-forest">{availabilityLabels[vehicle.availability]}</dd>
+                <dt className="eyebrow mb-1.5 text-muted-ink">{t.vehicleDetail.availability}</dt>
+                <dd className="font-display text-xl text-forest">{t.availability[vehicle.availability]}</dd>
               </div>
               {vehicle.details?.map((d) => (
-                <div key={d.label} className="border-b border-line py-4">
-                  <dt className="eyebrow mb-1.5 text-muted-ink">{d.label}</dt>
-                  <dd className="font-display text-xl text-forest">{d.value}</dd>
+                <div key={d.label.en} className="border-b border-line py-4">
+                  <dt className="eyebrow mb-1.5 text-muted-ink">{l(d.label)}</dt>
+                  <dd className="font-display text-xl text-forest">{l(d.value)}</dd>
                 </div>
               ))}
             </dl>
 
             <p className="mb-8 text-sm leading-relaxed text-muted-ink">
-              Each experience is arranged privately, on enquiry. Tell us your dates and what you have in mind — we will
-              confirm the car’s availability and the details of your journey personally.
+              {t.vehicleDetail.note}
             </p>
 
             <div className="mt-auto flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
@@ -124,11 +124,11 @@ export function VehicleDetail({ vehicle, onClose, onNavigate }: VehicleDetailPro
                   startEnquiry({ vehicle: slug });
                 }}
               >
-                Enquire about this car
+                {t.vehicleDetail.enquire}
               </Button>
               {next && next.slug !== vehicle.slug && (
                 <Button variant="text" onClick={() => onNavigate(next.slug)} arrow>
-                  Next: {next.name}
+                  {t.vehicleDetail.next}: {next.name}
                 </Button>
               )}
             </div>

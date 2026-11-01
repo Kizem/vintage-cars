@@ -1,32 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
 import { site } from '../data/site';
+import { useI18n } from '../i18n/I18nContext';
 
 /**
- * Legal pages placeholder. Opened by the #legal-notice and #privacy links.
- * TODO: replace the content with the final texts validated by counsel
- * (French "mentions légales" and a GDPR-compliant privacy policy).
+ * Legal pages placeholder, opened by the #legal-notice and #privacy links.
+ * TODO: replace the texts in the dictionaries with the final versions
+ * validated by counsel (mentions légales, GDPR privacy policy).
  */
-const pages = {
-  'legal-notice': {
-    title: 'Legal Notice',
-    body: [
-      'This page will contain the legal information required by French law (mentions légales): the publisher’s company name, legal form, registered office, registration number (RCS/SIREN), VAT number, publication director and the website host’s details.',
-      'This content is pending and will be published before launch.',
-    ],
-  },
-  privacy: {
-    title: 'Privacy Policy',
-    body: [
-      `The details you share through the enquiry form are used solely by ${site.name} to reply to your request and arrange your experience. They are never sold or shared for marketing purposes.`,
-      'The complete privacy policy — data controller, legal basis, retention periods, processors and your rights under the GDPR (access, rectification, erasure, objection) — is pending and will be published before launch.',
-    ],
-  },
-} as const;
-
-type PageKey = keyof typeof pages;
-const isPage = (h: string): h is PageKey => h in pages;
+const pageKeys = ['legal-notice', 'privacy'] as const;
+type PageKey = (typeof pageKeys)[number];
+const isPage = (h: string): h is PageKey => (pageKeys as readonly string[]).includes(h);
 
 export function LegalDialog() {
+  const { t } = useI18n();
   const ref = useRef<HTMLDialogElement>(null);
   const [page, setPage] = useState<PageKey | null>(null);
 
@@ -54,7 +40,7 @@ export function LegalDialog() {
     setPage(null);
   };
 
-  const content = page ? pages[page] : null;
+  const content = page ? t.legal[page] : null;
 
   return (
     <dialog
@@ -80,7 +66,7 @@ export function LegalDialog() {
             onClick={() => ref.current?.close()}
             className="mt-10 border-b border-forest pb-1 text-[12px] font-medium tracking-[0.18em] text-forest uppercase"
           >
-            Close
+            {t.legal.close}
           </button>
         </div>
       )}

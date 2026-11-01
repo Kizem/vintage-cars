@@ -1,0 +1,213 @@
+/**
+ * English interface copy. `fr.ts` must provide exactly the same keys
+ * (enforced by the Dictionary type).
+ * Editorial rule: no long dashes, no superlatives, no unverified claims.
+ */
+export const en = {
+  meta: {
+    title: 'Époque Motors | Private Vintage Car Experiences in Paris',
+    description:
+      'Driven by history. Experienced in Paris. Private tours, chauffeured journeys and special occasions in classic automobiles, by enquiry.',
+  },
+  common: {
+    skipToContent: 'Skip to content',
+    backToTop: 'back to top',
+    imagePlaceholder: 'Image placeholder',
+    photoToCome: 'photograph to come',
+    optional: 'Optional',
+  },
+  nav: {
+    collection: 'The Collection',
+    experiences: 'Our Experiences',
+    story: 'Our Story',
+    practical: 'Practical Information',
+    contact: 'Contact',
+  },
+  header: {
+    enquire: 'Enquire Now',
+    openMenu: 'Open menu',
+    closeMenu: 'Close menu',
+    language: 'Language',
+    primaryNav: 'Primary',
+    mobileNav: 'Mobile',
+  },
+  hero: {
+    eyebrow: 'French Automotive Heritage',
+    titleStart: 'Some journeys deserve a',
+    titleEm: 'timeless',
+    titleEnd: ' car.',
+    text: 'Discover Paris aboard automotive icons, through private experiences crafted around elegance, history and authenticity.',
+    ctaPrimary: 'Discover our collection',
+    ctaSecondary: 'Explore our experiences',
+    strap: 'Paris · Private experiences by enquiry',
+  },
+  collection: {
+    eyebrow: 'The Collection',
+    titleLine1: 'Iconic Cars.',
+    titleLine2: 'Timeless Stories.',
+    text: 'A carefully selected collection of automobiles, each with its own character and history.',
+    discover: 'Discover this car',
+    number: 'N°',
+    closing: 'The availability of each car is confirmed personally for every request.',
+    askSpecific: 'Ask about a specific car',
+  },
+  availability: {
+    'on-request': 'Availability on request',
+    available: 'Available',
+    limited: 'Limited availability',
+    unavailable: 'Currently unavailable',
+    'coming-soon': 'Joining the collection soon',
+  },
+  vehicleDetail: {
+    marque: 'Marque',
+    availability: 'Availability',
+    note: 'Each experience is arranged privately, on enquiry. Tell us your dates and what you have in mind: we will confirm the availability of the car and the details of your journey personally.',
+    enquire: 'Enquire about this car',
+    next: 'Next',
+    close: 'Close vehicle details',
+  },
+  experiences: {
+    eyebrow: 'Our Experiences',
+    titleStart: 'More Than',
+    titleEm: 'a Drive.',
+    text: 'Discover Paris and its surroundings through exceptional automobiles and personalised experiences.',
+    service: 'Service',
+    footLabel: 'Private & by enquiry',
+    footText:
+      'Every experience is private and arranged on enquiry. Itineraries, timings and arrangements are discussed with you personally and confirmed before your visit.',
+  },
+  story: {
+    eyebrow: 'Our Story',
+    titleStart: 'An Appreciation for',
+    titleEm: 'Timeless Design.',
+    p1: 'Some automobiles transcend their original purpose. They become symbols of an era, expressions of craftsmanship and pieces of cultural heritage.',
+    p2: 'At Époque Motors, we believe these icons deserve to be experienced, not simply admired.',
+    p3: 'Our ambition is to share the beauty of classic motoring through personal, authentic and memorable experiences in Paris.',
+  },
+  practical: {
+    eyebrow: 'Practical Information',
+    titleStart: 'Good',
+    titleEm: 'to Know.',
+    howItWorks: 'How it works',
+    steps: [
+      {
+        title: 'Send your enquiry',
+        text: 'Tell us the experience you have in mind, your preferred dates and the number of guests.',
+      },
+      {
+        title: 'Receive a personal reply',
+        text: 'We check the availability of the car and come back to you with a proposal tailored to your request.',
+      },
+      {
+        title: 'Confirm your experience',
+        text: 'Once every detail suits you, we confirm your experience together. No payment is requested online.',
+      },
+    ],
+    faqTitle: 'Before your visit',
+    faq: [
+      {
+        q: 'Where do experiences take place?',
+        a: 'In Paris and its surroundings. The itinerary and meeting point are agreed with you when preparing your experience.',
+      },
+      {
+        q: 'Which languages do you speak?',
+        a: 'We welcome you in English and in French.',
+      },
+      {
+        q: 'How long does an experience last, and at what rate?',
+        a: 'Each experience is tailored. Duration and rate are set out in our proposal, before any commitment.',
+      },
+      {
+        q: 'Can I drive the car myself?',
+        a: 'Self-drive rental is not offered at this stage.',
+      },
+    ],
+  },
+  form: {
+    eyebrow: 'Enquiries',
+    titleStart: 'Your Parisian Experience',
+    titleEm: 'Begins Here.',
+    text: 'Tell us what you have in mind. We will help you create a memorable experience.',
+    email: 'Email',
+    telephone: 'Telephone',
+    basedIn: 'Based in',
+    requiredNote: 'All fields are required unless marked optional.',
+    reviewOne: 'Please review the highlighted field below.',
+    reviewMany: 'Please review the {count} highlighted fields below.',
+    fullName: 'Full name',
+    emailAddress: 'Email address',
+    experience: 'Preferred experience',
+    selectExperience: 'Select an experience',
+    somethingElse: 'Something else',
+    vehicle: 'Preferred vehicle',
+    noPreference: 'No preference',
+    date: 'Desired date',
+    dateHint: 'Leave empty if your dates are flexible.',
+    flexible: 'Flexible',
+    guests: 'Number of guests',
+    message: 'Additional message',
+    messagePlaceholder: 'An occasion, a route you have in mind, timings, special requests…',
+    consentStart: 'I agree that Époque Motors may use these details to reply to my enquiry. See our',
+    privacyPolicy: 'Privacy Policy',
+    submit: 'Send an Enquiry',
+    submitting: 'Sending…',
+    noPayment: 'No payment is taken. Every request receives a personal reply.',
+    errors: {
+      nameRequired: 'Please tell us your full name.',
+      emailRequired: 'Please enter your email address.',
+      emailInvalid: 'Please enter a valid email address.',
+      experienceRequired: 'Please choose the experience you have in mind.',
+      datePast: 'Please choose a date in the future.',
+      guestsRequired: 'Please indicate the number of guests.',
+      guestsTooMany: 'For larger events, please describe your needs in the message.',
+      messageTooLong: 'Please keep your message under 2,000 characters.',
+      consentRequired: 'Please confirm we may use your details to reply to you.',
+    },
+    sentEyebrow: 'Enquiry received',
+    sentTitle: 'Thank you, {name}.',
+    sentText: 'Your enquiry has been sent. We will reply personally to {email} as soon as possible.',
+    sendAnother: 'Send another enquiry',
+    notSentTitle: 'Your enquiry has not been sent yet',
+    notSentText:
+      'Online enquiries are not connected yet. Your details are still here: you can send them to us by email in one click.',
+    errorTitle: 'Your enquiry could not be sent',
+    errorText: 'Your details are still here. Please try again, or send them by email.',
+    errorServer: 'The server responded with an error.',
+    errorNetwork: 'We could not reach our server. Please check your connection.',
+    sendByEmail: 'Send by email',
+    tryAgain: 'Try again',
+    mailSubject: 'Enquiry',
+    mailName: 'Name',
+    mailGuests: 'Guests',
+  },
+  footer: {
+    description:
+      'A French automotive heritage house offering private vintage car experiences in Paris to international visitors, by enquiry only.',
+    explore: 'Explore',
+    contact: 'Contact',
+    instagramSoon: 'Instagram, coming soon',
+    rights: 'All rights reserved.',
+    legalNotice: 'Legal Notice',
+    privacy: 'Privacy Policy',
+    footerNav: 'Footer',
+  },
+  legal: {
+    close: 'Close',
+    'legal-notice': {
+      title: 'Legal Notice',
+      body: [
+        'This page will contain the legal information required by French law: the publisher’s company name, legal form, registered office, registration number (RCS/SIREN), VAT number, publication director and the website host’s details.',
+        'This content is pending and will be published before launch.',
+      ],
+    },
+    privacy: {
+      title: 'Privacy Policy',
+      body: [
+        'The details you share through the enquiry form are used solely by Époque Motors to reply to your request and arrange your experience. They are never sold or shared for marketing purposes.',
+        'The complete privacy policy (data controller, legal basis, retention periods, processors and your rights under the GDPR) is pending and will be published before launch.',
+      ],
+    },
+  },
+};
+
+export type Dictionary = typeof en;

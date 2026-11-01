@@ -1,7 +1,10 @@
-import { site } from '../data/site';
+import { footerNav, site } from '../data/site';
+import { useI18n } from '../i18n/I18nContext';
 import { Wordmark } from './ui/Wordmark';
+import { LanguageToggle } from './ui/LanguageToggle';
 
 export function Footer() {
+  const { t, l } = useI18n();
   const year = new Date().getFullYear();
   const { instagramUrl, instagramHandle } = site.social;
 
@@ -10,23 +13,20 @@ export function Footer() {
       <div className="page-gutter mx-auto max-w-[var(--container-page)] pt-20 pb-10 sm:pt-24">
         <div className="grid gap-14 border-b border-line-light pb-16 md:grid-cols-12 md:gap-10">
           <div className="md:col-span-5">
-            <a href="#top" aria-label={`${site.name} — back to top`}>
+            <a href="#top" aria-label={`${site.name}, ${t.common.backToTop}`}>
               <Wordmark size="lg" />
             </a>
-            <p className="mt-6 max-w-sm text-[0.975rem] leading-relaxed text-ivory/65">
-              A French automotive heritage house offering private vintage car experiences in Paris to international
-              visitors — by enquiry only.
-            </p>
-            <p className="mt-8 font-display text-xl text-champagne italic">{site.tagline}</p>
+            <p className="mt-6 max-w-sm text-[0.975rem] leading-relaxed text-ivory/65">{t.footer.description}</p>
+            <p className="mt-8 font-display text-xl text-champagne italic">{l(site.tagline)}</p>
           </div>
 
-          <nav aria-label="Footer" className="md:col-span-3 md:col-start-7">
-            <h2 className="eyebrow mb-6 font-sans text-champagne">Explore</h2>
+          <nav aria-label={t.footer.footerNav} className="md:col-span-3 md:col-start-7">
+            <h2 className="eyebrow mb-6 font-sans text-champagne">{t.footer.explore}</h2>
             <ul className="space-y-3">
-              {site.nav.map((item) => (
+              {footerNav.map((item) => (
                 <li key={item.href}>
                   <a href={item.href} className="link-quiet text-ivory/80 hover:text-ivory">
-                    {item.label}
+                    {t.nav[item.key]}
                   </a>
                 </li>
               ))}
@@ -34,8 +34,8 @@ export function Footer() {
           </nav>
 
           <div className="md:col-span-3">
-            <h2 className="eyebrow mb-6 font-sans text-champagne">Contact</h2>
-            <address className="space-y-3 not-italic text-ivory/80">
+            <h2 className="eyebrow mb-6 font-sans text-champagne">{t.footer.contact}</h2>
+            <address className="space-y-3 break-words not-italic text-ivory/80">
               <p>
                 <a href={`mailto:${site.contact.email}`} className="link-quiet hover:text-ivory">
                   {site.contact.email}
@@ -46,8 +46,8 @@ export function Footer() {
                   {site.contact.phone}
                 </a>
               </p>
-              <p>{site.contact.location}</p>
-              <p className="text-ivory/55">{site.contact.hours}</p>
+              <p>{l(site.contact.location)}</p>
+              <p className="text-ivory/55">{l(site.contact.hours)}</p>
             </address>
             <p className="mt-6">
               {instagramUrl ? (
@@ -55,8 +55,8 @@ export function Footer() {
                   <InstagramIcon /> Instagram {instagramHandle}
                 </a>
               ) : (
-                <span className="inline-flex items-center gap-2 text-ivory/55" title="Instagram profile coming soon">
-                  <InstagramIcon /> Instagram — coming soon
+                <span className="inline-flex items-center gap-2 text-ivory/55">
+                  <InstagramIcon /> {t.footer.instagramSoon}
                 </span>
               )}
             </p>
@@ -65,20 +65,23 @@ export function Footer() {
 
         <div className="flex flex-col gap-4 pt-8 text-[12.5px] text-ivory/55 sm:flex-row sm:items-center sm:justify-between">
           <p>
-            © {year} {site.name}. All rights reserved.
+            © {year} {site.name}. {t.footer.rights}
           </p>
-          <ul className="flex gap-8">
-            <li>
-              <a href="#legal-notice" className="link-quiet hover:text-ivory">
-                Legal Notice
-              </a>
-            </li>
-            <li>
-              <a href="#privacy" className="link-quiet hover:text-ivory">
-                Privacy Policy
-              </a>
-            </li>
-          </ul>
+          <div className="flex flex-wrap items-center gap-x-8 gap-y-2">
+            <ul className="flex gap-8">
+              <li>
+                <a href="#legal-notice" className="link-quiet hover:text-ivory">
+                  {t.footer.legalNotice}
+                </a>
+              </li>
+              <li>
+                <a href="#privacy" className="link-quiet hover:text-ivory">
+                  {t.footer.privacy}
+                </a>
+              </li>
+            </ul>
+            <LanguageToggle className="text-ivory" />
+          </div>
         </div>
       </div>
     </footer>

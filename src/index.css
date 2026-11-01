@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 
 /* ==========================================================================
-   ÉPOQUE MOTORS — Design tokens
+   ÉPOQUE MOTORS: Design tokens
    --------------------------------------------------------------------------
    Contrast notes (WCAG 2.1):
    - charcoal / forest on ivory or off-white   ≥ 12:1  → all text sizes
@@ -172,7 +172,7 @@
 }
 
 /* --------------------------------------------------------------------------
-   Entrance animations — used sparingly via <Reveal>
+   Entrance animations: used sparingly via <Reveal>
    -------------------------------------------------------------------------- */
 .reveal {
   opacity: 0;

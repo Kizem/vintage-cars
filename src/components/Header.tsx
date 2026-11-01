@@ -1,9 +1,12 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
-import { site } from '../data/site';
+import { primaryNav, site } from '../data/site';
+import { useI18n } from '../i18n/I18nContext';
+import { LanguageToggle } from './ui/LanguageToggle';
 import { Wordmark } from './ui/Wordmark';
 import { ButtonLink } from './ui/Button';
 
 export function Header() {
+  const { t, l } = useI18n();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
@@ -29,7 +32,7 @@ export function Header() {
         toggleRef.current?.focus();
       }
       if (e.key === 'Tab' && panelRef.current) {
-        const items = [toggleRef.current, ...panelRef.current.querySelectorAll<HTMLElement>('a')].filter(Boolean) as HTMLElement[];
+        const items = [toggleRef.current, ...panelRef.current.querySelectorAll<HTMLElement>('a, button')].filter(Boolean) as HTMLElement[];
         const first = items[0];
         const last = items[items.length - 1];
         if (e.shiftKey && document.activeElement === first) {
@@ -41,7 +44,7 @@ export function Header() {
         }
       }
     };
-    const mq = window.matchMedia('(min-width: 1024px)');
+    const mq = window.matchMedia('(min-width: 1280px)');
     const onMq = () => mq.matches && setOpen(false);
     window.addEventListener('keydown', onKey);
     mq.addEventListener('change', onMq);
@@ -64,38 +67,39 @@ export function Header() {
         href="#main"
         className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-[60] focus:bg-forest focus:px-4 focus:py-2 focus:text-ivory"
       >
-        Skip to content
+        {t.common.skipToContent}
       </a>
       <div className={`page-gutter mx-auto flex max-w-[var(--container-page)] items-center justify-between transition-[height] duration-500 ${scrolled ? 'h-[68px]' : 'h-[76px] lg:h-[88px]'}`}>
-        <a href="#top" aria-label={`${site.name} — back to top`} className="relative z-10" onClick={() => setOpen(false)}>
+        <a href="#top" aria-label={`${site.name}, ${t.common.backToTop}`} className="relative z-10" onClick={() => setOpen(false)}>
           <Wordmark />
         </a>
 
-        <nav aria-label="Primary" className="hidden lg:block">
-          <ul className="flex items-center gap-10">
-            {site.nav.map((item) => (
+        <nav aria-label={t.header.primaryNav} className="hidden xl:block">
+          <ul className="flex items-center gap-7 xl:gap-10">
+            {primaryNav.map((item) => (
               <li key={item.href}>
-                <a href={item.href} className="link-quiet pb-1 text-[12.5px] font-medium tracking-[0.12em] uppercase">
-                  {item.label}
+                <a href={item.href} className="link-quiet pb-1 text-[12.5px] font-medium tracking-[0.12em] whitespace-nowrap uppercase">
+                  {t.nav[item.key]}
                 </a>
               </li>
             ))}
           </ul>
         </nav>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 sm:gap-5">
+          <LanguageToggle className="relative z-10" />
           <span className="hidden sm:block">
-            <ButtonLink href="#contact" variant={solid ? 'solid' : 'outline-light'} className="!px-6 !py-3">
-              Enquire Now
+            <ButtonLink href="#contact" variant={solid ? 'solid' : 'outline-light'} className="!px-6 !py-3 whitespace-nowrap">
+              {t.header.enquire}
             </ButtonLink>
           </span>
           <button
             ref={toggleRef}
             type="button"
-            className="relative z-10 -mr-2 flex h-11 w-11 items-center justify-center lg:hidden"
+            className="relative z-10 -mr-2 flex h-11 w-11 items-center justify-center xl:hidden"
             aria-expanded={open}
             aria-controls="mobile-menu"
-            aria-label={open ? 'Close menu' : 'Open menu'}
+            aria-label={open ? t.header.closeMenu : t.header.openMenu}
             onClick={() => setOpen((o) => !o)}
           >
             <span aria-hidden="true" className="relative block h-3 w-6">
@@ -115,11 +119,11 @@ export function Header() {
         id="mobile-menu"
         ref={panelRef}
         hidden={!open}
-        className="fixed inset-x-0 top-0 bottom-0 -z-0 overflow-y-auto bg-ivory pt-[96px] text-forest lg:hidden"
+        className="fixed inset-x-0 top-0 bottom-0 -z-0 overflow-y-auto bg-ivory pt-[96px] text-forest xl:hidden"
       >
-        <nav aria-label="Mobile" className="page-gutter flex min-h-full flex-col pb-10">
+        <nav aria-label={t.header.mobileNav} className="page-gutter flex min-h-full flex-col pb-10">
           <ul className="flex flex-col border-t border-line">
-            {site.nav.map((item, i) => (
+            {primaryNav.map((item, i) => (
               <li key={item.href} className="border-b border-line">
                 <a
                   href={item.href}
@@ -127,7 +131,7 @@ export function Header() {
                   className="hero-in flex items-baseline justify-between py-5 font-display text-[2rem] leading-none"
                   style={{ '--hero-delay': `${80 + i * 60}ms` } as CSSProperties}
                 >
-                  {item.label}
+                  {t.nav[item.key]}
                   <span className="eyebrow text-muted-ink">0{i + 1}</span>
                 </a>
               </li>
@@ -135,9 +139,9 @@ export function Header() {
           </ul>
           <div className="mt-auto flex flex-col gap-6 pt-12">
             <ButtonLink href="#contact" onClick={() => setOpen(false)} arrow className="w-full justify-between">
-              Enquire Now
+              {t.header.enquire}
             </ButtonLink>
-            <p className="font-display text-xl text-forest/80 italic">{site.tagline}</p>
+            <p className="font-display text-xl text-forest/80 italic">{l(site.tagline)}</p>
           </div>
         </nav>
       </div>

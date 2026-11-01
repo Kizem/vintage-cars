@@ -1,21 +1,23 @@
-import { experiences } from '../data/experiences';
-import { site } from '../data/site';
-import { getVehicle } from '../data/vehicles';
+import type { Dictionary } from '../i18n/en';
+import type { Locale } from '../i18n/locales';
 
 export interface EnquiryPayload {
   fullName: string;
   email: string;
+  /** Experience id, or 'other'. */
   experience: string;
+  /** Vehicle slug, or '' for no preference. */
   vehicle: string;
   date: string;
   guests: string;
   message: string;
   consent: boolean;
-  /** Honeypot — must stay empty. */
+  /** Honeypot, must stay empty. */
   company: string;
 }
 
-export type EnquiryErrors = Partial<Record<keyof EnquiryPayload, string>>;
+export type EnquiryErrorKey = keyof Dictionary['form']['errors'];
+export type EnquiryErrors = Partial<Record<keyof EnquiryPayload, EnquiryErrorKey>>;
 
 export const emptyEnquiry: EnquiryPayload = {
   fullName: '',
@@ -37,37 +39,35 @@ export const todayISO = () => {
   return d.toISOString().slice(0, 10);
 };
 
+/** Returns, per field, the key of the message to display (see dictionaries). */
 export function validateEnquiry(v: EnquiryPayload): EnquiryErrors {
   const e: EnquiryErrors = {};
-  if (v.fullName.trim().length < 2) e.fullName = 'Please tell us your full name.';
-  if (!v.email.trim()) e.email = 'Please enter your email address.';
-  else if (!EMAIL_RE.test(v.email.trim())) e.email = 'Please enter a valid email address.';
-  if (!v.experience) e.experience = 'Please choose the experience you have in mind.';
-  if (v.date && v.date < todayISO()) e.date = 'Please choose a date in the future.';
+  if (v.fullName.trim().length < 2) e.fullName = 'nameRequired';
+  if (!v.email.trim()) e.email = 'emailRequired';
+  else if (!EMAIL_RE.test(v.email.trim())) e.email = 'emailInvalid';
+  if (!v.experience) e.experience = 'experienceRequired';
+  if (v.date && v.date < todayISO()) e.date = 'datePast';
   const guests = Number(v.guests);
-  if (!v.guests || !Number.isInteger(guests) || guests < 1)
-    e.guests = 'Please indicate the number of guests.';
-  else if (guests > 500) e.guests = 'For larger events, please describe your needs in the message.';
-  if (v.message.length > 2000) e.message = 'Please keep your message under 2,000 characters.';
-  if (!v.consent) e.consent = 'Please confirm we may use your details to reply to you.';
+  if (!v.guests || !Number.isInteger(guests) || guests < 1) e.guests = 'guestsRequired';
+  else if (guests > 500) e.guests = 'guestsTooMany';
+  if (v.message.length > 2000) e.message = 'messageTooLong';
+  if (!v.consent) e.consent = 'consentRequired';
   return e;
 }
 
 export type SubmitResult =
   | { status: 'sent' }
   | { status: 'not-configured' }
-  | { status: 'error'; message: string };
+  | { status: 'error'; reason: 'server' | 'network' };
 
 /** Endpoint receiving a JSON POST. Configure with VITE_ENQUIRY_ENDPOINT (see .env.example). */
 const ENDPOINT = (import.meta.env.VITE_ENQUIRY_ENDPOINT as string | undefined)?.trim();
 
-export const isEnquiryBackendConfigured = Boolean(ENDPOINT);
-
 /**
  * Submits an enquiry. Until a backend is connected this resolves to
- * `not-configured` — the UI must never claim the enquiry was sent.
+ * `not-configured`: the UI must never claim the enquiry was sent.
  */
-export async function submitEnquiry(v: EnquiryPayload): Promise<SubmitResult> {
+export async function submitEnquiry(v: EnquiryPayload, locale: Locale): Promise<SubmitResult> {
   if (v.company) return { status: 'sent' }; // honeypot: silently drop bots
   if (!ENDPOINT) return { status: 'not-configured' };
 
@@ -78,40 +78,30 @@ export async function submitEnquiry(v: EnquiryPayload): Promise<SubmitResult> {
       body: JSON.stringify({
         fullName: v.fullName.trim(),
         email: v.email.trim(),
-        experience: experienceLabel(v.experience),
-        vehicle: vehicleLabel(v.vehicle),
+        experience: v.experience,
+        vehicle: v.vehicle || null,
         date: v.date || null,
         guests: Number(v.guests),
         message: v.message.trim(),
         consent: v.consent,
+        locale,
         submittedAt: new Date().toISOString(),
         source: 'website',
       }),
     });
-    if (!res.ok) return { status: 'error', message: `The server responded with status ${res.status}.` };
-    return { status: 'sent' };
+    return res.ok ? { status: 'sent' } : { status: 'error', reason: 'server' };
   } catch {
-    return { status: 'error', message: 'We could not reach our server. Please check your connection.' };
+    return { status: 'error', reason: 'network' };
   }
 }
 
-export const experienceLabel = (id: string) =>
-  id === 'other' ? 'Something else' : (experiences.find((x) => x.id === id)?.label ?? 'Not specified');
-
-export const vehicleLabel = (slug: string) => getVehicle(slug)?.name ?? 'No preference';
-
 /** Pre-filled email used as an honest fallback while no backend is connected. */
-export function buildMailto(v: EnquiryPayload) {
-  const lines = [
-    `Name: ${v.fullName.trim()}`,
-    `Email: ${v.email.trim()}`,
-    `Experience: ${experienceLabel(v.experience)}`,
-    `Vehicle: ${vehicleLabel(v.vehicle)}`,
-    `Desired date: ${v.date || 'Flexible'}`,
-    `Guests: ${v.guests}`,
-    '',
-    v.message.trim(),
-  ];
-  const subject = `Enquiry — ${experienceLabel(v.experience)}`;
-  return `mailto:${site.contact.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join('\n'))}`;
+export function buildMailto(
+  to: string,
+  subject: string,
+  rows: [label: string, value: string][],
+  message: string,
+) {
+  const body = [...rows.map(([k, val]) => `${k}: ${val}`), '', message.trim()].join('\n');
+  return `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }

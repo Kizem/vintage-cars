@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { getVehicle, vehicles } from '../data/vehicles';
+import { useI18n } from '../i18n/I18nContext';
 import { SectionIntro } from './ui/SectionIntro';
 import { Reveal } from './ui/Reveal';
 import { VehicleCard } from './VehicleCard';
@@ -18,6 +19,7 @@ function writeSlug(slug: string | null) {
 }
 
 export function VehicleCollection() {
+  const { t } = useI18n();
   const [active, setActive] = useState<string | null>(() => (getVehicle(readSlug()) ? readSlug() : null));
 
   useEffect(() => writeSlug(active), [active]);
@@ -29,15 +31,15 @@ export function VehicleCollection() {
       <div className="page-gutter mx-auto max-w-[var(--container-page)]">
         <SectionIntro
           id="collection-title"
-          eyebrow="The Collection"
+          eyebrow={t.collection.eyebrow}
           title={
             <>
-              Iconic Cars.
+              {t.collection.titleLine1}
               <br />
-              <em className="italic">Timeless Stories.</em>
+              <em className="italic">{t.collection.titleLine2}</em>
             </>
           }
-          text="A carefully selected collection of automobiles, each with its own character and history."
+          text={t.collection.text}
         />
 
         <ul className="mt-16 grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:mt-24 lg:grid-cols-3 lg:gap-x-10">
@@ -55,10 +57,10 @@ export function VehicleCollection() {
 
         <Reveal className="mt-20 flex flex-col items-start justify-between gap-6 border-t border-line pt-8 sm:flex-row sm:items-center">
           <p className="max-w-xl font-display text-[1.45rem] leading-snug text-forest italic">
-            The collection grows slowly and deliberately — each automobile chosen for its character.
+            {t.collection.closing}
           </p>
           <a href="#contact" className="link-quiet eyebrow pb-1 text-forest">
-            Ask about a specific car
+            {t.collection.askSpecific}
           </a>
         </Reveal>
       </div>
