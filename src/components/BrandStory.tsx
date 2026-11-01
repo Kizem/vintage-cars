@@ -12,6 +12,7 @@ export function BrandStory() {
           <Reveal>
             <Media
               image={storyImages.primary}
+              creditPosition="top-right"
               tone="forest"
               className="aspect-[4/5] w-full max-w-[560px] rounded-xs"
               sizes="(min-width:1024px) 45vw, 100vw"

@@ -67,12 +67,14 @@ export const heroImage: MediaAsset = {
 };
 
 export const storyImages: { primary: MediaAsset; detail: MediaAsset } = {
+  // Generated image, labelled as an illustration.
   primary: {
-    src: '',
+    src: 'images/story/interieur-volant.webp',
     alt: {
-      en: 'Close-up of a vintage steering wheel and dashboard in morning light',
-      fr: 'Gros plan sur le volant et le tableau de bord d’une voiture ancienne, lumière du matin',
+      en: 'Close-up of an ivory vintage steering wheel with chrome spokes, cream leather seats behind (illustrative image)',
+      fr: 'Gros plan sur un volant ancien ivoire aux branches chromées, sièges en cuir crème en arrière-plan (image d’illustration)',
     },
+    credit: { en: 'Illustrative image', fr: 'Image d’illustration' },
     placeholderLabel: { en: 'Story, interior detail', fr: 'Histoire, détail intérieur' },
     brief: {
       en: 'Editorial portrait, steering wheel and chrome detail, shallow depth of field. 4:5.',
