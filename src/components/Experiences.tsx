@@ -248,7 +248,7 @@ export function Experiences() {
                           arrow
                           onClick={() => startEnquiry({ experience: exp.id })}
                           tabIndex={selected ? 0 : -1}
-                          className="w-full whitespace-nowrap max-sm:!px-4 max-sm:text-[11px] max-sm:tracking-[0.12em] sm:w-auto [&>svg]:hidden sm:[&>svg]:block"
+                          className="w-full text-balance sm:whitespace-nowrap max-sm:!px-4 max-sm:text-[11px] max-sm:tracking-[0.12em] sm:w-auto [&>svg]:hidden sm:[&>svg]:block"
                         >
                           {l(exp.cta)}
                         </Button>

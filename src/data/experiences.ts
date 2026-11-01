@@ -14,7 +14,7 @@ export const experiences: Experience[] = [
       en: 'Explore the French capital in an iconic vintage car, accompanied by a passionate English-speaking local guide. Discover Paris’s landmarks, hidden streets and fascinating stories at your own pace.',
       fr: 'Parcourez la capitale à bord d’une voiture de collection, avec un guide parisien passionné. Grands monuments, rues méconnues et anecdotes : vous découvrez Paris à votre rythme.',
     },
-    cta: { en: 'Explore Private Tours', fr: 'Découvrir les visites privées' },
+    cta: { en: 'Enquire about a private tour', fr: 'Demander une visite privée' },
     // Generated image, labelled as an illustration.
     image: {
       src: 'images/experiences/visite-privee-seine.webp',
@@ -40,7 +40,7 @@ export const experiences: Experience[] = [
       en: 'Enjoy a vintage car with a dedicated chauffeur for a private journey, a special outing or a personalised Parisian experience.',
       fr: 'Une voiture de collection et son chauffeur, rien que pour vous : un trajet privé, une sortie à deux ou une journée parisienne sur mesure.',
     },
-    cta: { en: 'Discover Chauffeured Experiences', fr: 'Découvrir l’offre avec chauffeur' },
+    cta: { en: 'Enquire about a chauffeured journey', fr: 'Demander un trajet avec chauffeur' },
     // Generated image, labelled as an illustration.
     image: {
       src: 'images/experiences/chauffeur-arrivee.webp',
@@ -66,7 +66,7 @@ export const experiences: Experience[] = [
       en: 'Bring a touch of French automotive elegance to weddings, private celebrations, photoshoots and exclusive events.',
       fr: 'Mariage, fête privée, shooting photo ou événement d’entreprise : une voiture de collection pour donner à la journée une élégance toute française.',
     },
-    cta: { en: 'Plan Your Experience', fr: 'Préparer votre événement' },
+    cta: { en: 'Enquire about your event', fr: 'Parler de votre événement' },
     // Generated image, labelled as an illustration.
     image: {
       src: 'images/experiences/evenements-chateau.webp',
