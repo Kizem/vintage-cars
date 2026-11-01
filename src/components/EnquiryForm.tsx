@@ -115,19 +115,21 @@ export function EnquiryForm() {
     return x ? l(x.label) : f.somethingElse;
   };
 
+  const sep = locale === 'fr' ? '\u00a0: ' : ': ';
   const mailto = () =>
     buildMailto(
       site.contact.email,
-      `${f.mailSubject}: ${experienceName(values.experience)}`,
+      `${f.mailSubject}${sep}${experienceName(values.experience)}`,
       [
         [f.mailName, values.fullName.trim()],
         [f.email, values.email.trim()],
         [f.experience, experienceName(values.experience)],
-        [f.vehicle, getVehicle(values.vehicle)?.name ?? f.noPreference],
+        [f.vehicle, (() => { const v = getVehicle(values.vehicle); return v ? l(v.name) : f.noPreference; })()],
         [f.date, values.date || f.flexible],
         [f.mailGuests, values.guests],
       ],
       values.message,
+      sep,
     );
 
   return (
@@ -224,7 +226,7 @@ export function EnquiryForm() {
                         <option value="">{f.noPreference}</option>
                         {vehicles.map((v) => (
                           <option key={v.slug} value={v.slug}>
-                            {v.name}
+                            {l(v.name)}
                           </option>
                         ))}
                       </select>

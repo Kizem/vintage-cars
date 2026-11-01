@@ -26,7 +26,7 @@ export type AvailabilityStatus = 'on-request' | 'available' | 'limited' | 'unava
 export interface Vehicle {
   /** URL-safe identifier, also used in the ?car= deep link. */
   slug: string;
-  name: string;
+  name: Localized;
   marque: string;
   /** Large letters shown on the image placeholder. */
   mark: string;

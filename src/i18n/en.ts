@@ -58,12 +58,20 @@ export const en = {
     unavailable: 'Currently unavailable',
     'coming-soon': 'Joining the collection soon',
   },
+  /** Short values for the detail view, next to the “Availability” label. */
+  availabilityShort: {
+    'on-request': 'On request',
+    available: 'Available',
+    limited: 'Limited',
+    unavailable: 'Currently unavailable',
+    'coming-soon': 'Coming soon',
+  },
   vehicleDetail: {
     marque: 'Marque',
     availability: 'Availability',
     note: 'Each experience is arranged privately, on enquiry. Tell us your dates and what you have in mind: we will confirm the availability of the car and the details of your journey personally.',
     enquire: 'Enquire about this car',
-    next: 'Next',
+    next: 'Next: {name}',
     close: 'Close vehicle details',
   },
   experiences: {

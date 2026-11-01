@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import type { Vehicle } from '../data/types';
 import { vehicles } from '../data/vehicles';
-import { useI18n } from '../i18n/I18nContext';
+import { fill, useI18n } from '../i18n/I18nContext';
 import { useEnquiry } from '../context/EnquiryContext';
 import { Media } from './ui/Media';
 import { Button } from './ui/Button';
@@ -85,7 +85,7 @@ export function VehicleDetail({ vehicle, onClose, onNavigate }: VehicleDetailPro
             </p>
             <p className="eyebrow mb-3 text-muted-ink">{l(vehicle.category)}</p>
             <h2 id="vehicle-detail-title" className="mb-6 text-[clamp(2.4rem,4.5vw,3.6rem)] leading-[1.02] text-forest">
-              {vehicle.name}
+              {l(vehicle.name)}
             </h2>
 
             <div className="space-y-4 text-[1.0625rem] leading-relaxed text-charcoal/85">
@@ -101,7 +101,7 @@ export function VehicleDetail({ vehicle, onClose, onNavigate }: VehicleDetailPro
               </div>
               <div className="border-b border-line py-4">
                 <dt className="eyebrow mb-1.5 text-muted-ink">{t.vehicleDetail.availability}</dt>
-                <dd className="font-display text-xl text-forest">{t.availability[vehicle.availability]}</dd>
+                <dd className="font-display text-xl text-forest">{t.availabilityShort[vehicle.availability]}</dd>
               </div>
               {vehicle.details?.map((d) => (
                 <div key={d.label.en} className="border-b border-line py-4">
@@ -115,9 +115,10 @@ export function VehicleDetail({ vehicle, onClose, onNavigate }: VehicleDetailPro
               {t.vehicleDetail.note}
             </p>
 
-            <div className="mt-auto flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="mt-auto flex flex-col items-start gap-5">
               <Button
                 arrow
+                className="w-full justify-between sm:w-auto"
                 onClick={() => {
                   const slug = vehicle.slug;
                   ref.current?.close();
@@ -128,7 +129,7 @@ export function VehicleDetail({ vehicle, onClose, onNavigate }: VehicleDetailPro
               </Button>
               {next && next.slug !== vehicle.slug && (
                 <Button variant="text" onClick={() => onNavigate(next.slug)} arrow>
-                  {t.vehicleDetail.next}: {next.name}
+                  {fill(t.vehicleDetail.next, { name: l(next.name) })}
                 </Button>
               )}
             </div>

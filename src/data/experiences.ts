@@ -12,7 +12,7 @@ export const experiences: Experience[] = [
     title: { en: 'See Paris in a Different Light.', fr: 'Paris sous un autre jour.' },
     description: {
       en: 'Explore the French capital in an iconic vintage car, accompanied by a passionate English-speaking local guide. Discover Paris’s landmarks, hidden streets and fascinating stories at your own pace.',
-      fr: 'Parcourez la capitale à bord d’une voiture de collection, accompagné d’un guide local passionné. Monuments, rues cachées et histoires de Paris, à votre rythme.',
+      fr: 'Parcourez la capitale à bord d’une voiture de collection, avec un guide parisien passionné. Grands monuments, rues méconnues et anecdotes : vous découvrez Paris à votre rythme.',
     },
     cta: { en: 'Explore Private Tours', fr: 'Découvrir les visites privées' },
     image: {
@@ -31,20 +31,20 @@ export const experiences: Experience[] = [
   {
     id: 'chauffeured',
     index: '02',
-    label: { en: 'Chauffeured Experiences', fr: 'Expériences avec chauffeur' },
-    title: { en: 'Your Journey, Your Way.', fr: 'Votre trajet, à votre façon.' },
+    label: { en: 'Chauffeured Experiences', fr: 'Voiture avec chauffeur' },
+    title: { en: 'Your Journey, Your Way.', fr: 'À vous de choisir la route.' },
     description: {
       en: 'Enjoy a vintage car with a dedicated chauffeur for a private journey, a special outing or a personalised Parisian experience.',
-      fr: 'Profitez d’une voiture de collection et d’un chauffeur dédié pour un trajet privé, une sortie particulière ou une expérience parisienne sur mesure.',
+      fr: 'Une voiture de collection et son chauffeur, rien que pour vous : un trajet privé, une sortie à deux ou une journée parisienne sur mesure.',
     },
-    cta: { en: 'Discover Chauffeured Experiences', fr: 'Découvrir les expériences avec chauffeur' },
+    cta: { en: 'Discover Chauffeured Experiences', fr: 'Découvrir l’offre avec chauffeur' },
     image: {
       src: '',
       alt: {
         en: 'A chauffeur opening the rear door of a vintage car in front of a Parisian hotel',
         fr: 'Un chauffeur ouvrant la portière arrière d’une voiture de collection devant un hôtel parisien',
       },
-      placeholderLabel: { en: 'Chauffeured, arrival', fr: 'Avec chauffeur, arrivée' },
+      placeholderLabel: { en: 'Chauffeured, arrival', fr: 'Avec chauffeur, l’arrivée' },
       brief: {
         en: 'Portrait, gloved hand on the door handle, hotel entrance softly out of focus. 4:5.',
         fr: 'Portrait, main gantée sur la poignée, entrée d’hôtel floue en arrière-plan. 4:5.',
@@ -54,13 +54,13 @@ export const experiences: Experience[] = [
   {
     id: 'events',
     index: '03',
-    label: { en: 'Events & Special Occasions', fr: 'Événements et occasions' },
-    title: { en: 'Make Every Moment Timeless.', fr: 'Des moments intemporels.' },
+    label: { en: 'Events & Special Occasions', fr: 'Événements et grandes occasions' },
+    title: { en: 'Make Every Moment Timeless.', fr: 'Pour les moments qui comptent.' },
     description: {
       en: 'Bring a touch of French automotive elegance to weddings, private celebrations, photoshoots and exclusive events.',
-      fr: 'Apportez une touche d’élégance automobile française à vos mariages, célébrations privées, shootings photo et événements.',
+      fr: 'Mariage, fête privée, shooting photo ou événement d’entreprise : une voiture de collection pour donner à la journée une élégance toute française.',
     },
-    cta: { en: 'Plan Your Experience', fr: 'Organiser votre expérience' },
+    cta: { en: 'Plan Your Experience', fr: 'Préparer votre événement' },
     image: {
       src: '',
       alt: {

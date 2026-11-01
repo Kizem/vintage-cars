@@ -17,7 +17,7 @@ function ExperienceText({ exp, onEnquire, compact = false }: { exp: Experience; 
         </span>
         <span aria-hidden="true" className="h-px w-10 bg-champagne/60" />
         <p className="eyebrow text-champagne">
-          <span className="sr-only">{t.experiences.service} {exp.index}: </span>
+          <span className="sr-only">{t.experiences.service} {exp.index}, </span>
           {l(exp.label)}
         </p>
       </div>

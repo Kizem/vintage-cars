@@ -13,13 +13,13 @@ import type { Vehicle } from './types';
 export const vehicles: Vehicle[] = [
   {
     slug: 'citroen-ds',
-    name: 'Citroën DS',
+    name: { en: 'Citroën DS', fr: 'Citroën DS' },
     marque: 'Citroën',
     mark: 'DS',
     category: { en: 'French Icon', fr: 'Icône française' },
     description: {
       en: 'An icon of French design and engineering. A timeless silhouette that embodies the elegance and innovation of another era.',
-      fr: 'Une icône du design et de l’ingénierie français. Une silhouette intemporelle qui incarne l’élégance et l’innovation d’une autre époque.',
+      fr: 'Le design et l’audace technique à la française. Une silhouette reconnaissable au premier regard, qui incarne l’élégance et l’esprit d’innovation d’une autre époque.',
     },
     availability: 'on-request',
     image: {
@@ -38,13 +38,13 @@ export const vehicles: Vehicle[] = [
   },
   {
     slug: 'peugeot-504',
-    name: 'Peugeot 504',
+    name: { en: 'Peugeot 504', fr: 'Peugeot 504' },
     marque: 'Peugeot',
     mark: '504',
     category: { en: 'French Classic', fr: 'Classique français' },
     description: {
       en: 'A symbol of French automotive craftsmanship, combining understated elegance with unmistakable character.',
-      fr: 'Un symbole du savoir-faire automobile français, qui allie une élégance discrète à un caractère affirmé.',
+      fr: 'Un symbole du savoir-faire automobile français : une élégance sobre et un caractère bien à elle.',
     },
     availability: 'on-request',
     image: {
@@ -63,13 +63,13 @@ export const vehicles: Vehicle[] = [
   },
   {
     slug: 'mercedes-benz-classic',
-    name: 'Mercedes-Benz Classic',
+    name: { en: 'Mercedes-Benz Classic', fr: 'Mercedes-Benz de collection' },
     marque: 'Mercedes-Benz',
     mark: 'MB',
-    category: { en: 'German Heritage', fr: 'Héritage allemand' },
+    category: { en: 'German Heritage', fr: 'Tradition allemande' },
     description: {
       en: 'A timeless expression of German engineering, refinement and automotive heritage.',
-      fr: 'L’expression intemporelle de l’ingénierie allemande, de son raffinement et de son patrimoine automobile.',
+      fr: 'La rigueur de l’ingénierie allemande, servie par un raffinement qui n’a pas pris une ride.',
     },
     availability: 'on-request',
     image: {

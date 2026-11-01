@@ -101,7 +101,9 @@ export function buildMailto(
   subject: string,
   rows: [label: string, value: string][],
   message: string,
+  /** ': ' in English, ' : ' in French. */
+  separator = ': ',
 ) {
-  const body = [...rows.map(([k, val]) => `${k}: ${val}`), '', message.trim()].join('\n');
+  const body = [...rows.map(([k, val]) => `${k}${separator}${val}`), '', message.trim()].join('\n');
   return `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }

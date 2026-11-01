@@ -34,7 +34,7 @@ export function VehicleCard({ vehicle, index, onOpen }: VehicleCardProps) {
           </span>
         </div>
         <h3 id={titleId} className="mb-4 text-[2rem] leading-tight text-forest">
-          {vehicle.name}
+          {l(vehicle.name)}
         </h3>
         <p className="mb-7 max-w-[38ch] text-[0.975rem] leading-relaxed text-muted-ink">{l(vehicle.description)}</p>
         <button
@@ -47,7 +47,7 @@ export function VehicleCard({ vehicle, index, onOpen }: VehicleCardProps) {
           <svg aria-hidden="true" width="22" height="8" viewBox="0 0 22 8" fill="none" className="transition-transform duration-500 group-hover:translate-x-1">
             <path d="M0 4h20.5M17.5 1l3 3-3 3" stroke="currentColor" />
           </svg>
-          <span className="sr-only">: {vehicle.name}</span>
+          <span className="sr-only">, {l(vehicle.name)}</span>
         </button>
       </div>
     </article>

@@ -21,7 +21,7 @@ export const site = {
     location: { en: 'Paris, France', fr: 'Paris, France' } satisfies Localized,
     hours: {
       en: 'Enquiries answered Monday to Saturday',
-      fr: 'Réponse aux demandes du lundi au samedi',
+      fr: 'Nous répondons du lundi au samedi',
     } satisfies Localized,
   },
   social: {
