@@ -19,7 +19,10 @@ export function LanguageToggle({ className = '' }: { className?: string }) {
             onClick={() => setLocale(code)}
             aria-pressed={locale === code}
             aria-label={names[code]}
-            className={`px-1 py-2 uppercase transition-opacity duration-300 ${
+            className={`relative px-1 py-2 uppercase transition-opacity duration-300 before:absolute before:top-1/2 before:h-11 before:w-11 before:-translate-y-1/2 before:content-[''] ${
+              // 44 x 44 hit area, invisible; each one extends outwards and they meet mid-separator
+              i === 0 ? 'before:-right-1.5' : 'before:-left-1.5'
+            } ${
               locale === code ? 'opacity-100 underline decoration-champagne decoration-1 underline-offset-[6px]' : 'opacity-55 hover:opacity-100'
             }`}
           >
