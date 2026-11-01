@@ -69,12 +69,16 @@ export const experiences: Experience[] = [
       fr: 'Mariage, fête privée, shooting photo ou événement d’entreprise : une voiture de collection pour donner à la journée une élégance toute française.',
     },
     cta: { en: 'Plan Your Experience', fr: 'Préparer votre événement' },
+    // Generated image, labelled as an illustration.
     image: {
-      src: '',
+      src: 'images/experiences/evenements-chateau.webp',
       alt: {
-        en: 'A vintage car waiting in the courtyard of a French château for a wedding',
-        fr: 'Une voiture de collection dans la cour d’un château pour un mariage',
+        en: 'An ivory vintage saloon decorated with white ribbons in the gravel courtyard of a French château (illustrative image)',
+        fr: 'Une berline ancienne ivoire ornée de rubans blancs dans la cour d’un château (image d’illustration)',
       },
+      credit: { en: 'Illustrative image', fr: 'Image d’illustration' },
+      // Keeps the car in frame on the narrower mobile and tablet crops.
+      focalPoint: '74% 60%',
       placeholderLabel: { en: 'Events, château courtyard', fr: 'Événements, cour de château' },
       brief: {
         en: 'Cinematic wide shot, gravel courtyard, late golden light, no visible guests. 21:9.',

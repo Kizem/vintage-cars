@@ -87,6 +87,7 @@ export function Experiences() {
                 image={events.image}
                 tone="charcoal"
                 captionPosition="top-right"
+                creditPosition="top-right"
                 className="aspect-[4/3] w-full rounded-xs sm:aspect-[16/9] lg:aspect-[21/9]"
                 sizes="100vw"
                 showBrief
@@ -94,7 +95,7 @@ export function Experiences() {
             </Reveal>
             <Reveal
               delay={150}
-              className="relative -mt-16 ml-4 rounded-xs border border-line-light bg-forest-deep p-7 sm:-mt-24 sm:ml-10 sm:max-w-xl sm:p-10 lg:absolute lg:bottom-[-3rem] lg:left-12 lg:mt-0 lg:ml-0 lg:p-12"
+              className="relative -mt-6 ml-4 rounded-xs border border-line-light bg-forest-deep p-7 sm:-mt-8 sm:ml-10 sm:max-w-xl sm:p-10 lg:absolute lg:bottom-[-3rem] lg:left-12 lg:mt-0 lg:ml-0 lg:p-12"
             >
               <ExperienceText exp={events} onEnquire={enquire(events)} compact />
             </Reveal>
