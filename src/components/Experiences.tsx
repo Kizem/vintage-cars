@@ -231,18 +231,26 @@ export function Experiences() {
                             {l(exp.title)}
                           </h3>
                           <p
-                            className="hero-in mb-9 max-w-[44ch] text-[1.0625rem] leading-relaxed text-ivory/75"
+                            className="hero-in mb-7 max-w-[44ch] text-[1.0625rem] leading-relaxed text-ivory/75"
                             style={{ '--hero-delay': '200ms' } as CSSProperties}
                           >
                             {l(exp.description)}
                           </p>
+                          <dl className="hero-in mb-9" style={{ '--hero-delay': '280ms' } as CSSProperties}>
+                            <dt className="eyebrow mb-1.5 text-champagne">{t.experiences.duration}</dt>
+                            <dd className="font-display text-[1.35rem] leading-snug text-ivory">{l(exp.duration)}</dd>
+                          </dl>
                         </div>
                       )}
                       {/* invisible copy keeps every panel's height in the shared cell */}
                       {!selected && (
                         <div aria-hidden="true">
                           <h3 className="mb-6 text-[clamp(2.1rem,3.6vw,3.25rem)] leading-[1.04]">{l(exp.title)}</h3>
-                          <p className="mb-9 max-w-[44ch] text-[1.0625rem] leading-relaxed">{l(exp.description)}</p>
+                          <p className="mb-7 max-w-[44ch] text-[1.0625rem] leading-relaxed">{l(exp.description)}</p>
+                          <div className="mb-9">
+                            <p className="eyebrow mb-1.5">{t.experiences.duration}</p>
+                            <p className="font-display text-[1.35rem] leading-snug">{l(exp.duration)}</p>
+                          </div>
                         </div>
                       )}
                       <div className="mt-auto">

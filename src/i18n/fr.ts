@@ -89,6 +89,7 @@ export const fr: Dictionary = {
     text: 'Paris et ses environs, à bord d’automobiles de collection, lors d’expériences conçues pour vous.',
     service: 'Prestation',
     tabsLabel: 'Choisir une expérience',
+    duration: 'Durée',
     pause: 'Mettre le diaporama en pause',
     play: 'Relancer le diaporama',
     footLabel: 'Sur mesure et sur demande',
@@ -134,7 +135,7 @@ export const fr: Dictionary = {
       },
       {
         q: 'Quelle durée, quel tarif ?',
-        a: 'Chaque expérience est conçue sur mesure : la durée et le tarif figurent dans notre proposition, avant tout engagement de votre part.',
+        a: 'Une expérience dure de 2 h à une journée. Le tarif dépend de votre projet : il figure dans notre proposition, avant tout engagement de votre part.',
       },
       {
         q: 'Puis-je conduire la voiture ?',

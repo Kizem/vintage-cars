@@ -87,6 +87,7 @@ export const en = {
     text: 'Discover Paris and its surroundings through exceptional automobiles and personalised experiences.',
     service: 'Service',
     tabsLabel: 'Choose an experience',
+    duration: 'Duration',
     pause: 'Pause the slideshow',
     play: 'Play the slideshow',
     footLabel: 'Private & by enquiry',
@@ -132,7 +133,7 @@ export const en = {
       },
       {
         q: 'How long does an experience last, and at what rate?',
-        a: 'Each experience is tailored. Duration and rate are set out in our proposal, before any commitment.',
+        a: 'An experience lasts from 2 hours to a full day. The rate depends on what you have in mind and is set out in our proposal, before any commitment.',
       },
       {
         q: 'Can I drive the car myself?',

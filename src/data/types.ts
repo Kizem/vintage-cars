@@ -52,6 +52,8 @@ export interface Experience {
   label: Localized;
   title: Localized;
   description: Localized;
+  /** Typical duration, shown under the description. */
+  duration: Localized;
   cta: Localized;
   image: MediaAsset;
 }
