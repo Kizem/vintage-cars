@@ -48,18 +48,22 @@ export const footerNav: { key: NavKey; href: string }[] = [
   { key: 'contact', href: '#contact' },
 ];
 
+// Generated image (not a photograph of the collection car): always labelled as an illustration.
 export const heroImage: MediaAsset = {
-  src: '',
+  src: 'images/hero/hero-ds-paris.webp',
+  srcSet: 'images/hero/hero-ds-paris-960.webp 960w, images/hero/hero-ds-paris.webp 1672w',
   alt: {
-    en: 'A classic Citroën DS parked on a Parisian boulevard at dusk',
-    fr: 'Une Citroën DS garée sur un boulevard parisien à la tombée du jour',
+    en: 'A grey Citroën DS on a wet cobbled Paris street at dusk, the Eiffel Tower in the distance (illustrative image)',
+    fr: 'Une Citroën DS grise sur les pavés mouillés d’une rue de Paris au crépuscule, la tour Eiffel au loin (image d’illustration)',
   },
+  credit: { en: 'Illustrative image', fr: 'Image d’illustration' },
   placeholderLabel: { en: 'Hero, Citroën DS in Paris', fr: 'Visuel principal, Citroën DS à Paris' },
   brief: {
     en: 'Cinematic landscape (desktop 16:9, mobile 4:5 crop), Citroën DS on a Haussmann boulevard, blue hour, car in the lower third.',
     fr: 'Paysage cinématographique (16:9 desktop, recadrage 4:5 mobile), Citroën DS sur un boulevard haussmannien, heure bleue, voiture dans le tiers inférieur.',
   },
-  focalPoint: '50% 60%',
+  // Keeps the car in frame on portrait (mobile) crops.
+  focalPoint: '68% 70%',
 };
 
 export const storyImages: { primary: MediaAsset; detail: MediaAsset } = {

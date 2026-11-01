@@ -15,12 +15,15 @@ export const experiences: Experience[] = [
       fr: 'Parcourez la capitale à bord d’une voiture de collection, avec un guide parisien passionné. Grands monuments, rues méconnues et anecdotes : vous découvrez Paris à votre rythme.',
     },
     cta: { en: 'Explore Private Tours', fr: 'Découvrir les visites privées' },
+    // Generated image, labelled as an illustration.
     image: {
-      src: '',
+      src: 'images/experiences/visite-privee-seine.webp',
+      srcSet: 'images/experiences/visite-privee-seine-800.webp 800w, images/experiences/visite-privee-seine.webp 1231w',
       alt: {
-        en: 'A vintage car crossing a Seine bridge in Paris in the early morning',
-        fr: 'Une voiture de collection traversant un pont de la Seine au petit matin',
+        en: 'A vintage saloon crossing Pont Alexandre III at sunrise, the Eiffel Tower in the mist (illustrative image)',
+        fr: 'Une berline ancienne sur le pont Alexandre III au lever du soleil, la tour Eiffel dans la brume (image d’illustration)',
       },
+      credit: { en: 'Illustrative image', fr: 'Image d’illustration' },
       placeholderLabel: { en: 'Private tour, Seine bridges', fr: 'Visite privée, ponts de la Seine' },
       brief: {
         en: 'Wide landscape, car crossing Pont Alexandre III or Pont Neuf, morning haze. 3:2.',

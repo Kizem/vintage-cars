@@ -19,20 +19,26 @@ export function Hero() {
         priority
         tone="charcoal"
         captionPosition="under-header"
+        creditPosition="under-header"
         className="!absolute inset-0 -z-10"
         imgClassName="hero-media"
         showBrief
       />
-      {/* Readability overlay, darker where the text sits (functional, not decorative) */}
+      {/* Readability overlays, darker where the text sits (functional, not decorative) */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgb(16_28_22/0.55)_0%,rgb(16_28_22/0.08)_32%,rgb(16_28_22/0.35)_62%,rgb(16_28_22/0.86)_100%)]"
       />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10 hidden bg-[linear-gradient(90deg,rgb(16_28_22/0.7)_0%,rgb(16_28_22/0.35)_40%,transparent_62%)] lg:block"
+      />
 
       {/* Top padding reserves the space of the fixed header: the content can grow but never slides under it. */}
       <div className="page-gutter mx-auto w-full max-w-[var(--container-page)] pt-36 pb-14 sm:pb-16 lg:pt-44 lg:pb-20">
-        <div className="grid gap-10 lg:grid-cols-12 lg:items-end">
-          <div className="lg:col-span-8">
+        {/* Text stays in the left half so the car (right of the image) remains visible. */}
+        <div className="max-w-[44rem]">
+          <div>
             <p className="eyebrow hero-in mb-6 flex items-center gap-4 text-champagne" style={delay(150)}>
               <span aria-hidden="true" className="h-px w-10 bg-champagne/70" />
               {t.hero.eyebrow}
@@ -46,8 +52,8 @@ export function Hero() {
               {t.hero.titleEnd}
             </h1>
           </div>
-          <div className="hero-in lg:col-span-4 lg:pb-3" style={delay(550)}>
-            <p className="max-w-md text-[1.0625rem] leading-relaxed text-ivory/85">{t.hero.text}</p>
+          <div className="hero-in mt-8" style={delay(550)}>
+            <p className="max-w-md text-[1.0625rem] leading-relaxed text-ivory/90">{t.hero.text}</p>
           </div>
         </div>
 

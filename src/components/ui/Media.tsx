@@ -28,6 +28,8 @@ interface MediaProps {
   /** Large typographic mark shown on placeholders (e.g. "DS"). */
   mark?: string;
   captionPosition?: keyof typeof captionPos;
+  /** Where the credit label sits on a real image. */
+  creditPosition?: keyof typeof captionPos;
   showBrief?: boolean;
   /** 'contain' shows the whole photograph (detail view); placeholders always fill. */
   fit?: 'cover' | 'contain';
@@ -46,6 +48,7 @@ export function Media({
   tone = 'forest',
   mark,
   captionPosition = 'bottom-left',
+  creditPosition = 'bottom-right',
   showBrief = false,
   fit = 'cover',
 }: MediaProps) {
@@ -66,7 +69,7 @@ export function Media({
           className={`h-full w-full ${fit === 'contain' ? 'object-contain' : 'object-cover'} ${imgClassName}`}
         />
         {image.credit && (
-          <span className="absolute right-3 bottom-3 rounded-xs bg-forest-deep/70 px-2 py-1 text-[10px] tracking-wide text-ivory/90">
+          <span className={`absolute rounded-xs bg-forest-deep/70 px-2 py-1 text-[10px] tracking-wide text-ivory/90 ${creditPosition === 'bottom-right' ? 'right-3 bottom-3' : captionPos[creditPosition]}`}>
             {l(image.credit)}
           </span>
         )}
