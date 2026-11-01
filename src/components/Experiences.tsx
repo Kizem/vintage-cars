@@ -8,7 +8,7 @@ import { Media } from './ui/Media';
 import { Button } from './ui/Button';
 
 /** Time each experience stays on screen when the slideshow plays. */
-const DURATION_MS = 7000;
+const DURATION_MS = 11000;
 
 /**
  * One experience at a time: large image on one side, text on the other.
@@ -134,24 +134,6 @@ export function Experiences() {
                   />
                 </div>
               ))}
-              {/* Pause / play, on the image so it never competes with the call to action */}
-              <button
-                type="button"
-                onClick={() => setPlaying((p) => !p)}
-                aria-label={playing ? t.experiences.pause : t.experiences.play}
-                className="absolute bottom-4 left-4 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-ivory/40 bg-forest-deep/60 text-ivory transition-colors hover:bg-ivory hover:text-forest"
-              >
-                {playing ? (
-                  <svg aria-hidden="true" width="10" height="12" viewBox="0 0 10 12" fill="currentColor">
-                    <rect x="1" y="1" width="2.5" height="10" />
-                    <rect x="6.5" y="1" width="2.5" height="10" />
-                  </svg>
-                ) : (
-                  <svg aria-hidden="true" width="10" height="12" viewBox="0 0 10 12" fill="currentColor">
-                    <path d="M1.5 1v10l8-5z" />
-                  </svg>
-                )}
-              </button>
             </div>
 
             {/* Tabs + text */}
@@ -206,8 +188,29 @@ export function Experiences() {
                 })}
               </div>
 
+              {/* Pause / play, right under the tabs it controls (44px target) */}
+              <div className="mt-4 flex lg:mt-5">
+                <button
+                  type="button"
+                  onClick={() => setPlaying((p) => !p)}
+                  aria-label={playing ? t.experiences.pause : t.experiences.play}
+                  className="flex h-11 w-11 items-center justify-center rounded-full border border-ivory/35 text-ivory/80 transition-colors duration-300 hover:border-ivory hover:text-ivory"
+                >
+                  {playing ? (
+                    <svg aria-hidden="true" width="10" height="12" viewBox="0 0 10 12" fill="currentColor">
+                      <rect x="1" y="1" width="2.5" height="10" />
+                      <rect x="6.5" y="1" width="2.5" height="10" />
+                    </svg>
+                  ) : (
+                    <svg aria-hidden="true" width="10" height="12" viewBox="0 0 10 12" fill="currentColor">
+                      <path d="M1.5 1v10l8-5z" />
+                    </svg>
+                  )}
+                </button>
+              </div>
+
               {/* Panels share one grid cell, so the height never jumps between slides */}
-              <div className="mt-10 grid flex-1 lg:mt-12">
+              <div className="mt-8 grid flex-1 lg:mt-10">
                 {experiences.map((exp, i) => {
                   const selected = i === active;
                   return (
