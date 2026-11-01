@@ -44,7 +44,7 @@ export function Header() {
         }
       }
     };
-    const mq = window.matchMedia('(min-width: 1280px)');
+    const mq = window.matchMedia('(min-width: 1024px)');
     const onMq = () => mq.matches && setOpen(false);
     window.addEventListener('keydown', onKey);
     mq.addEventListener('change', onMq);
@@ -69,16 +69,16 @@ export function Header() {
       >
         {t.common.skipToContent}
       </a>
-      <div className={`page-gutter mx-auto flex max-w-[var(--container-page)] items-center justify-between transition-[height] duration-500 ${scrolled ? 'h-[68px]' : 'h-[76px] lg:h-[88px]'}`}>
+      <div className={`page-gutter mx-auto flex max-w-[var(--container-page)] items-center justify-between gap-4 transition-[height] lg:px-8 xl:px-14 duration-500 ${scrolled ? 'h-[68px]' : 'h-[76px] lg:h-[88px]'}`}>
         <a href="#top" aria-label={`${site.name}, ${t.common.backToTop}`} className="relative z-10" onClick={() => setOpen(false)}>
           <Wordmark />
         </a>
 
-        <nav aria-label={t.header.primaryNav} className="hidden xl:block">
-          <ul className="flex items-center gap-7 xl:gap-10">
+        <nav aria-label={t.header.primaryNav} className="hidden lg:block">
+          <ul className="flex items-center gap-3 xl:gap-10">
             {primaryNav.map((item) => (
               <li key={item.href}>
-                <a href={item.href} className="link-quiet pb-1 text-[12.5px] font-medium tracking-[0.12em] whitespace-nowrap uppercase">
+                <a href={item.href} className="link-quiet pb-1 text-[12.5px] font-medium tracking-[0.06em] whitespace-nowrap uppercase xl:tracking-[0.12em]">
                   {t.nav[item.key]}
                 </a>
               </li>
@@ -86,17 +86,17 @@ export function Header() {
           </ul>
         </nav>
 
-        <div className="flex items-center gap-3 sm:gap-5">
+        <div className="flex items-center gap-3 sm:gap-5 lg:gap-3 xl:gap-5">
           <LanguageToggle className="relative z-10" />
           <span className="hidden sm:block">
-            <ButtonLink href="#contact" variant={solid ? 'solid' : 'outline-light'} className="!px-6 !py-3 whitespace-nowrap">
+            <ButtonLink href="#contact" variant={solid ? 'solid' : 'outline-light'} className="!px-6 !py-3 whitespace-nowrap lg:!px-5 xl:!px-6">
               {t.header.enquire}
             </ButtonLink>
           </span>
           <button
             ref={toggleRef}
             type="button"
-            className="relative z-10 -mr-2 flex h-11 w-11 items-center justify-center xl:hidden"
+            className="relative z-10 -mr-2 flex h-11 w-11 items-center justify-center lg:hidden"
             aria-expanded={open}
             aria-controls="mobile-menu"
             aria-label={open ? t.header.closeMenu : t.header.openMenu}
@@ -119,7 +119,7 @@ export function Header() {
         id="mobile-menu"
         ref={panelRef}
         hidden={!open}
-        className="fixed inset-x-0 top-0 bottom-0 -z-0 overflow-y-auto bg-ivory pt-[96px] text-forest xl:hidden"
+        className="fixed inset-x-0 top-0 bottom-0 -z-0 overflow-y-auto bg-ivory pt-[96px] text-forest lg:hidden"
       >
         <nav aria-label={t.header.mobileNav} className="page-gutter flex min-h-full flex-col pb-10">
           <ul className="flex flex-col border-t border-line">
