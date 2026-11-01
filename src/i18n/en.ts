@@ -7,7 +7,7 @@ export const en = {
   meta: {
     title: 'Époque Motors | Private Vintage Car Experiences in Paris',
     description:
-      'Driven by history. Experienced in Paris. Private tours, chauffeured journeys and special occasions in classic automobiles, by enquiry.',
+      'Private tours, chauffeured journeys and special occasions in classic automobiles, by enquiry.',
   },
   common: {
     skipToContent: 'Skip to content',

@@ -8,11 +8,6 @@ import type { MediaAsset } from './types';
  */
 export const site = {
   name: 'Époque Motors',
-  tagline: {
-    en: 'Driven by history. Experienced in Paris.',
-    // Brand signature, kept in English in both languages.
-    fr: 'Driven by history. Experienced in Paris.',
-  } satisfies Localized,
   contact: {
     // TODO: replace with confirmed contact details
     email: 'hello@epoque-motors.example',

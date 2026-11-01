@@ -6,7 +6,7 @@ import { Wordmark } from './ui/Wordmark';
 import { ButtonLink } from './ui/Button';
 
 export function Header() {
-  const { t, l } = useI18n();
+  const { t } = useI18n();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
@@ -143,7 +143,6 @@ export function Header() {
             <ButtonLink href="#contact" onClick={() => setOpen(false)} arrow className="w-full justify-between">
               {t.header.enquire}
             </ButtonLink>
-            <p className="font-display text-xl text-forest/80 italic">{l(site.tagline)}</p>
           </div>
         </nav>
       </div>

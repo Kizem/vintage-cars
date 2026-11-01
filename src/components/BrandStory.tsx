@@ -1,10 +1,10 @@
-import { storyImages, site } from '../data/site';
+import { storyImages } from '../data/site';
 import { Media } from './ui/Media';
 import { Reveal } from './ui/Reveal';
 import { useI18n } from '../i18n/I18nContext';
 
 export function BrandStory() {
-  const { t, l } = useI18n();
+  const { t } = useI18n();
   return (
     <section id="story" aria-labelledby="story-title" className="overflow-hidden bg-offwhite py-24 sm:py-32 lg:py-44">
       <div className="page-gutter mx-auto grid max-w-[var(--container-page)] gap-16 lg:grid-cols-12 lg:gap-12">
@@ -43,9 +43,6 @@ export function BrandStory() {
             </p>
             <p>{t.story.p2}</p>
             <p>{t.story.p3}</p>
-          </Reveal>
-          <Reveal delay={200} className="mt-12 border-t border-line pt-6">
-            <p className="font-display text-xl text-forest italic">{l(site.tagline)}</p>
           </Reveal>
         </div>
       </div>

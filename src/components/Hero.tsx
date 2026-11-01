@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import { heroImage, site } from '../data/site';
+import { heroImage } from '../data/site';
 import { useI18n } from '../i18n/I18nContext';
 import { Media } from './ui/Media';
 import { ButtonLink } from './ui/Button';
@@ -7,7 +7,7 @@ import { ButtonLink } from './ui/Button';
 const delay = (ms: number) => ({ '--hero-delay': `${ms}ms` }) as CSSProperties;
 
 export function Hero() {
-  const { t, l } = useI18n();
+  const { t } = useI18n();
   return (
     <section
       id="top"
@@ -66,8 +66,7 @@ export function Hero() {
           </ButtonLink>
         </div>
 
-        <div className="mt-12 hidden items-center justify-between border-t border-line-light pt-5 text-ivory/70 md:flex">
-          <p className="font-display text-lg italic">{l(site.tagline)}</p>
+        <div className="mt-12 hidden items-center border-t border-line-light pt-5 text-ivory/70 md:flex">
           <p className="eyebrow">{t.hero.strap}</p>
         </div>
       </div>

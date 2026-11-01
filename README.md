@@ -1,7 +1,7 @@
 # Époque Motors | Website
 
 Landing page for **ÉPOQUE MOTORS**, private vintage car experiences in Paris.
-*Driven by history. Experienced in Paris.*
+*Private vintage car experiences in Paris, by enquiry.*
 
 ## Stack
 

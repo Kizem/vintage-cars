@@ -17,7 +17,6 @@ export function Footer() {
               <Wordmark size="lg" />
             </a>
             <p className="mt-6 max-w-sm text-[0.975rem] leading-relaxed text-ivory/65">{t.footer.description}</p>
-            <p className="mt-8 font-display text-xl text-champagne italic">{l(site.tagline)}</p>
           </div>
 
           <nav aria-label={t.footer.footerNav} className="md:col-span-3 md:col-start-7">
