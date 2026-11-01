@@ -68,6 +68,12 @@ export const fr: Dictionary = {
     unavailable: 'Actuellement indisponible',
     'coming-soon': 'Prochainement',
   },
+  gallery: {
+    label: 'Photos de la {name}',
+    slide: 'Photo {n} sur {total}',
+    prev: 'Photo précédente',
+    next: 'Photo suivante',
+  },
   vehicleDetail: {
     marque: 'Marque',
     availability: 'Disponibilité',

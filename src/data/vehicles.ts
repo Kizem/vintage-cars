@@ -30,8 +30,8 @@ export const vehicles: Vehicle[] = [
       },
       placeholderLabel: { en: 'Citroën DS, collection car', fr: 'Citroën DS, voiture de la collection' },
       brief: {
-        en: 'Three-quarter front view, Parisian street, soft daylight. 4:5 portrait.',
-        fr: 'Vue trois-quarts avant, rue parisienne, lumière douce. Portrait 4:5.',
+        en: 'Three-quarter front view, Parisian street, soft daylight. 3:2 landscape.',
+        fr: 'Vue trois-quarts avant, rue parisienne, lumière douce. Paysage 3:2.',
       },
       focalPoint: '50% 55%',
     },
@@ -48,18 +48,28 @@ export const vehicles: Vehicle[] = [
     },
     availability: 'on-request',
     image: {
-      src: '',
+      src: 'images/collection/peugeot-504-avant.webp',
       alt: {
-        en: 'The Peugeot 504 of the Époque Motors collection, photographed in Paris',
-        fr: 'La Peugeot 504 de la collection Époque Motors, photographiée à Paris',
+        en: 'The blue Peugeot 504 saloon of the collection, three-quarter front view',
+        fr: 'La Peugeot 504 berline bleue de la collection, vue de trois-quarts avant',
       },
-      placeholderLabel: { en: 'Peugeot 504, collection car', fr: 'Peugeot 504, voiture de la collection' },
-      brief: {
-        en: 'Side profile against a stone façade, overcast light. 4:5 portrait.',
-        fr: 'Profil devant une façade en pierre, lumière voilée. Portrait 4:5.',
-      },
-      focalPoint: '50% 55%',
+      placeholderLabel: { en: 'Peugeot 504, front', fr: 'Peugeot 504, avant' },
+      focalPoint: '42% 60%',
     },
+    // Source: owner's listing https://www.roadstr.fr/cars/peugeot-504-1971-saint-denis
+    // TODO: complete with the listing's specifications once verified.
+    details: [{ label: { en: 'Year', fr: 'Année' }, value: { en: '1971', fr: '1971' } }],
+    gallery: [
+      {
+        src: 'images/collection/peugeot-504-arriere.webp',
+        alt: {
+          en: 'The blue Peugeot 504 saloon of the collection, three-quarter rear view',
+          fr: 'La Peugeot 504 berline bleue de la collection, vue de trois-quarts arrière',
+        },
+        placeholderLabel: { en: 'Peugeot 504, rear', fr: 'Peugeot 504, arrière' },
+        focalPoint: '50% 60%',
+      },
+    ],
   },
   {
     slug: 'mercedes-benz-classic',
@@ -80,8 +90,8 @@ export const vehicles: Vehicle[] = [
       },
       placeholderLabel: { en: 'Mercedes-Benz, collection car', fr: 'Mercedes-Benz, voiture de la collection' },
       brief: {
-        en: 'Front detail with grille and lamps, early evening light. 4:5 portrait.',
-        fr: 'Détail avant, calandre et phares, lumière de fin de journée. Portrait 4:5.',
+        en: 'Three-quarter front view, early evening light. 3:2 landscape.',
+        fr: 'Vue trois-quarts avant, lumière de fin de journée. Paysage 3:2.',
       },
       focalPoint: '50% 55%',
     },

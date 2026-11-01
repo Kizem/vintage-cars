@@ -38,7 +38,10 @@ export interface Vehicle {
   /** Optional verified facts (year, colour, seats…). Only add confirmed information. */
   details?: { label: Localized; value: Localized }[];
   availability: AvailabilityStatus;
+  /** Main photograph, used on the card and as the first slide of the detail view. */
   image: MediaAsset;
+  /** Additional photographs shown after `image` in the detail view carousel. */
+  gallery?: MediaAsset[];
 }
 
 export type ExperienceId = 'private-tours' | 'chauffeured' | 'events';

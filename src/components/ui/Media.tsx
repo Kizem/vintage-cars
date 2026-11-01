@@ -29,6 +29,8 @@ interface MediaProps {
   mark?: string;
   captionPosition?: keyof typeof captionPos;
   showBrief?: boolean;
+  /** 'contain' shows the whole photograph (detail view); placeholders always fill. */
+  fit?: 'cover' | 'contain';
 }
 
 /**
@@ -45,6 +47,7 @@ export function Media({
   mark,
   captionPosition = 'bottom-left',
   showBrief = false,
+  fit = 'cover',
 }: MediaProps) {
   const { t, l } = useI18n();
 
@@ -60,7 +63,7 @@ export function Media({
           decoding={priority ? 'sync' : 'async'}
           fetchPriority={priority ? 'high' : 'auto'}
           style={{ objectPosition: image.focalPoint }}
-          className={`h-full w-full object-cover ${imgClassName}`}
+          className={`h-full w-full ${fit === 'contain' ? 'object-contain' : 'object-cover'} ${imgClassName}`}
         />
         {image.credit && (
           <span className="absolute right-3 bottom-2 text-[10px] tracking-wide text-ivory/70">{image.credit}</span>

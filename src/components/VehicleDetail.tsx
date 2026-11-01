@@ -3,7 +3,7 @@ import type { Vehicle } from '../data/types';
 import { vehicles } from '../data/vehicles';
 import { fill, useI18n } from '../i18n/I18nContext';
 import { useEnquiry } from '../context/EnquiryContext';
-import { Media } from './ui/Media';
+import { Gallery } from './ui/Gallery';
 import { Button } from './ui/Button';
 
 interface VehicleDetailProps {
@@ -57,7 +57,7 @@ export function VehicleDetail({ vehicle, onClose, onNavigate }: VehicleDetailPro
       }}
     >
       {vehicle && (
-        <div data-scroll className="relative flex h-full flex-col overflow-y-auto bg-offwhite text-charcoal md:grid md:grid-cols-[1.05fr_1fr] md:overflow-hidden md:rounded-sm">
+        <div data-scroll className="relative flex h-full flex-col overflow-y-auto bg-offwhite text-charcoal md:grid md:grid-cols-[1.2fr_1fr] md:overflow-hidden md:rounded-sm">
           <button
             type="button"
             onClick={() => ref.current?.close()}
@@ -69,13 +69,13 @@ export function VehicleDetail({ vehicle, onClose, onNavigate }: VehicleDetailPro
             </svg>
           </button>
 
-          <Media
-            image={vehicle.image}
+          <Gallery
+            key={vehicle.slug}
+            images={[vehicle.image, ...(vehicle.gallery ?? [])]}
+            name={l(vehicle.name)}
             mark={vehicle.mark}
             tone={idx % 2 === 1 ? 'stone' : 'forest'}
-            showBrief
-            className="aspect-[4/3] w-full shrink-0 md:aspect-auto md:h-full"
-            sizes="(min-width: 768px) 50vw, 100vw"
+            className="w-full shrink-0 md:self-center md:py-10 md:pl-10 lg:pl-12"
           />
 
           <div className="flex shrink-0 grow flex-col p-6 sm:p-10 md:shrink md:overflow-y-auto lg:p-14">
@@ -128,7 +128,7 @@ export function VehicleDetail({ vehicle, onClose, onNavigate }: VehicleDetailPro
                 {t.vehicleDetail.enquire}
               </Button>
               {next && next.slug !== vehicle.slug && (
-                <Button variant="text" onClick={() => onNavigate(next.slug)} arrow>
+                <Button variant="text" onClick={() => onNavigate(next.slug)} arrow className="text-left">
                   {fill(t.vehicleDetail.next, { name: l(next.name) })}
                 </Button>
               )}

@@ -66,6 +66,12 @@ export const en = {
     unavailable: 'Currently unavailable',
     'coming-soon': 'Coming soon',
   },
+  gallery: {
+    label: 'Photos of the {name}',
+    slide: 'Photo {n} of {total}',
+    prev: 'Previous photo',
+    next: 'Next photo',
+  },
   vehicleDetail: {
     marque: 'Marque',
     availability: 'Availability',
