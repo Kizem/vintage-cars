@@ -56,9 +56,20 @@ export const vehicles: Vehicle[] = [
       placeholderLabel: { en: 'Peugeot 504, front', fr: 'Peugeot 504, avant' },
       focalPoint: '42% 60%',
     },
-    // Source: owner's listing https://www.roadstr.fr/cars/peugeot-504-1971-saint-denis
-    // TODO: complete with the listing's specifications once verified.
-    details: [{ label: { en: 'Year', fr: 'Année' }, value: { en: '1971', fr: '1971' } }],
+    // Specifications provided by the owner (listing: roadstr.fr/cars/peugeot-504-1971-saint-denis).
+    details: [
+      { label: { en: 'Year', fr: 'Année' }, value: { en: '1971', fr: '1971' } },
+      { label: { en: 'Body', fr: 'Carrosserie' }, value: { en: 'Saloon', fr: 'Berline' } },
+      { label: { en: 'Seats', fr: 'Places' }, value: { en: '5', fr: '5' } },
+      { label: { en: 'Engine', fr: 'Moteur' }, value: { en: '4 cylinders', fr: '4 cylindres' } },
+      { label: { en: 'Power', fr: 'Puissance' }, value: { en: '110 hp', fr: '110 ch' } },
+      { label: { en: 'Gearbox', fr: 'Boîte de vitesses' }, value: { en: 'Manual', fr: 'Manuelle' } },
+      { label: { en: 'Drive', fr: 'Transmission' }, value: { en: 'Rear-wheel drive', fr: 'Propulsion' } },
+      {
+        label: { en: 'Mileage', fr: 'Kilométrage' },
+        value: { en: '50,000 to 100,000 km', fr: '50\u00a0000 à 100\u00a0000\u00a0km' },
+      },
+    ],
     gallery: [
       {
         src: 'images/collection/peugeot-504-arriere.webp',
