@@ -24,6 +24,7 @@ export const fr: Dictionary = {
     experiences: 'Nos expériences',
     story: 'Notre histoire',
     practical: 'Informations pratiques',
+    practicalShort: 'Comment ça marche',
     contact: 'Contact',
   },
   header: {

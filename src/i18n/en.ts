@@ -21,6 +21,8 @@ export const en = {
     experiences: 'Our Experiences',
     story: 'Our Story',
     practical: 'Practical Information',
+    /** Short label for the header. */
+    practicalShort: 'How it works',
     contact: 'Contact',
   },
   header: {

@@ -33,17 +33,19 @@ export const site = {
 
 type NavKey = keyof Dictionary['nav'];
 
-/** Header navigation (kept to four entries on purpose). */
+/** Header navigation (kept to four entries on purpose; short label for Practical). */
 export const primaryNav: { key: NavKey; href: string }[] = [
   { key: 'collection', href: '#collection' },
   { key: 'experiences', href: '#experiences' },
-  { key: 'story', href: '#story' },
+  { key: 'practicalShort', href: '#practical' },
   { key: 'contact', href: '#contact' },
 ];
 
-/** Footer navigation also links to the practical information. */
+/** Footer navigation: every section, Our Story included. */
 export const footerNav: { key: NavKey; href: string }[] = [
-  ...primaryNav.slice(0, 3),
+  { key: 'collection', href: '#collection' },
+  { key: 'experiences', href: '#experiences' },
+  { key: 'story', href: '#story' },
   { key: 'practical', href: '#practical' },
   { key: 'contact', href: '#contact' },
 ];
