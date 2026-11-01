@@ -38,7 +38,7 @@ export const en = {
     titleEnd: ' car.',
     text: 'Discover Paris aboard automotive icons, through private experiences crafted around elegance, history and authenticity.',
     ctaPrimary: 'Discover our collection',
-    ctaSecondary: 'Explore our experiences',
+    ctaSecondary: 'Discover our experiences',
     strap: 'Paris · Private experiences by enquiry',
   },
   collection: {
@@ -49,7 +49,7 @@ export const en = {
     discover: 'Discover this car',
     number: 'N°',
     closing: 'The availability of each car is confirmed personally for every request.',
-    askSpecific: 'Ask about a specific car',
+    askSpecific: 'Enquire about a specific car',
   },
   availability: {
     'on-request': 'Availability on request',

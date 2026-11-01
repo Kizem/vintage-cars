@@ -41,7 +41,7 @@ export const fr: Dictionary = {
     titleEnd: '.',
     text: 'Découvrez Paris à bord d’automobiles emblématiques, le temps d’une expérience privée placée sous le signe de l’élégance et de l’histoire.',
     ctaPrimary: 'Découvrir la collection',
-    ctaSecondary: 'Voir nos expériences',
+    ctaSecondary: 'Découvrir nos expériences',
     strap: 'Paris · Expériences privées sur demande',
   },
   collection: {
