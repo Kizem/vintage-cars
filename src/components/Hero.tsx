@@ -12,7 +12,7 @@ export function Hero() {
     <section
       id="top"
       aria-labelledby="hero-title"
-      className="relative isolate flex h-[100svh] max-h-[1000px] min-h-[640px] items-end overflow-hidden bg-forest-deep text-ivory md:h-[88vh]"
+      className="relative isolate flex min-h-[max(640px,100svh)] items-end overflow-hidden bg-forest-deep text-ivory md:min-h-[max(640px,88vh)]"
     >
       <Media
         image={heroImage}
@@ -29,7 +29,8 @@ export function Hero() {
         className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgb(16_28_22/0.55)_0%,rgb(16_28_22/0.08)_32%,rgb(16_28_22/0.35)_62%,rgb(16_28_22/0.86)_100%)]"
       />
 
-      <div className="page-gutter mx-auto w-full max-w-[var(--container-page)] pb-14 sm:pb-16 lg:pb-20">
+      {/* Top padding reserves the space of the fixed header: the content can grow but never slides under it. */}
+      <div className="page-gutter mx-auto w-full max-w-[var(--container-page)] pt-36 pb-14 sm:pb-16 lg:pt-44 lg:pb-20">
         <div className="grid gap-10 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-8">
             <p className="eyebrow hero-in mb-6 flex items-center gap-4 text-champagne" style={delay(150)}>
@@ -38,7 +39,7 @@ export function Hero() {
             </p>
             <h1
               id="hero-title"
-              className="hero-in max-w-[16ch] text-[clamp(2.9rem,7.4vw,6.4rem)] leading-[0.98] font-light"
+              className="hero-in max-w-[16ch] text-[clamp(2.5rem,min(7.4vw,11.5svh),6.4rem)] leading-[0.98] font-light"
               style={delay(300)}
             >
               {t.hero.titleStart} <em className="font-normal italic">{t.hero.titleEm}</em>

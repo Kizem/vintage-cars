@@ -96,7 +96,7 @@ export function Media({
         </span>
         <span className={`text-[12px] leading-snug ${dark ? 'text-ivory/75' : 'text-charcoal/75'}`}>{l(image.placeholderLabel)}</span>
         {showBrief && image.brief && (
-          <span className={`hidden text-[11px] leading-snug sm:block ${dark ? 'text-ivory/50' : 'text-charcoal/55'}`}>
+          <span className={`hidden text-[11px] leading-snug lg:block ${dark ? 'text-ivory/50' : 'text-charcoal/55'}`}>
             {l(image.brief)}
           </span>
         )}
