@@ -41,12 +41,17 @@ export const experiences: Experience[] = [
       fr: 'Une voiture de collection et son chauffeur, rien que pour vous : un trajet privé, une sortie à deux ou une journée parisienne sur mesure.',
     },
     cta: { en: 'Discover Chauffeured Experiences', fr: 'Découvrir l’offre avec chauffeur' },
+    // Generated image, labelled as an illustration. Hotel name on the sign blurred
+    // (no association with a real hotel without a partnership).
     image: {
-      src: '',
+      src: 'images/experiences/chauffeur-arrivee.webp',
+      srcSet: 'images/experiences/chauffeur-arrivee-800.webp 800w, images/experiences/chauffeur-arrivee.webp 1122w',
       alt: {
-        en: 'A chauffeur opening the rear door of a vintage car in front of a Parisian hotel',
-        fr: 'Un chauffeur ouvrant la portière arrière d’une voiture de collection devant un hôtel parisien',
+        en: 'A chauffeur in leather gloves opening the door of a dark green vintage car in front of a Parisian hotel (illustrative image)',
+        fr: 'Un chauffeur ganté ouvrant la portière d’une voiture ancienne vert foncé devant un hôtel parisien (image d’illustration)',
       },
+      credit: { en: 'Illustrative image', fr: 'Image d’illustration' },
+      focalPoint: '62% 60%',
       placeholderLabel: { en: 'Chauffeured, arrival', fr: 'Avec chauffeur, l’arrivée' },
       brief: {
         en: 'Portrait, gloved hand on the door handle, hotel entrance softly out of focus. 4:5.',
