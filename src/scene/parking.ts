@@ -356,10 +356,11 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
     active() { return ((Math.round(st.target) % N) + N) % N; },
     setHover(i: number) { st.hover = i; },
     pointer(nx: number, ny: number) { st.mx = nx; st.my = ny; },
-    /* Un glissement change d'une seule voiture à la fois : l'allée ne dépasse pas la place voisine. */
+    /* Un glissement change d'une seule voiture à la fois : il part de la voiture affichée
+       (même si une alternance est en cours) et l'allée ne dépasse pas la place voisine. */
     drag(active: boolean) {
       st.drag = active;
-      if (active) { st.dragFrom = Math.round(st.target); return; }
+      if (active) { st.dragFrom = Math.round(st.pos); return; }
       st.target = clamp(Math.round(st.pos + clamp(st.speed * .22, -.5, .5)), st.dragFrom - 1, st.dragFrom + 1);
     },
     dragBy(dx: number) { const d = dx / (st.portrait ? st.w * .72 : st.w * .36); const prev = st.pos; st.pos = clamp(st.pos - d, st.dragFrom - 1, st.dragFrom + 1); st.speed = (st.pos - prev) * 60; },

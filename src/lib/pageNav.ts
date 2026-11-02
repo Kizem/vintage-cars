@@ -42,12 +42,19 @@ function sectionTop(el: HTMLElement) {
 let animating = false;
 let animRun = 0;
 
+/* La position finale est toujours signalée : le menu et les images ne dépendent pas
+   du regroupement des événements scroll par le navigateur quand la page est chargée. */
+const arrived = (sc: HTMLElement, done?: () => void) => {
+  sc.dispatchEvent(new Event('scroll'));
+  done?.();
+};
+
 function animateTo(y: number, done?: () => void) {
   const sc = scroller();
   if (!sc) return;
   if (reducedMotion()) {
     sc.scrollTop = y;
-    done?.();
+    arrived(sc, done);
     return;
   }
   animating = true;
@@ -65,7 +72,7 @@ function animateTo(y: number, done?: () => void) {
     else {
       sc.style.scrollSnapType = '';
       animating = false;
-      done?.();
+      arrived(sc, done);
     }
   };
   requestAnimationFrame(step);

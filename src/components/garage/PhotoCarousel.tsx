@@ -18,13 +18,17 @@ export function PhotoCarousel({ photos, label, ref }: { photos: MediaAsset[]; la
   const { t, l } = useI18n();
   const track = useRef<HTMLDivElement>(null);
   const [i, setI] = useState(0);
+  /* photo visée par les flèches, tant que le défilement animé n'y est pas arrivé */
+  const target = useRef<number | null>(null);
   const n = photos.length;
 
   const go = (k: number) => {
     const el = track.current;
     if (!el || !n) return;
     const to = (k + n) % n;
-    el.scrollTo({ left: to * el.clientWidth, behavior: reducedMotion() ? 'auto' : 'smooth' });
+    const x = to * el.clientWidth;
+    target.current = Math.abs(el.scrollLeft - x) < 2 ? null : to;
+    el.scrollTo({ left: x, behavior: reducedMotion() ? 'auto' : 'smooth' });
     setI(to);
   };
   useImperativeHandle(ref, () => ({ step: (d: number) => go(i + d) }));
@@ -32,15 +36,24 @@ export function PhotoCarousel({ photos, label, ref }: { photos: MediaAsset[]; la
   const onScroll = () => {
     const el = track.current;
     if (!el || !el.clientWidth) return;
+    /* pendant un défilement lancé par les flèches, les positions intermédiaires ne changent pas la photo courante */
+    if (target.current !== null) {
+      if (Math.abs(el.scrollLeft - target.current * el.clientWidth) < 2) target.current = null;
+      return;
+    }
     const k = Math.round(el.scrollLeft / el.clientWidth);
     if (k !== i && k >= 0 && k < n) setI(k);
+  };
+  /* le doigt ou la molette reprennent la main */
+  const release = () => {
+    target.current = null;
   };
 
   if (!n) return null;
   const p = photos[Math.min(i, n - 1)];
   return (
     <div className="em-carousel" role="group" aria-roledescription="carousel" aria-label={label}>
-      <div className="em-carousel__track" ref={track} onScroll={onScroll} tabIndex={0}>
+      <div className="em-carousel__track" ref={track} onScroll={onScroll} onPointerDown={release} onTouchStart={release} onWheel={release} tabIndex={0}>
         {photos.map((x, k) => (
           <figure className="em-carousel__slide" key={x.src} aria-hidden={k === i ? undefined : true}>
             <img
