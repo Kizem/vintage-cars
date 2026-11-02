@@ -2,12 +2,13 @@
    dans carmodels.ts, en attendant de nouvelles photos. Ce module est chargé à la demande. */
 import {
   WebGLRenderer, Scene, PerspectiveCamera, Group, Mesh, PlaneGeometry, BoxGeometry,
-  MeshStandardMaterial, MeshBasicMaterial, CanvasTexture, PointLight, HemisphereLight, Fog, Color, PMREMGenerator, BackSide,
+  MeshStandardMaterial, MeshBasicMaterial, CanvasTexture, PointLight, HemisphereLight, Fog, Color,
   SRGBColorSpace, RepeatWrapping, AdditiveBlending, Sprite, SpriteMaterial, Vector3, DirectionalLight, ACESFilmicToneMapping,
-  Texture, type Material, type Object3D,
+  type Object3D,
 } from 'three';
 import { buildCar } from './carmodels';
 import { SPECS, type CarModelKey } from './carspecs';
+import { release, studioEnvironment } from './studio';
 
 export interface ParkingCar {
   /** Numéro de la place, peint au sol. */
@@ -54,19 +55,6 @@ function softBlob() {
     const gr = g.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2);
     gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(.45, 'rgba(255,255,255,.55)'); gr.addColorStop(1, 'rgba(255,255,255,0)');
     g.fillStyle = gr; g.fillRect(0, 0, w, h);
-  });
-}
-
-/* Libère tout ce que la scène a confié au GPU : géométries, matériaux et textures */
-function release(root: Object3D) {
-  root.traverse((o) => {
-    const m = o as Object3D & { geometry?: { dispose(): void }; material?: Material | Material[] };
-    m.geometry?.dispose();
-    const mats = Array.isArray(m.material) ? m.material : m.material ? [m.material] : [];
-    mats.forEach((mat) => {
-      Object.values(mat).forEach((v) => { if (v instanceof Texture) v.dispose(); });
-      mat.dispose();
-    });
   });
 }
 
@@ -150,19 +138,9 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
   }
   buildWorld(false); buildWorld(true);
 
-  /* --- Reflets : un petit studio dont seuls les néons comptent --- */
-  const envScene = new Scene();
-  envScene.add(new Mesh(new BoxGeometry(40, 16, 40), new MeshBasicMaterial({ color: 0x3e453f, side: BackSide })));
-  const strip = (x: number, y: number, z: number, w: number, h: number, c = 0xffffff, rotX = Math.PI / 2) => { const m = new Mesh(new PlaneGeometry(w, h), new MeshBasicMaterial({ color: c, side: 2 })); m.position.set(x, y, z); m.rotation.x = rotX; envScene.add(m); };
-  for (let i = -3; i <= 3; i++) { strip(i * 4.5, 7, 3, 2.8, 16, 0xf8f8ee); }
-  strip(0, 3, 19, 36, 3.6, 0xc8d0c6, 0);
-  strip(0, 1.2, -19, 36, 3.5, 0x9aa69c, 0);
-  const floorMirror = new Mesh(new PlaneGeometry(40, 40), new MeshBasicMaterial({ color: 0x20302a, side: 2 })); floorMirror.rotation.x = Math.PI / 2; floorMirror.position.y = -7.5; envScene.add(floorMirror);
-  const pm = new PMREMGenerator(renderer);
-  const envRT = pm.fromScene(envScene, .025);
+  /* --- Reflets --- */
+  const envRT = studioEnvironment(renderer);
   const env = envRT.texture;
-  pm.dispose();
-  release(envScene);
   const sun = new DirectionalLight(0xfff6e4, 1.1); sun.position.set(-3, 8, 7); scene.add(sun);
 
   const shadowTex = tex(canvas(256, 256, (g, w, h) => {
@@ -228,7 +206,7 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
   const EYE = { y: 2.55 };
 
   /* --- État --- */
-  const st = { pos: opts.start || 0, target: opts.start || 0, drag: false, dragFrom: opts.start || 0, hover: -1, mx: 0, my: 0, smx: 0, smy: 0, open: 0, openT: 0, w: 1, h: 1, portrait: false, dist: 16, visible: true, intro: motion ? 0 : 1, speed: 0 };
+  const st = { pos: opts.start || 0, target: opts.start || 0, drag: false, dragFrom: opts.start || 0, hover: -1, mx: 0, my: 0, smx: 0, smy: 0, open: 0, openT: 0, w: 1, h: 1, portrait: false, dist: 16, cx: 0, visible: true, intro: motion ? 0 : 1, speed: 0 };
   let last = performance.now(); let raf = 0; let shown = false;
   const v = new Vector3();
 
@@ -279,8 +257,8 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
     const panelShift = st.portrait ? 0 : st.openT * 1.55;
     const lookY = st.portrait ? .75 + st.openT * -3.1 : .85;
     const dist = st.dist * (1 + (st.portrait ? .16 : -.08) * st.openT) * (1 + .1 * (1 - intro));
-    camera.position.set(st.smx * (st.portrait ? .5 : 1.1) + panelShift, EYE.y + st.smy * -.5 + (1 - intro) * .9, dist);
-    camera.lookAt(panelShift + st.smx * .25, lookY, 0);
+    camera.position.set(st.smx * (st.portrait ? .5 : 1.1) + panelShift + st.cx, EYE.y + st.smy * -.5 + (1 - intro) * .9, dist);
+    camera.lookAt(panelShift + st.smx * .25 + st.cx, lookY, 0);
 
     /* les voitures */
     units.forEach((u) => {
@@ -324,6 +302,22 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
       u.light.intensity = (4 + near * 11 + u.hover * 12) * edge * intro * flicker * (st.portrait ? .6 : 1);
     });
     init = false;
+
+    /* En portrait, la voiture de trois-quarts (nez vers la caméra) paraît décalée :
+       la caméra glisse pour centrer à l'écran son encombrement projeté. */
+    let target = 0;
+    if (st.portrait) {
+      const a = units.reduce((b, u) => (Math.abs(wrap(u.i - st.pos)) < Math.abs(wrap(b.i - st.pos)) ? u : b));
+      camera.updateMatrixWorld(); a.group.updateMatrixWorld(true);
+      const L = a.model.L / 2; const W = a.model.W / 2; const H = a.model.H;
+      let lo = Infinity; let hi = -Infinity;
+      for (const [x, y, z] of [[-L, 0, W], [L, 0, W], [-L, 0, -W], [L, 0, -W], [-L, H, W], [L, H, W], [-L, H, -W], [L, H, -W]]) {
+        v.set(x, y, z); a.group.localToWorld(v); v.project(camera); lo = Math.min(lo, v.x); hi = Math.max(hi, v.x);
+      }
+      const halfW = Math.tan((camera.fov / 2) * Math.PI / 180) * camera.aspect * (camera.position.z - a.group.position.z);
+      target = st.cx + ((lo + hi) / 2) * halfW;
+    }
+    st.cx = motion ? damp(st.cx, target, 4, dt) : target;
   }
 
   /* Qui est sous le pointeur ? On compare au rectangle projeté de chaque voiture. */

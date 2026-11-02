@@ -93,7 +93,7 @@ body { margin: 0; background: var(--ivory); }
 .em-parking__bottom { position: absolute; left: 0; right: 0; bottom: 0; display: flex; align-items: flex-end; justify-content: center; gap: clamp(1rem, 5cqw, 4rem); padding: 0 16px 1.4rem; pointer-events: none; transition: opacity .5s, transform .5s; }
 .em-parking__bottom button, .em-parking__bottom a { pointer-events: auto; }
 .em-parking__who { text-align: center; min-width: 0; font-size: .9rem; }
-.em-parking__who .em-no { font-size: .8rem; }
+.em-parking__who .em-no { font-size: .8rem; display: flex; justify-content: center; align-items: center; gap: .35em; }
 .em-parking__name { display: block; margin: .35rem auto .3rem; background: none; border: 0; color: inherit; cursor: pointer; font-family: var(--font-display); font-weight: 300; text-transform: uppercase; font-size: clamp(2rem, 4.6cqw, 3.9rem); line-height: 1; letter-spacing: .005em; animation: em-up .7s cubic-bezier(.22,.61,.36,1) both; }
 .em-parking__sub { margin: 0; font-size: .8rem; min-height: 1.3em; }
 @keyframes em-up { from { opacity: 0; transform: translateY(10px); } }
