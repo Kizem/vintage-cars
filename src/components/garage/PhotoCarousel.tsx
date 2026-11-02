@@ -26,9 +26,8 @@ export function PhotoCarousel({ photos, label, ref }: { photos: MediaAsset[]; la
     const el = track.current;
     if (!el || !n) return;
     const to = (k + n) % n;
-    const x = to * el.clientWidth;
-    target.current = Math.abs(el.scrollLeft - x) < 2 ? null : to;
-    el.scrollTo({ left: x, behavior: reducedMotion() ? 'auto' : 'smooth' });
+    target.current = to;
+    el.scrollTo({ left: to * el.clientWidth, behavior: reducedMotion() ? 'auto' : 'smooth' });
     setI(to);
   };
   useImperativeHandle(ref, () => ({ step: (d: number) => go(i + d) }));

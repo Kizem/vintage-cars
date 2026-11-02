@@ -248,8 +248,8 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
 
   function frame(now: number) {
     raf = requestAnimationFrame(frame);
-    /* rien à dessiner hors écran, ni quand le focus couvre la scène */
-    if (!st.visible || (st.open && st.openT > .995)) { last = now; return; }
+    /* rien à dessiner hors écran, ni quand le focus couvre la scène (panneau opaque après ~0,9 s, openT ≈ 0,95) */
+    if (!st.visible || (st.open && st.openT > .95)) { last = now; return; }
     const dt = Math.min(.05, (now - last) / 1000); last = now;
     tick(dt, now / 1000);
     renderer.render(scene, camera);
