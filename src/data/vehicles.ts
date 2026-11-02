@@ -48,6 +48,20 @@ export const vehicles: Vehicle[] = [
       { label: { en: 'Suspension', fr: 'Suspension' }, value: { en: 'Hydropneumatic', fr: 'Hydropneumatique' } },
       { label: { en: 'Design', fr: 'Design' }, value: { en: 'Flaminio Bertoni', fr: 'Flaminio Bertoni' } },
     ],
+    miniature: {
+      // Cut out from the third-party illustrative photo (Place Vendôme), not the collection car.
+      src: 'images/showroom/citroen-ds-21.webp',
+      width: 624,
+      height: 206,
+      alt: {
+        en: 'A grey Citroën DS 21 saloon in side view (illustrative photo)',
+        fr: 'Une Citroën DS 21 berline grise vue de profil (photo d’illustration)',
+      },
+      lamps: [[5.6, 45]],
+      lampSize: 6,
+      scale: 1,
+      credit: { en: 'Illustrative photo', fr: 'Photo d’illustration' },
+    },
     availability: 'on-request',
     service: 'chauffeur',
     // Illustrative photos supplied by the owner (third-party, not the collection car).
@@ -90,6 +104,21 @@ export const vehicles: Vehicle[] = [
     description: {
       en: 'A symbol of French automotive craftsmanship, combining understated elegance with unmistakable character.',
       fr: 'Un symbole du savoir-faire automobile français : une élégance sobre et un caractère bien à elle.',
+    },
+    miniature: {
+      src: 'images/showroom/peugeot-504.webp',
+      width: 557,
+      height: 352,
+      alt: {
+        en: 'The blue Peugeot 504 saloon of the collection, three-quarter front view',
+        fr: 'La Peugeot 504 berline bleue de la collection, vue de trois-quarts avant',
+      },
+      lamps: [
+        [2.7, 47],
+        [32, 64],
+      ],
+      lampSize: 8,
+      scale: 0.74,
     },
     availability: 'on-request',
     service: 'chauffeur-or-self-drive',
@@ -161,6 +190,21 @@ export const vehicles: Vehicle[] = [
       { label: { en: 'Drive', fr: 'Transmission' }, value: { en: 'Rear-wheel drive', fr: 'Propulsion' } },
       { label: { en: 'Design', fr: 'Design' }, value: { en: 'Paul Bracq', fr: 'Paul Bracq' } },
     ],
+    miniature: {
+      src: 'images/showroom/mercedes-benz-8.webp',
+      width: 1133,
+      height: 507,
+      alt: {
+        en: 'The ivory Mercedes-Benz /8 saloon of the collection, three-quarter front view',
+        fr: 'La Mercedes-Benz /8 berline ivoire de la collection, vue de trois-quarts avant',
+      },
+      lamps: [
+        [3.4, 64],
+        [19.4, 72],
+      ],
+      lampSize: 6,
+      scale: 0.94,
+    },
     availability: 'on-request',
     service: 'chauffeur-or-self-drive',
     image: {

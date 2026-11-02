@@ -45,6 +45,15 @@ export const fr: Dictionary = {
     ctaSecondary: 'Découvrir nos expériences',
     strap: 'Paris · Expériences privées sur demande',
   },
+  showroom: {
+    label: 'La collection en vitrine',
+    hint: 'Survolez une voiture, cliquez pour ouvrir sa fiche.',
+    hintTouch: 'Touchez une voiture pour ouvrir sa fiche.',
+    open: 'Ouvrir la fiche de la {name}',
+    specs: 'Fiche technique',
+    back: 'Retour à la vitrine',
+    photos: 'Voir les photos',
+  },
   collection: {
     eyebrow: 'La collection',
     titleLine1: 'Des voitures de caractère.',

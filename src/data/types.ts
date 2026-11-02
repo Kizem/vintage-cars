@@ -46,6 +46,27 @@ export interface Vehicle {
   image: MediaAsset;
   /** Additional photographs shown after `image` in the detail view carousel. */
   gallery?: MediaAsset[];
+  /** Cut-out photograph shown on its plinth in the hero showroom. */
+  miniature?: Miniature;
+}
+
+/**
+ * A car photographed in side or three-quarter view, background removed
+ * (transparent WebP), facing left. Positions are percentages of the image.
+ */
+export interface Miniature {
+  src: string;
+  width: number;
+  height: number;
+  alt: Localized;
+  /** Headlamp centres [x %, y %], lit on hover. */
+  lamps: [number, number][];
+  /** Glow diameter, in % of the image width. */
+  lampSize: number;
+  /** Width on the plinth relative to the other cars (1 = full slot). */
+  scale: number;
+  /** Shown under the car when the photograph is not of the collection car. */
+  credit?: Localized;
 }
 
 export type ExperienceId = 'private-tours' | 'chauffeured' | 'events';

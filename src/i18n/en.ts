@@ -43,6 +43,15 @@ export const en = {
     ctaSecondary: 'Discover our experiences',
     strap: 'Paris · Private experiences by enquiry',
   },
+  showroom: {
+    label: 'The collection on display',
+    hint: 'Hover over a car, click to open its specifications.',
+    hintTouch: 'Tap a car to open its specifications.',
+    open: 'Open the {name} specifications',
+    specs: 'Specifications',
+    back: 'Back to the display',
+    photos: 'See the photos',
+  },
   collection: {
     eyebrow: 'The Collection',
     titleLine1: 'Iconic Cars.',

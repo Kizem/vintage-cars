@@ -1,7 +1,7 @@
 import { I18nProvider } from './i18n/I18nContext';
 import { EnquiryProvider } from './context/EnquiryContext';
 import { Header } from './components/Header';
-import { Hero } from './components/Hero';
+import { HeroShowroom } from './components/HeroShowroom';
 import { VehicleCollection } from './components/VehicleCollection';
 import { Experiences } from './components/Experiences';
 import { BrandStory } from './components/BrandStory';
@@ -16,7 +16,7 @@ export default function App() {
       <EnquiryProvider>
         <Header />
         <main id="main">
-          <Hero />
+          <HeroShowroom />
           <VehicleCollection />
           <Experiences />
           <BrandStory />

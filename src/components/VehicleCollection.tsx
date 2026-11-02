@@ -5,6 +5,7 @@ import { SectionIntro } from './ui/SectionIntro';
 import { Reveal } from './ui/Reveal';
 import { VehicleCard } from './VehicleCard';
 import { VehicleDetail } from './VehicleDetail';
+import { OPEN_VEHICLE_EVENT } from './HeroShowroom';
 
 const PARAM = 'car';
 
@@ -23,6 +24,16 @@ export function VehicleCollection() {
   const [active, setActive] = useState<string | null>(() => (getVehicle(readSlug()) ? readSlug() : null));
 
   useEffect(() => writeSlug(active), [active]);
+
+  // The hero showroom asks for a car's photos through a window event.
+  useEffect(() => {
+    const onOpen = (e: Event) => {
+      const slug = (e as CustomEvent<string>).detail;
+      if (getVehicle(slug)) setActive(slug);
+    };
+    window.addEventListener(OPEN_VEHICLE_EVENT, onOpen);
+    return () => window.removeEventListener(OPEN_VEHICLE_EVENT, onOpen);
+  }, []);
 
   const close = useCallback(() => setActive(null), []);
 
