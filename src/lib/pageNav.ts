@@ -41,7 +41,6 @@ function sectionTop(el: HTMLElement) {
 
 let animating = false;
 let animRun = 0;
-export const isAnimating = () => animating;
 
 function animateTo(y: number, done?: () => void) {
   const sc = scroller();
@@ -74,7 +73,7 @@ function animateTo(y: number, done?: () => void) {
 
 /** Ferme le focus voiture s'il est ouvert. `to` : la section visée ensuite. */
 export const CLOSE_FOCUS = 'epoque:closefocus';
-export const requestCloseFocus = (to: SectionId) => window.dispatchEvent(new CustomEvent(CLOSE_FOCUS, { detail: to }));
+const requestCloseFocus = (to: SectionId) => window.dispatchEvent(new CustomEvent(CLOSE_FOCUS, { detail: to }));
 
 /**
  * Va à une section. Avec `focusHeading`, le titre de la section (tabIndex=-1)
