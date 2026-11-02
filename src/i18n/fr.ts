@@ -114,6 +114,12 @@ export const fr: Dictionary = {
     eyebrow: 'Informations pratiques',
     titleStart: 'Bon',
     titleEm: 'à savoir.',
+    facts: [
+      { label: 'Durée', value: 'De 2\u00a0h à une journée' },
+      { label: 'Langues', value: 'Français et anglais' },
+      { label: 'Lieu', value: 'Paris et ses environs' },
+      { label: 'Paiement', value: 'Aucun en ligne' },
+    ],
     howItWorks: 'Comment ça se passe',
     steps: [
       {
@@ -130,6 +136,8 @@ export const fr: Dictionary = {
       },
     ],
     faqTitle: 'Avant votre venue',
+    faqShow: 'Voir toutes les questions',
+    faqHide: 'Masquer les questions',
     faq: [
       {
         q: 'Où se déroulent les expériences ?',

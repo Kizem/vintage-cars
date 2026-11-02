@@ -114,6 +114,13 @@ export const en = {
     eyebrow: 'Practical Information',
     titleStart: 'Good',
     titleEm: 'to Know.',
+    /** Key facts shown at a glance; details in the FAQ. */
+    facts: [
+      { label: 'Duration', value: '2 hours to a full day' },
+      { label: 'Languages', value: 'English and French' },
+      { label: 'Area', value: 'Paris and surroundings' },
+      { label: 'Payment', value: 'None online' },
+    ],
     howItWorks: 'How it works',
     steps: [
       {
@@ -130,6 +137,8 @@ export const en = {
       },
     ],
     faqTitle: 'Before your visit',
+    faqShow: 'See all questions',
+    faqHide: 'Hide the questions',
     faq: [
       {
         q: 'Where do experiences take place?',
