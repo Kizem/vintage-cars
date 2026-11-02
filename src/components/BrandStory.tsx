@@ -9,25 +9,31 @@ export function BrandStory() {
     <section id="story" aria-labelledby="story-title" className="overflow-hidden bg-offwhite py-24 sm:py-32 lg:py-44">
       <div className="page-gutter mx-auto grid max-w-[var(--container-page)] gap-16 lg:grid-cols-12 lg:gap-12">
         <div className="relative lg:col-span-6">
-          <Reveal>
-            <Media
-              image={storyImages.primary}
-              creditPosition="top-right"
-              tone="forest"
-              className="aspect-[4/5] w-full max-w-[560px] rounded-xs"
-              sizes="(min-width:1024px) 45vw, 100vw"
-              showBrief
-            />
+          {/* A light above the photograph; a shutter in the page colour slides away beneath it. */}
+          <Reveal className="relative max-w-[560px]">
+            <span aria-hidden="true" className="story-beam motion-beam" />
+            <div className="relative overflow-hidden rounded-xs">
+              <Media
+                image={storyImages.primary}
+                creditPosition="top-right"
+                tone="forest"
+                className="aspect-[4/5] w-full"
+                imgClassName="story-photo"
+                sizes="(min-width:1024px) 45vw, 100vw"
+                showBrief
+              />
+              <span aria-hidden="true" className="motion-shutter bg-offwhite" />
+            </div>
           </Reveal>
           <Reveal
             delay={200}
-            className="absolute right-0 -bottom-10 w-[42%] max-w-[240px] border-[6px] border-offwhite sm:-bottom-12 lg:right-[-1rem]"
+            className="motion-depth absolute right-0 -bottom-10 w-[42%] max-w-[240px] border-[6px] border-offwhite [--depth:34px] sm:-bottom-12 lg:right-[-1rem]"
           >
             <Media image={storyImages.detail} tone="stone" className="aspect-square w-full" sizes="240px" />
           </Reveal>
         </div>
 
-        <div className="flex flex-col justify-center lg:col-span-5 lg:col-start-8">
+        <div className="motion-depth flex flex-col justify-center [--depth:-12px] lg:col-span-5 lg:col-start-8">
           <Reveal>
             <p className="eyebrow mb-6 flex items-center gap-4 text-forest">
               <span aria-hidden="true" className="h-px w-10 bg-champagne" />

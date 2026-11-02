@@ -920,3 +920,24 @@ dialog[open] {
     transition: none;
   }
 }
+
+/* --- Our story: the photograph uncovered under a light ---------------------- */
+.story-beam {
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  height: clamp(4rem, 9vw, 7.5rem);
+}
+.story-photo {
+  transition: transform 2.4s var(--ease-editorial) 300ms;
+}
+.js-reveal .reveal:not(.is-visible) .story-photo {
+  transform: scale(1.06);
+}
+@media (prefers-reduced-motion: reduce) {
+  .story-photo,
+  .js-reveal .reveal:not(.is-visible) .story-photo {
+    transform: none;
+    transition: none;
+  }
+}
