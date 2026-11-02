@@ -41,11 +41,13 @@ export function Parking({ open, onOpenChange }: { open: boolean; onOpenChange: (
   const [announce, setAnnounce] = useState(false);
   const unmount = useRef(0);
   const paused = useRef(false);
+  /* geste en cours : bouton ou doigt posé sur la scène */
+  const drag = useRef<Drag | null>(null);
   const flatHover = useRef(false);
   const refocusName = useRef(false);
   const lastTouch = useRef(performance.now());
-  const latest = useRef({ gl, open, active });
-  latest.current = { gl, open, active };
+  const latest = useRef({ gl, open, active, ready });
+  latest.current = { gl, open, active, ready };
   const car = vehicles[active];
   const name = l(car.name);
 
@@ -114,13 +116,13 @@ export function Parking({ open, onOpenChange }: { open: boolean; onOpenChange: (
   useEffect(() => {
     if (reducedMotion()) return;
     const id = window.setInterval(() => {
-      if (paused.current || document.hidden || latest.current.open) return;
+      if (paused.current || document.hidden || latest.current.open || drag.current) return;
       if (performance.now() - lastTouch.current < QUIET) return;
       const a = document.activeElement;
       if (a && rootRef.current?.contains(a) && a.matches(':focus-visible')) return;
       const e = engine.current;
       if (e) {
-        if (e.state.drag || e.state.open || e.state.hover >= 0) return;
+        if (!latest.current.ready || e.state.drag || e.state.open || e.state.hover >= 0) return;
         e.step(1);
         setActive(e.active());
       } else if (!latest.current.gl) {
@@ -207,9 +209,9 @@ export function Parking({ open, onOpenChange }: { open: boolean; onOpenChange: (
   }, []);
 
   /* Souris et doigt sur la scène */
-  const drag = useRef<Drag | null>(null);
   const onDown = (e: PointerEvent<HTMLDivElement>) => {
     if (e.button && e.button !== 0) return;
+    lastTouch.current = performance.now();
     drag.current = { x: e.clientX, sx: e.clientX, moved: false, id: e.pointerId };
     const en = engine.current;
     if (en) en.setHover(en.pick(e.clientX, e.clientY));
@@ -278,6 +280,8 @@ export function Parking({ open, onOpenChange }: { open: boolean; onOpenChange: (
     en.setHover(-1);
   };
   const onLeave = () => {
+    /* bouton relâché hors de la scène sans avoir glissé : le geste est fini */
+    if (drag.current && !drag.current.moved) drag.current = null;
     const en = engine.current;
     if (!en) return;
     en.setHover(-1);
@@ -287,6 +291,7 @@ export function Parking({ open, onOpenChange }: { open: boolean; onOpenChange: (
   /* Sans WebGL : glisser change de voiture, toucher ouvre le focus */
   const flatDown = (e: PointerEvent<HTMLDivElement>) => {
     if (e.button && e.button !== 0) return;
+    lastTouch.current = performance.now();
     drag.current = { x: e.clientX, sx: e.clientX, moved: false, id: e.pointerId };
   };
   const flatUp = (e: PointerEvent<HTMLDivElement>) => {
@@ -324,7 +329,10 @@ export function Parking({ open, onOpenChange }: { open: boolean; onOpenChange: (
           onPointerUp={flatUp}
           onPointerCancel={() => (drag.current = null)}
           onPointerEnter={() => (flatHover.current = true)}
-          onPointerLeave={() => (flatHover.current = false)}
+          onPointerLeave={() => {
+            flatHover.current = false;
+            drag.current = null;
+          }}
         >
           <CarProfile model={car.rendering.model} />
         </div>

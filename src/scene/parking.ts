@@ -226,11 +226,10 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
   });
 
   const EYE = { y: 2.55 };
-  opts.onReady?.();
 
   /* --- État --- */
   const st = { pos: opts.start || 0, target: opts.start || 0, drag: false, dragFrom: opts.start || 0, hover: -1, mx: 0, my: 0, smx: 0, smy: 0, open: 0, openT: 0, w: 1, h: 1, portrait: false, dist: 16, visible: true, intro: motion ? 0 : 1, speed: 0 };
-  let last = performance.now(); let raf = 0;
+  let last = performance.now(); let raf = 0; let shown = false;
   const v = new Vector3();
 
   function resize() {
@@ -254,6 +253,8 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
     const dt = Math.min(.05, (now - last) / 1000); last = now;
     tick(dt, now / 1000);
     renderer.render(scene, camera);
+    /* prête quand la première image est dessinée : c'est de là que comptent les 9 s avant la première alternance */
+    if (!shown) { shown = true; opts.onReady?.(); }
   }
 
   let init = true;

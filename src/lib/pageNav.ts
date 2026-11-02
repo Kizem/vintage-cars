@@ -124,7 +124,8 @@ export function usePageNavigation() {
         e.preventDefault();
         return;
       }
-      const now = performance.now();
+      /* l'heure de l'événement, pas celle de son traitement : une rafale reste une rafale même si la page est occupée */
+      const now = e.timeStamp || performance.now();
       const dir = Math.sign(e.deltaY);
       const cur = sections()[currentIndex()];
       if (cur && !animating) {
