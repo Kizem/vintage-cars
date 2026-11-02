@@ -2,6 +2,7 @@ import { footerNav, site } from '../data/site';
 import { useI18n } from '../i18n/I18nContext';
 import { Wordmark } from './ui/Wordmark';
 import { LanguageToggle } from './ui/LanguageToggle';
+import { Reveal } from './ui/Reveal';
 
 export function Footer() {
   const { t, l } = useI18n();
@@ -10,6 +11,10 @@ export function Footer() {
 
   return (
     <footer className="bg-forest-deep text-ivory">
+      {/* The showroom's horizon line, drawn once from the centre. */}
+      <Reveal>
+        <span aria-hidden="true" className="motion-rule motion-rule-center block h-px bg-champagne/50" />
+      </Reveal>
       <div className="page-gutter mx-auto max-w-[var(--container-page)] pt-20 pb-10 sm:pt-24">
         <div className="grid gap-14 border-b border-line-light pb-16 md:grid-cols-12 md:gap-10">
           <div className="md:col-span-5">
