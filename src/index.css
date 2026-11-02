@@ -607,6 +607,65 @@ dialog[open] {
   }
 }
 
+/* --- Carousel cues (below lg): pager dots, a swipe arrow, a one-time nudge ---- */
+.showroom-dot {
+  position: relative;
+  width: 1.75rem;
+  height: 2.75rem;
+}
+.showroom-dot::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  border: 1px solid rgb(179 154 112 / 0.7);
+  transition:
+    transform 0.4s var(--ease-editorial),
+    background-color 0.4s var(--ease-editorial);
+}
+.showroom-dot[aria-current]::after {
+  background: var(--color-champagne);
+  transform: scale(1.35);
+}
+.showroom[data-selected] .showroom-pager {
+  opacity: 0;
+  pointer-events: none;
+}
+.showroom-swipe {
+  animation: swipe-cue 1.6s var(--ease-editorial) 3 both;
+  animation-delay: 2.8s;
+}
+@keyframes swipe-cue {
+  0%,
+  100% {
+    transform: none;
+  }
+  45% {
+    transform: translateX(6px);
+  }
+}
+/* Once the cars have arrived, the row slides a little to the left and back:
+   the next car shows itself, so the carousel reads as one. */
+@media (max-width: 1023px) {
+  .showroom:not([data-selected]) .showroom-slot {
+    animation: carousel-nudge 1.4s var(--ease-editorial) both;
+    animation-delay: 2.4s;
+  }
+}
+@keyframes carousel-nudge {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  40% {
+    translate: -14vw 0;
+  }
+}
+
 /* --- Specifications card ------------------------------------------------------ */
 .showroom-spec {
   position: fixed;
@@ -734,6 +793,10 @@ dialog[open] {
   }
   .showroom-sheen {
     opacity: 0;
+  }
+  .showroom-swipe,
+  .showroom:not([data-selected]) .showroom-slot {
+    animation: none;
   }
   .showroom-slot,
   .showroom-slot[data-state='away-left'],

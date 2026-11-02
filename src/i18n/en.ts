@@ -46,8 +46,9 @@ export const en = {
   showroom: {
     label: 'The collection on display',
     hint: 'Hover over a car, click to open its specifications.',
-    hintTouch: 'Tap a car to open its specifications.',
+    hintTouch: 'Swipe to see the other cars, tap one to open its specifications.',
     open: 'Open the {name} specifications',
+    goTo: 'Show the {name}',
     specs: 'Specifications',
     back: 'Back to the display',
     photos: 'See the photos',

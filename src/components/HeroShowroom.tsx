@@ -143,6 +143,20 @@ export function HeroShowroom() {
     return () => io.disconnect();
   }, []);
 
+  /** Touch screens: centre a car in the carousel (it then becomes the lit one). */
+  const litIndex = cars.findIndex((c) => c.slug === lit);
+  const scrollToCar = (slug: string) => {
+    const scroller = scrollerRef.current;
+    const slot = slotRefs.current[slug];
+    if (!scroller || !slot) return;
+    const a = scroller.getBoundingClientRect();
+    const b = slot.getBoundingClientRect();
+    scroller.scrollTo({
+      left: scroller.scrollLeft + b.left - a.left - (a.width - b.width) / 2,
+      behavior: prefersReducedMotion() ? 'auto' : 'smooth',
+    });
+  };
+
   /* Pointer tilt, written straight to CSS variables (no re-render per frame). */
   const tilt = (slug: string, e: PointerEvent<HTMLButtonElement>) => {
     const model = modelRefs.current[slug];
@@ -219,7 +233,7 @@ export function HeroShowroom() {
 
         <ul
           ref={scrollerRef}
-          className="showroom-row no-scrollbar mx-auto flex max-w-[var(--container-page)] snap-x snap-mandatory items-end overflow-x-auto px-[11vw] pt-16 pb-4 lg:grid lg:snap-none lg:grid-cols-3 lg:gap-6 lg:overflow-visible lg:px-14 lg:pt-10"
+          className="showroom-row no-scrollbar mx-auto flex max-w-[var(--container-page)] snap-x snap-mandatory items-end overflow-x-auto px-[15vw] pt-16 pb-4 lg:grid lg:snap-none lg:grid-cols-3 lg:gap-6 lg:overflow-visible lg:px-14 lg:pt-10"
         >
           {cars.map((car, i) => {
             const m = car.miniature;
@@ -242,7 +256,7 @@ export function HeroShowroom() {
                 data-slug={car.slug}
                 data-state={state}
                 data-lit={lit === car.slug && !selected ? '' : undefined}
-                className="showroom-slot w-[78vw] max-w-[26rem] shrink-0 snap-center lg:w-auto lg:max-w-none"
+                className="showroom-slot w-[70vw] max-w-[26rem] shrink-0 snap-center lg:w-auto lg:max-w-none"
                 style={style}
               >
                 <button
@@ -304,9 +318,34 @@ export function HeroShowroom() {
           })}
         </ul>
 
+        {/* Phones and tablets: where you are in the carousel, and a way to move along it. */}
+        <div className="showroom-pager mb-4 flex items-center justify-center gap-4 lg:hidden">
+          <span aria-hidden="true" className="eyebrow w-16 text-right whitespace-nowrap text-champagne tabular-nums">
+            {String(Math.max(litIndex, 0) + 1).padStart(2, '0')} / {String(cars.length).padStart(2, '0')}
+          </span>
+          <span className="flex items-center">
+            {cars.map((car, i) => (
+              <button
+                key={car.slug}
+                type="button"
+                aria-label={fill(t.showroom.goTo, { name: l(car.name) })}
+                aria-current={i === Math.max(litIndex, 0) ? 'true' : undefined}
+                onClick={() => scrollToCar(car.slug)}
+                className="showroom-dot"
+              />
+            ))}
+          </span>
+          <span aria-hidden="true" className="w-16" />
+        </div>
+
         <p className="showroom-hint eyebrow pb-8 text-center text-ivory/50 lg:pb-10">
           <span className="hint-hover">{t.showroom.hint}</span>
-          <span className="hint-touch">{t.showroom.hintTouch}</span>
+          <span className="hint-touch">
+            {t.showroom.hintTouch}
+            <svg aria-hidden="true" width="22" height="8" viewBox="0 0 22 8" fill="none" className="showroom-swipe ml-3 inline-block align-middle">
+              <path d="M0 4h20.5M17.5 1l3 3-3 3" stroke="currentColor" />
+            </svg>
+          </span>
         </p>
 
         {current && (

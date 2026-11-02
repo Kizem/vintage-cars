@@ -48,8 +48,9 @@ export const fr: Dictionary = {
   showroom: {
     label: 'La collection en vitrine',
     hint: 'Survolez une voiture, cliquez pour ouvrir sa fiche.',
-    hintTouch: 'Touchez une voiture pour ouvrir sa fiche.',
+    hintTouch: 'Glissez pour voir les autres voitures, touchez-en une pour ouvrir sa fiche.',
     open: 'Ouvrir la fiche de la {name}',
+    goTo: 'Afficher la {name}',
     specs: 'Fiche technique',
     back: 'Retour à la vitrine',
     photos: 'Voir les photos',
