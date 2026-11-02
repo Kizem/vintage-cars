@@ -227,10 +227,11 @@ body { margin: 0; background: var(--ivory); }
 .em-done { margin-top: 2rem; margin-inline: auto; display: flex; flex-direction: column; align-items: center; gap: 1rem; }
 
 .em-foot { margin-top: clamp(.8rem, 2.6cqh, 2rem); font-size: .8rem; line-height: 1.6; }
-#ecrire .em-form { margin-top: clamp(.8rem, 2.6cqh, 2rem); }
-#ecrire { justify-content: flex-start; }
+#ecrire .em-form { margin-top: clamp(1.6rem, 6cqh, 4rem); }
+/* Écrire : titre, phrase et pied de page centrés ensemble, avec de l'air entre eux */
+#ecrire { justify-content: center; }
 #ecrire .em-form__s { font-size: clamp(1.5rem, min(3.4cqw, 4.4cqh), 3rem); }
-#ecrire .em-foot { margin-top: auto; padding-top: .8rem; }
+#ecrire .em-foot { margin-top: clamp(2rem, 9cqh, 6rem); }
 .em-foot p { margin: 0; }
 
 @media (prefers-reduced-motion: reduce) {

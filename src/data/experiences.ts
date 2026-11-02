@@ -71,10 +71,10 @@ export const experiences: Experience[] = [
       en: 'Weddings, private celebrations, photoshoots and company events, with a vintage car for the day.',
       fr: 'Mariage, fête privée, shooting photo ou événement d’entreprise : une voiture de collection pour la journée.',
     },
-    // Self-drive only for the 504 and the Mercedes (see vehicles.ts and the FAQ); the DS is chauffeur-only.
+    // Self-drive depends on the car (see `service` in vehicles.ts and the FAQ).
     detail: {
-      en: 'The cars can also be hired for the occasion, with a chauffeur, or self-drive on enquiry for the Peugeot 504 and the Mercedes-Benz /8.',
-      fr: 'Les voitures se louent aussi pour l’occasion, avec chauffeur, ou sans chauffeur sur demande pour la Peugeot 504 et la Mercedes-Benz /8.',
+      en: 'The cars can also be hired, with or without a chauffeur depending on the model.',
+      fr: 'Les voitures se louent aussi, avec ou sans chauffeur selon le modèle.',
     },
     cta: { en: 'Enquire about your event', fr: 'Parler de votre événement' },
     // Generated image, labelled as an illustration.
