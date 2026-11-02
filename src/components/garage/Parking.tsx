@@ -5,7 +5,7 @@ import { fill, useI18n } from '../../i18n/I18nContext';
 import { CLOSE_FOCUS, currentIndex, isLocked, reducedMotion, setLock } from '../../lib/pageNav';
 import type { ParkingCar, ParkingEngine } from '../../scene/parking';
 import { hasWebGL } from '../../scene/webgl';
-import { Arrow, Monogram, Odometer } from '../ui';
+import { Arrow, Brand, Monogram, Odometer } from '../ui';
 import { CarProfile } from './CarProfile';
 import { PhotoCarousel, type CarouselHandle } from './PhotoCarousel';
 import { VehicleSheet } from './VehicleSheet';
@@ -262,9 +262,12 @@ export function Parking({ open, onOpenChange }: { open: boolean; onOpenChange: (
     const hit = en.pick(e.clientX, e.clientY);
     if (e.pointerType !== 'mouse') window.setTimeout(() => en.setHover(-1), 700);
     if (hit < 0) return;
+    /* une voisine passe d'abord au premier plan ; seule la voiture principale ouvre sa fiche */
     if (hit !== en.active()) {
       en.go(hit);
       setActive(hit);
+      setAnnounce(true);
+      return;
     }
     if (!open) openSheet();
   };
@@ -341,6 +344,7 @@ export function Parking({ open, onOpenChange }: { open: boolean; onOpenChange: (
         <Monogram />
       </div>
       <div className="em-parking__top">
+        <Brand className="em-brand--garage" />
         <h1 className="em-parking__h1">{t.garage.h1}</h1>
       </div>
       <div className="em-parking__bottom" inert={open}>
