@@ -7,7 +7,15 @@ interface RevealProps {
   className?: string;
 }
 
-/** Fades content in once when it enters the viewport. Respects reduced motion (see CSS). */
+// The hidden “before” state only applies once this module has run (see .js-reveal in
+// index.css): if scripts or the observer fail, the content stays visible.
+if (typeof document !== 'undefined') document.documentElement.classList.add('js-reveal');
+
+/**
+ * Fades content in once when it enters the viewport. Respects reduced motion (see CSS).
+ * Children can join the entrance with the shared motion classes in index.css
+ * (.motion-rule, .motion-beam, .motion-shutter): they play when `.is-visible` is set.
+ */
 export function Reveal({ children, as: Tag = 'div', delay = 0, className = '' }: RevealProps) {
   const ref = useRef<HTMLElement>(null);
 
@@ -15,6 +23,11 @@ export function Reveal({ children, as: Tag = 'div', delay = 0, className = '' }:
     const el = ref.current;
     if (!el) return;
     if (!('IntersectionObserver' in window)) {
+      el.classList.add('is-visible');
+      return;
+    }
+    // Already scrolled past (anchor jump, restored scroll position): show it straight away.
+    if (el.getBoundingClientRect().bottom < 0) {
       el.classList.add('is-visible');
       return;
     }

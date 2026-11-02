@@ -181,16 +181,15 @@
    Entrance animations: used sparingly via <Reveal>
    -------------------------------------------------------------------------- */
 .reveal {
-  opacity: 0;
-  transform: translateY(18px);
   transition:
     opacity 1s var(--ease-editorial),
     transform 1s var(--ease-editorial);
   transition-delay: var(--reveal-delay, 0ms);
 }
-.reveal.is-visible {
-  opacity: 1;
-  transform: none;
+/* Hidden only when <Reveal> is running (class set by Reveal.tsx), never by default. */
+.js-reveal .reveal:not(.is-visible) {
+  opacity: 0;
+  transform: translateY(18px);
 }
 
 @keyframes hero-in {
@@ -235,10 +234,11 @@ dialog[open] {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .reveal {
-    opacity: 1;
+  .js-reveal .reveal:not(.is-visible) {
     transform: none;
-    transition: none;
+  }
+  .reveal {
+    transition: opacity 0.6s linear;
   }
   .hero-in,
   .hero-media,
@@ -744,5 +744,125 @@ dialog[open] {
   .showroom-spec,
   .showroom-spec[data-open] {
     transition: opacity 0.3s linear, visibility 0s;
+  }
+}
+
+/* ==========================================================================
+   Motion vocabulary for the rest of the page
+   --------------------------------------------------------------------------
+   One idea, taken from the showroom: a champagne light that reveals an
+   object. Everything plays once, inside a <Reveal>, when it becomes
+   `.is-visible`; the “before” state only exists under .js-reveal, so the
+   page is complete if the observer never fires. transform / opacity only.
+   ========================================================================== */
+
+/* A hairline that draws itself (scaleX), once. */
+.motion-rule {
+  transform-origin: left;
+  transition: transform 1.3s var(--ease-editorial) var(--draw-delay, 250ms);
+}
+.motion-rule-center {
+  transform-origin: center;
+}
+.js-reveal .reveal:not(.is-visible) .motion-rule,
+.js-reveal .reveal.motion-rule:not(.is-visible) {
+  transform: scaleX(0);
+}
+
+/* Graduations of a period instrument: fine ticks, a longer one every fifth. */
+.motion-gauge {
+  height: 7px;
+  background:
+    linear-gradient(currentColor, currentColor) 0 0 / 100% 1px no-repeat,
+    repeating-linear-gradient(to right, currentColor 0 1px, transparent 1px 40px) 0 0 / 100% 7px no-repeat,
+    repeating-linear-gradient(to right, currentColor 0 1px, transparent 1px 8px) 0 0 / 100% 4px no-repeat;
+}
+
+/* A cone of champagne light falling on an object. */
+.motion-beam {
+  position: absolute;
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgb(179 154 112 / 0), rgb(179 154 112 / 0.22));
+  clip-path: polygon(43% 0, 57% 0, 100% 100%, 0 100%);
+  opacity: var(--beam-rest, 0.5);
+}
+.reveal.is-visible .motion-beam {
+  animation: beam-on 2.4s var(--ease-editorial) both;
+  animation-delay: var(--beam-delay, 150ms);
+}
+.js-reveal .reveal:not(.is-visible) .motion-beam {
+  opacity: 0;
+}
+@keyframes beam-on {
+  0% {
+    opacity: 0;
+  }
+  35% {
+    opacity: 1;
+  }
+  100% {
+    opacity: var(--beam-rest, 0.5);
+  }
+}
+
+/* A shutter in the page colour that slides away under the light (cover, not mask). */
+.motion-shutter {
+  position: absolute;
+  inset: -1px;
+  pointer-events: none;
+  transform: translateY(101%);
+  transition: transform 1.5s var(--ease-editorial) var(--shutter-delay, 450ms);
+}
+.js-reveal .reveal:not(.is-visible) .motion-shutter {
+  transform: none;
+}
+
+/* 2.5D depth: planes drift a few pixels apart while the section crosses the
+   screen. Scroll-driven where supported (Chromium); elsewhere the layout is
+   simply static. Uses `translate`, so it never fights a Reveal transform. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .motion-depth {
+      animation: depth-drift linear both;
+      animation-timeline: view();
+      animation-range: cover;
+    }
+  }
+}
+@keyframes depth-drift {
+  from {
+    translate: 0 var(--depth, 24px);
+  }
+  to {
+    translate: 0 calc(var(--depth, 24px) * -1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion-rule,
+  .motion-shutter {
+    transition: none;
+  }
+  .js-reveal .reveal:not(.is-visible) .motion-rule,
+  .js-reveal .reveal.motion-rule:not(.is-visible) {
+    transform: none;
+  }
+  .motion-shutter,
+  .js-reveal .reveal:not(.is-visible) .motion-shutter {
+    transform: translateY(101%);
+  }
+  .reveal.is-visible .motion-beam {
+    animation: none;
+  }
+}
+
+@media print {
+  .js-reveal .reveal:not(.is-visible) {
+    opacity: 1;
+    transform: none;
+  }
+  .motion-shutter,
+  .motion-beam {
+    display: none;
   }
 }
