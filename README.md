@@ -44,7 +44,8 @@ src/
   i18n/            dictionaries (en, fr) + language provider
   lib/enquiry.ts   form validation + submission service
   context/         enquiry pre-fill (vehicle / experience CTAs → form)
-  components/      Header, Hero, VehicleCollection, VehicleCard, VehicleDetail,
+  components/      Header, HeroShowroom (the collection on display, ?car= deep link),
+                   VehicleDetail (photo view), Hero (previous hero, not rendered),
                    Experiences, BrandStory, PracticalInfo, EnquiryForm, Footer,
                    LegalDialog, ui/* (Media, Button, LanguageToggle…)
   index.css        design tokens (colours, fonts, radii) + base styles
@@ -65,9 +66,10 @@ Collection images must show the **actual cars** of the collection.
 
 ## Adding a vehicle
 
-Append an object to `vehicles` in `src/data/vehicles.ts`. Cards, the detail
-view (`?car=<slug>` deep link) and the form’s “Preferred vehicle” list update
-automatically. Only add verified facts in `details` (year, colour, seats…).
+Append an object to `vehicles` in `src/data/vehicles.ts`. The photo view and
+the form’s “Preferred vehicle” list update automatically. A car appears in the
+hero showroom (and the `?car=<slug>` deep link) once it has a `miniature`: a
+cut-out WebP facing left in `public/images/showroom/`. Only add verified facts in `details` (year, colour, seats…).
 Availability: `on-request` | `available` | `limited` | `unavailable` | `coming-soon`.
 
 ## Enquiry form

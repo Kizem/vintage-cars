@@ -15,6 +15,7 @@ interface VehicleDetailProps {
 /** Vehicle detail view, rendered in a native modal <dialog> (focus trap + Escape built in). */
 export function VehicleDetail({ vehicle, onClose, onNavigate }: VehicleDetailProps) {
   const ref = useRef<HTMLDialogElement>(null);
+  const prevOverflow = useRef('');
   const { startEnquiry } = useEnquiry();
   const { t, l } = useI18n();
 
@@ -22,6 +23,8 @@ export function VehicleDetail({ vehicle, onClose, onNavigate }: VehicleDetailPro
     const dialog = ref.current;
     if (!dialog) return;
     if (vehicle && !dialog.open) {
+      // Remember the previous value: the showroom sheet may already lock the page on phones.
+      prevOverflow.current = document.documentElement.style.overflow;
       dialog.showModal();
       document.documentElement.style.overflow = 'hidden';
     } else if (!vehicle && dialog.open) {
@@ -33,7 +36,7 @@ export function VehicleDetail({ vehicle, onClose, onNavigate }: VehicleDetailPro
     const dialog = ref.current;
     if (!dialog) return;
     const onDialogClose = () => {
-      document.documentElement.style.overflow = '';
+      document.documentElement.style.overflow = prevOverflow.current;
       onClose();
     };
     dialog.addEventListener('close', onDialogClose);

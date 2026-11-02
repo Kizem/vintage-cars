@@ -1,12 +1,10 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type PointerEvent } from 'react';
 import type { Vehicle } from '../data/types';
-import { vehicles } from '../data/vehicles';
+import { getVehicle, vehicles } from '../data/vehicles';
 import { fill, useI18n } from '../i18n/I18nContext';
 import { useEnquiry } from '../context/EnquiryContext';
 import { Button, ButtonLink } from './ui/Button';
-
-/** Opens the photo detail view owned by <VehicleCollection>. */
-export const OPEN_VEHICLE_EVENT = 'epoque:open-vehicle';
+import { VehicleDetail } from './VehicleDetail';
 
 const cars = vehicles.filter((v): v is Vehicle & Required<Pick<Vehicle, 'miniature'>> => Boolean(v.miniature));
 
@@ -17,6 +15,19 @@ const canHover = () => window.matchMedia('(hover: hover) and (pointer: fine)').m
 const isDesktop = () => window.matchMedia('(min-width: 1024px)').matches;
 
 type Shift = { x: number; y: number; s: number };
+
+/** Deep link: ?car=<slug> opens that car's specifications in the showroom. */
+const PARAM = 'car';
+const readSlug = () => {
+  const slug = new URLSearchParams(window.location.search).get(PARAM);
+  return cars.some((c) => c.slug === slug) ? slug : null;
+};
+function writeSlug(slug: string | null) {
+  const url = new URL(window.location.href);
+  if (slug) url.searchParams.set(PARAM, slug);
+  else url.searchParams.delete(PARAM);
+  window.history.replaceState(null, '', url);
+}
 
 /** Layout box of `el` relative to `root`, ignoring CSS transforms. */
 function boxWithin(el: HTMLElement, root: HTMLElement) {
@@ -40,7 +51,9 @@ export function HeroShowroom() {
   const { t, l } = useI18n();
   const { startEnquiry } = useEnquiry();
 
-  const [selected, setSelected] = useState<string | null>(null);
+  const [selected, setSelected] = useState<string | null>(readSlug);
+  /** Car whose photo detail view (<dialog>) is open. */
+  const [photos, setPhotos] = useState<string | null>(null);
   const [lit, setLit] = useState<string | null>(null);
   const [shift, setShift] = useState<Shift | null>(null);
 
@@ -82,6 +95,8 @@ export function HeroShowroom() {
     window.addEventListener('resize', measure);
     return () => window.removeEventListener('resize', measure);
   }, [measure]);
+
+  useEffect(() => writeSlug(selected), [selected]);
 
   const close = useCallback(() => {
     const slug = selected;
@@ -150,7 +165,12 @@ export function HeroShowroom() {
     return i < selectedIndex ? 'away-left' : 'away-right';
   };
 
-  const openPhotos = (slug: string) => window.dispatchEvent(new CustomEvent(OPEN_VEHICLE_EVENT, { detail: slug }));
+  const closePhotos = useCallback(() => setPhotos(null), []);
+  /** “Next car” inside the photo view keeps the specifications behind it in step. */
+  const navigatePhotos = useCallback((slug: string) => {
+    setPhotos(slug);
+    setSelected(slug);
+  }, []);
 
   return (
     <section
@@ -383,7 +403,7 @@ export function HeroShowroom() {
                 {t.vehicleDetail.enquire}
               </Button>
               <div className="flex flex-wrap items-center gap-x-7 gap-y-1">
-                <Button variant="text" onClick={() => openPhotos(current.slug)}>
+                <Button variant="text" onClick={() => setPhotos(current.slug)}>
                   {t.showroom.photos}
                 </Button>
                 {next && next.slug !== current.slug && (
@@ -396,6 +416,8 @@ export function HeroShowroom() {
           </div>
         )}
       </aside>
+
+      <VehicleDetail vehicle={getVehicle(photos)} onClose={closePhotos} onNavigate={navigatePhotos} />
     </section>
   );
 }

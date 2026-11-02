@@ -30,7 +30,7 @@ type NavKey = keyof Dictionary['nav'];
 
 /** Header navigation (kept to four entries on purpose; short label for Practical). */
 export const primaryNav: { key: NavKey; href: string }[] = [
-  { key: 'collection', href: '#collection' },
+  { key: 'collection', href: '#top' },
   { key: 'experiences', href: '#experiences' },
   { key: 'practicalShort', href: '#practical' },
   { key: 'contact', href: '#contact' },
@@ -38,7 +38,7 @@ export const primaryNav: { key: NavKey; href: string }[] = [
 
 /** Footer navigation: every section, Our Story included. */
 export const footerNav: { key: NavKey; href: string }[] = [
-  { key: 'collection', href: '#collection' },
+  { key: 'collection', href: '#top' },
   { key: 'experiences', href: '#experiences' },
   { key: 'story', href: '#story' },
   { key: 'practical', href: '#practical' },

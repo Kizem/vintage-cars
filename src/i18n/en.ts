@@ -54,13 +54,7 @@ export const en = {
   },
   collection: {
     eyebrow: 'The Collection',
-    titleLine1: 'Iconic Cars.',
-    titleLine2: 'Timeless Stories.',
-    text: 'A carefully selected collection of automobiles, each with its own character and history.',
-    discover: 'Discover this car',
     number: 'N°',
-    closing: 'The availability of each car is confirmed personally for every request.',
-    askSpecific: 'Enquire about a specific car',
   },
   availability: {
     'on-request': 'Availability on request',

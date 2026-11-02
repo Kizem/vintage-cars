@@ -56,13 +56,7 @@ export const fr: Dictionary = {
   },
   collection: {
     eyebrow: 'La collection',
-    titleLine1: 'Des voitures de caractère.',
-    titleLine2: 'Chacune son histoire.',
-    text: 'Une sélection d’automobiles choisies avec soin, pour leur ligne comme pour leur histoire.',
-    discover: 'Découvrir la voiture',
     number: 'N°',
-    closing: 'Pour chaque demande, nous vous confirmons personnellement la disponibilité de la voiture.',
-    askSpecific: 'Demander un modèle précis',
   },
   availability: {
     'on-request': 'Disponibilité sur demande',
