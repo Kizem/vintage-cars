@@ -19,7 +19,12 @@ export interface CarSpec {
   seams: number[];
   trim: [number, number, number, number][];
   lamps: [number, number, number][]; lampKind: 'ds' | 'peugeot' | 'mercedes';
-  roofColorDiffers?: boolean;
+  /** Vitrage teinté transparent et habitacle visible (sellerie, finitions). */
+  cabin?: { glass: number; opacity: number; seat: number; trim: number };
+  /** Montants de pare-brise et de portes en inox plutôt que couleur caisse. */
+  pillarChrome?: boolean;
+  /** Trappe ronde dessinée sur l'aile arrière : [x, y, rayon]. */
+  flap?: [number, number, number];
 }
 
 /* Courbe lisse et sans dépassement à travers des points [x, y] */
@@ -41,22 +46,26 @@ export const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
 /* --- Les trois voitures --- */
 export const SPECS: Record<CarModelKey, CarSpec> = {
+  /* Citroën DS 21 berline, d'après les photos de la voiture : nez large et arrondi en plan, capot long et plongeant,
+     double optique sous globe aux angles, pavillon gris, poupe effilée aux feux rectangulaires. */
   ds: {
-    L: 4.84, H: 1.47, W: 1.79, wheelR: .315, wheelW: .17, hub: 'ds', hubTint: '#c9cbc9',
-    paint: { color: 0xaeb2b4, metalness: .3, roughness: .3 }, roof: { color: 0xd8d8d0, metalness: 0, roughness: .42 },
+    L: 4.84, H: 1.47, W: 1.79, wheelR: .315, wheelW: .17, hub: 'ds', hubTint: '#9fa3a4',
+    paint: { color: 0xa7abad, metalness: .55, roughness: .3 },
     axles: [-1.49, 1.635], arch: [[.385, 2], [.385, .47]], trackZ: [.74, .62],
-    floor: [[-2.42, .47], [-2.2, .33], [-1.9, .27], [1.7, .27], [2.15, .36], [2.42, .55]],
-    belt: [[-2.42, .50], [-2.1, .69], [-1.0, .85], [0, .94], [1.2, 1.0], [1.9, .95], [2.42, .63]],
-    deck: [[-2.42, .53], [-2.2, .68], [-1.6, .83], [-.9, .96], [-.55, 1.0], [1.4, 1.1], [1.95, 1.0], [2.3, .8], [2.42, .66]],
-    hw: [[-2.42, .5], [-2.25, .68], [-1.9, .84], [-1.2, .895], [.4, .895], [1.5, .84], [2.1, .7], [2.42, .46]],
-    glass: { xa: -.86, xb: -.12, xc: 1.02, xd: 2.02, roofY: 1.47, baseY: .98, tailY: 1.03, tumble: .74 },
-    lensColor: 0xf7eab8,
+    floor: [[-2.42, .4], [-2.3, .32], [-2.0, .27], [1.8, .27], [2.2, .34], [2.42, .46]],
+    belt: [[-2.42, .55], [-2.3, .62], [-1.9, .74], [-1.0, .87], [0, .93], [1.2, .98], [1.9, .93], [2.3, .79], [2.42, .68]],
+    deck: [[-2.42, .58], [-2.3, .66], [-1.9, .77], [-1.3, .88], [-.86, .95], [1.4, 1.05], [1.95, .99], [2.3, .84], [2.42, .72]],
+    hw: [[-2.42, .38], [-2.4, .6], [-2.35, .73], [-2.25, .81], [-2.1, .86], [-1.8, .885], [-.8, .895], [.5, .895], [1.5, .85], [2.05, .74], [2.3, .62], [2.42, .52]],
+    glass: { xa: -.86, xb: -.1, xc: 1.02, xd: 2.0, roofY: 1.47, baseY: .98, tailY: 1.04, tumble: .74 },
+    lensColor: 0xf2cf5a,
     pillars: [[-.04, .02, -.06, -.02], [.98, 1.03, .85, .92]],
     cPillar: [1.62, 1.84, 1.0, 1.12],
     seams: [-.62, .42, 1.42],
-    trim: [[-2.2, .47, 2.2, .53]],
-    lamps: [[-2.34, .63, .33], [-2.2, .67, .56]], lampKind: 'ds',
-    roofColorDiffers: true,
+    trim: [[-1.8, .34, 2.05, .34]],
+    lamps: [[-2.4, .63, .66], [-2.42, .63, .47]], lampKind: 'ds',
+    cabin: { glass: 0x3f4f49, opacity: .55, seat: 0x5c1513, trim: 0xd8ceb6 },
+    pillarChrome: true,
+    flap: [1.98, .74, .085],
   },
   p504: {
     L: 4.49, H: 1.46, W: 1.69, wheelR: .315, wheelW: .17, hub: 'peugeot', hubTint: '#c7c9c7',

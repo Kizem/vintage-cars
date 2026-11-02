@@ -2,7 +2,7 @@
    Ce sont des représentations graphiques, pas des photos. Unités : mètres. Le nez est côté -X. */
 import {
   Group, Mesh, BufferGeometry, Float32BufferAttribute, BoxGeometry, CylinderGeometry, CircleGeometry, TorusGeometry, SphereGeometry,
-  TubeGeometry, CatmullRomCurve3, Vector3, MeshPhysicalMaterial, MeshStandardMaterial, MeshBasicMaterial, CanvasTexture, SRGBColorSpace, DoubleSide, Shape, ExtrudeGeometry, LatheGeometry, Vector2,
+  TubeGeometry, CatmullRomCurve3, Vector3, MeshPhysicalMaterial, MeshStandardMaterial, MeshBasicMaterial, CanvasTexture, SRGBColorSpace, DoubleSide, Shape, ExtrudeGeometry, LatheGeometry, Vector2, CapsuleGeometry, PlaneGeometry,
   type Material, type Texture,
 } from 'three';
 import { curve, lerp, type CarSpec, type Pt } from './carspecs';
@@ -90,8 +90,9 @@ function hubTexture(style: CarSpec['hub'], tint: string) {
       g.fillStyle = '#1c1c1b'; for (let i = 0; i < 10; i++) { const a = i / 10 * 6.283; g.beginPath(); g.ellipse(c + Math.cos(a) * c * .74, c + Math.sin(a) * c * .74, c * .11, c * .055, a, 0, 7); g.fill(); }
       g.strokeStyle = 'rgba(30,30,30,.5)'; g.lineWidth = 3; g.beginPath(); g.arc(c, c, c * .42, 0, 7); g.stroke();
     } else {
-      for (let i = 0; i < 16; i++) { const a = i / 16 * 6.283; g.strokeStyle = 'rgba(40,40,40,.4)'; g.lineWidth = 4; g.beginPath(); g.moveTo(c + Math.cos(a) * c * .38, c + Math.sin(a) * c * .38); g.lineTo(c + Math.cos(a) * c * .88, c + Math.sin(a) * c * .88); g.stroke(); }
-      g.fillStyle = 'rgba(50,50,50,.6)'; g.beginPath(); g.arc(c, c, c * .14, 0, 7); g.fill();
+      /* DS : jante en tôle peinte, un seul gros enjoliveur central (modélisé à part) */
+      g.strokeStyle = 'rgba(25,25,25,.55)'; g.lineWidth = 5; g.beginPath(); g.arc(c, c, c * .8, 0, 7); g.stroke();
+      g.strokeStyle = 'rgba(255,255,255,.18)'; g.lineWidth = 3; g.beginPath(); g.arc(c, c, c * .72, 0, 7); g.stroke();
     }
   });
 }
@@ -106,7 +107,6 @@ export function buildCar(spec: CarSpec, env: Texture) {
   const chrome = new MeshStandardMaterial({ color: 0xf2f3f4, metalness: 1, roughness: .18, envMap: env, envMapIntensity: 1.5 });
   const dark = new MeshStandardMaterial({ color: 0x0b0d0c, roughness: .7, envMap: env, envMapIntensity: .3 });
   const black = new MeshBasicMaterial({ color: 0x050605 });
-  const glassMat = new MeshPhysicalMaterial({ color: 0x0d1513, metalness: .2, roughness: .06, clearcoat: 1, clearcoatRoughness: .04, envMap: env, envMapIntensity: .85 });
 
   /* Lignes de carrosserie dessinées comme sur un plan */
   const seamTex = canvasTex(2048, 512, (g, w, h) => {
@@ -116,6 +116,7 @@ export function buildCar(spec: CarSpec, env: Texture) {
     s.seams.forEach((x) => { g.beginPath(); g.moveTo(X(x), Y(.33)); g.lineTo(X(x + .02), Y(be(x) - .015)); g.stroke(); });
     g.fillStyle = 'rgba(10,12,12,.85)';
     [s.seams[0] + .78, s.seams[1] + .72].forEach((x) => { g.fillRect(X(x), Y(be(x) - .1), 26, 4); });
+    if (s.flap) { const [fx, fy, fr] = s.flap; g.beginPath(); g.ellipse(X(fx), Y(fy), fr / 6 * w, fr / 1.6 * h, 0, 0, 7); g.stroke(); }
     /* bas de caisse */
     g.fillStyle = 'rgba(6,8,8,.88)'; g.fillRect(0, Y(.325), w, h);
   });
@@ -156,12 +157,35 @@ export function buildCar(spec: CarSpec, env: Texture) {
     const c = catmull([[wb, yb], [lerp(wb, wt, .55), lerp(yb, yt, .58)], [wt * 1.0, yt - crown], [wt * .62, yt - crown * .22], [0, yt]], 40);
     return c[Math.round(t * 40)];
   };
+  /* Habitacle vu à travers les vitres : plancher, planche de bord et volant crème, sièges rouge foncé */
+  function buildCabin(c: NonNullable<CarSpec['cabin']>) {
+    const seat = new MeshStandardMaterial({ color: c.seat, roughness: .55 });
+    const trim = new MeshStandardMaterial({ color: c.trim, roughness: .45 });
+    const floorMat = new MeshStandardMaterial({ color: 0x1d1514, roughness: .9, side: DoubleSide });
+    body.add(new Mesh(loft(stations(gl.xa, gl.xd, 24), (x): Pt[] => { const y = Math.min(be(x), de(x)) - .02; const w = hw(x) * .9; return [[w, y], [0, y]]; }, { caps: false }), floorMat));
+    const y0 = (x: number) => Math.min(be(x), de(x)) - .02;
+    const box = (x: number, y: number, z: number, sx: number, sy: number, sz: number, mat: Material, lean = 0) => { const m = new Mesh(new BoxGeometry(sx, sy, sz, 2, 2, 2), mat); m.position.set(x, y, z); m.rotation.z = lean; body.add(m); return m; };
+    /* planche de bord crème sous le pare-brise */
+    box(gl.xa + .42, y0(gl.xa + .42) + .05, 0, .22, .08, hw(gl.xa + .42) * 1.5, trim);
+    /* volant monobranche crème, à gauche */
+    const wheel = new Mesh(new TorusGeometry(.18, .013, 8, 36), trim); wheel.position.set(gl.xa + .68, y0(gl.xa + .68) + .17, .38); wheel.rotation.set(0, Math.PI / 2, -.55); body.add(wheel);
+    const spoke = new Mesh(new CylinderGeometry(.009, .009, .18, 8), trim); spoke.position.set(gl.xa + .7, y0(gl.xa + .7) + .1, .38); spoke.rotation.x = .15; body.add(spoke);
+    /* dossiers avant et banquette arrière */
+    [.36, -.36].forEach((z) => box(.32, y0(.32) + .17, z, .12, .36, .46, seat, -.2));
+    box(1.3, y0(1.3) + .16, 0, .13, .34, 1.24, seat, -.24);
+    /* tablette arrière */
+    box(1.72, y0(1.72) + .03, 0, .36, .02, hw(1.72) * 1.6, seat);
+  }
   const glassGeo = loft(stations(gl.xa - .05, gl.xd + .05, 54), (x) => { const out: Pt[] = []; for (let k = 40; k >= 0; k--) { const [z, y] = gh(x, k / 40); out.push([z, y]); } return out.reverse().map((p) => p).reverse(); }, { caps: false });
-  const glass = new Mesh(glassGeo, new MeshPhysicalMaterial({ side: DoubleSide, color: 0x0d1513, metalness: .2, roughness: .08, clearcoat: 1, clearcoatRoughness: .05, envMap: env, envMapIntensity: .8 }));
+  /* vitrage : sombre et réfléchissant, ou teinté et transparent quand l'habitacle est modélisé */
+  const glass = new Mesh(glassGeo, s.cabin
+    ? new MeshPhysicalMaterial({ side: DoubleSide, color: s.cabin.glass, roughness: .04, clearcoat: 1, clearcoatRoughness: .03, transparent: true, opacity: s.cabin.opacity, depthWrite: false, envMap: env, envMapIntensity: 1.1 })
+    : new MeshPhysicalMaterial({ side: DoubleSide, color: 0x0d1513, metalness: .2, roughness: .08, clearcoat: 1, clearcoatRoughness: .05, envMap: env, envMapIntensity: .8 }));
+  if (s.cabin) { glass.renderOrder = 4; buildCabin(s.cabin); }
   body.add(glass);
 
   const roofMat = s.roof ? new MeshPhysicalMaterial({ ...s.roof, clearcoat: .6, clearcoatRoughness: .2, envMap: env, envMapIntensity: .9, side: DoubleSide }) : new MeshPhysicalMaterial({ ...s.paint, clearcoat: 1, clearcoatRoughness: .07, envMap: env, envMapIntensity: 1.15, side: DoubleSide });
-  const pillarMat: Material = s.roof ? new MeshStandardMaterial({ color: 0xcfd2d2, metalness: .95, roughness: .2, envMap: env }) : roofMat;
+  const pillarMat: Material = s.roof || s.pillarChrome ? new MeshStandardMaterial({ color: 0xcfd2d2, metalness: .95, roughness: .2, envMap: env }) : roofMat;
 
   /* Pièce posée sur l'habitacle : une grille (x, t) légèrement décollée */
   function patch(mat: Material, f: (u: number, v: number) => Pt, nu = 16, nv = 8) {
@@ -181,7 +205,7 @@ export function buildCar(spec: CarSpec, env: Texture) {
   /* montant de pare-brise : du coin de la baie jusqu'au coin du toit */
   patch(pillarMat, (u, v) => [lerp(gl.xa + .1, gl.xb + .06, u), lerp(.03, railT - .05, u) + v * .1], 18, 2);
   /* montant de lunette : du coin du toit jusqu'au coin de la malle */
-  patch(pillarMat, (u, v) => [lerp(gl.xc - .02, gl.xd - .14, u), lerp(railT - .05, .03, u) + v * .075], 18, 2);
+  patch(s.pillarChrome ? roofMat : pillarMat, (u, v) => [lerp(gl.xc - .02, gl.xd - .14, u), lerp(railT - .05, .03, u) + v * .075], 18, 2);
   patch(pillarMat, (u, v) => [lerp(gl.xb, gl.xc, u), lerp(railT - .06, railT + .01, v)], 16, 2);
   /* montants centraux */
   s.pillars.forEach(([x0, x1, x2, x3]) => patch(pillarMat, (u, v) => [lerp(lerp(x0, x2, v), lerp(x1, x3, v), u), v * railT], 3, 6));
@@ -278,25 +302,81 @@ export function buildCar(spec: CarSpec, env: Texture) {
     [1, -1].forEach((sg) => { const o = new Mesh(new BoxGeometry(.05, .13, .045), chrome); o.position.set(nx - .045, .46, sg * .32); body.add(o); });
     const lion = new Mesh(new CylinderGeometry(.028, .028, .012, 16), chrome); lion.rotation.z = Math.PI / 2; lion.position.set(nx - .03, .845, 0); body.add(lion);
   } else {
-    /* DS : nez plongeant, double optique sous verre, feux en trompette */
+    /* DS 21, d'après les photos : nez large et arrondi, double optique (grande à l'extérieur, petite à l'intérieur)
+       aux ampoules jaunes sous un globe, clignotants aux angles, pare-chocs à butoirs, prise d'air noire ;
+       poupe effilée : feux rouges rectangulaires, plaque, chevrons dorés et monogramme DS21 sur la malle,
+       feux en trompette en haut des montants arrière. */
+    const gold = new MeshStandardMaterial({ color: 0xc8a24c, metalness: 1, roughness: .26, envMap: env, envMapIntensity: 1.3 });
+    const globe = new MeshPhysicalMaterial({ color: 0xffffff, roughness: .02, transparent: true, opacity: .2, clearcoat: 1, clearcoatRoughness: .02, envMap: env, envMapIntensity: 1.6, depthWrite: false });
+    const crease = new MeshBasicMaterial({ color: 0x2b2e2e });
+    /* x de la surface pour une demi-largeur donnée, au nez et à la poupe */
+    const surfX = (z: number, front: boolean) => {
+      let a = front ? nx : 1.2; let b = front ? -1.5 : tx;
+      for (let k = 0; k < 30; k++) { const m = (a + b) / 2; if ((hw(m) >= z) === front) b = m; else a = m; }
+      return (a + b) / 2;
+    };
+    /* hauteur du dessus de la caisse à une distance z de l'axe */
+    const topY = (x: number, z: number) => {
+      const sec = halfSection(x);
+      for (let i = sec.length - 1; i > 0; i--) { const [z1, y1] = sec[i]; const [z0, y0] = sec[i - 1]; if (z0 >= z && z1 <= z) return lerp(y1, y0, (z - z1) / Math.max(1e-6, z0 - z1)); }
+      return de(x);
+    };
+    /* orientation (autour de Y) d'un élément posé sur la face avant, pour qu'il regarde selon la normale de l'aile */
+    const yawAt = (x: number) => { const d = (hw(x + .01) - hw(x - .01)) / .02; return Math.atan2(1, Math.max(.001, d)); };
+
     [1, -1].forEach((sg) => {
-      /* carénage de verre, posé à plat sur l'aile */
-      const fair = new Mesh(new SphereGeometry(1, 28, 16), glassMat); fair.scale.set(.29, .07, .13); fair.position.set(-2.11, .625, sg * .5); fair.rotation.y = -sg * .78; fair.rotation.z = .16; body.add(fair);
-      [[-2.235, .612, .385], [-2.0, .652, .61]].forEach(([x, y, z]) => {
-        const l = new Mesh(new SphereGeometry(.078, 20, 12), lens); l.scale.set(.75, .42, .75); l.position.set(x, y + .02, sg * z); body.add(l);
+      const pods: [number, number][] = [[.66, .085], [.47, .068]];
+      pods.forEach(([z, r]) => {
+        const x = surfX(z, true) + .06;
+        const g = new Group(); g.position.set(x, .635, sg * z); g.rotation.y = sg * yawAt(x); body.add(g);
+        const ring = new Mesh(new TorusGeometry(r, r * .1, 8, 32), chrome); ring.rotation.y = Math.PI / 2; g.add(ring);
+        const cup = new Mesh(new SphereGeometry(r * .96, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2), chrome); cup.rotation.z = -Math.PI / 2; cup.scale.y = .55; cup.position.x = .012; g.add(cup);
+        const bulb = new Mesh(new SphereGeometry(r * .9, 24, 12), lens); bulb.scale.set(.32, 1, 1); bulb.position.x = -.004; g.add(bulb);
+        lampPoints.push([x - .03, .635, sg * z]);
       });
-      /* feux en trompette en haut du montant arrière */
-      const tr = new Mesh(new CylinderGeometry(.036, .016, .2, 12), red); tr.rotation.z = Math.PI / 2 - .05; const [z, y] = gh(1.04, railT - .03); tr.position.set(1.12, y - .004, sg * (z + .012)); body.add(tr);
+      /* le globe couvre les deux optiques, dans le galbe de l'aile */
+      const zm = .565; const xm = surfX(zm, true) + .045;
+      const fair = new Mesh(new SphereGeometry(1, 36, 18), globe); fair.scale.set(.05, .095, .2); fair.position.set(xm, .635, sg * zm); fair.rotation.y = sg * yawAt(xm); fair.renderOrder = 6; body.add(fair);
+      /* clignotant à l'angle, sous l'optique */
+      const xa = surfX(.74, true) + .03;
+      const blink = new Mesh(new SphereGeometry(.05, 16, 10), amber); blink.scale.set(.35, .45, 1); blink.position.set(xa, .5, sg * .74); blink.rotation.y = sg * yawAt(xa); body.add(blink);
+      /* butoirs avant et arrière */
+      [[nx - .045, .41], [tx + .03, .46]].forEach(([x, y]) => { const o = new Mesh(new CapsuleGeometry(.026, .1, 4, 12), chrome); o.position.set(x, y, sg * .34); body.add(o); });
+      /* lignes du capot, le long des ailes */
+      const cl: P3[] = []; for (let i = 0; i <= 18; i++) { const x = lerp(-2.32, -.95, i / 18); const z = hw(x) * .74; cl.push([x, topY(x, z) + .002, sg * z]); }
+      body.add(tube(cl, .0035, crease));
+      /* poignées de portes */
+      [.3, 1.3].forEach((x) => { const h = new Mesh(new CapsuleGeometry(.011, .09, 4, 8), chrome); h.rotation.z = Math.PI / 2; h.position.set(x, be(x) - .085, sg * (hw(x) + .008)); body.add(h); });
+      /* feux arrière rectangulaires, cerclés de chrome, et catadioptre rond à l'angle */
+      const xr = surfX(.36, false) - .012;
+      const bez = plate(xr + .006, .58, sg * .36, .23, .1, .015, chrome, .012); bez.rotation.y = Math.PI / 2;
+      const tl = plate(xr + .016, .58, sg * .36, .2, .075, .01, red, .012); tl.rotation.y = Math.PI / 2;
+      const xc = surfX(.5, false) - .01;
+      const cat = new Mesh(new CylinderGeometry(.026, .026, .012, 18), red); cat.rotation.z = Math.PI / 2; cat.position.set(xc + .006, .5, sg * .5); body.add(cat);
+      /* feux en trompette en haut des montants arrière */
+      const tr = new Mesh(new CylinderGeometry(.036, .016, .2, 14), amber); tr.rotation.z = Math.PI / 2 - .05; const [z, y] = gh(1.04, railT - .03); tr.position.set(1.12, y - .004, sg * (z + .012)); body.add(tr);
     });
-    lampPoints.push([-2.26, .635, .385], [-2.26, .635, -.385]);
-    /* chevrons sur le nez */
-    [0, 1].forEach((k) => { [1, -1].forEach((sg) => { const c = new Mesh(new BoxGeometry(.006, .012, .1), chrome); c.position.set(-2.425, .47 + k * .03, sg * .046); c.rotation.x = sg * -.45; body.add(c); }); });
-    bumper(nx + .04, .405, .05, .03, .8, .7);
-    bumper(tx - .06, .5, .06, .028, .8, .62);
-    [1, -1].forEach((sg) => { const rr = plate(tx - .1, .70, sg * .3, .17, .06, .012, red, .012); rr.rotation.y = Math.PI / 2 + sg * -.45; });
+    /* pare-chocs : avant à creux central, arrière bas ; prise d'air noire sous l'avant */
+    bumper(nx + .04, .41, .05, .03, .8, .7);
+    const v: P3[] = [[nx - .03, .41, -.12], [nx - .045, .365, 0], [nx - .03, .41, .12]]; body.add(tube(v, .012, chrome));
+    const intake = new Mesh(new BoxGeometry(.03, .06, .9), dark); intake.position.set(nx + .07, .335, 0); body.add(intake);
+    bumper(tx - .05, .46, .06, .028, .8, .62);
+    /* plaque arrière (sans inscription), poignée de malle */
+    const xp = surfX(.2, false);
+    const plateBox = new Mesh(new BoxGeometry(.02, .11, .5), black); plateBox.position.set(xp - .004, .6, 0); body.add(plateBox);
+    const handle = new Mesh(new CapsuleGeometry(.012, .05, 4, 8), chrome); handle.rotation.x = Math.PI / 2; handle.position.set(xp - .03, .7, 0); body.add(handle);
+    /* chevrons dorés sur la malle, pointe vers l'avant ; monogramme DS21 à droite */
+    const lay = (m: Mesh, x: number, z: number, lift = .004) => {
+      const slope = (topY(x + .02, Math.abs(z)) - topY(x - .02, Math.abs(z))) / .04;
+      const g = new Group(); g.position.set(x, topY(x, Math.abs(z)) + lift, z); g.rotation.z = Math.atan(slope); m.rotation.x = -Math.PI / 2; g.add(m); body.add(g);
+    };
+    const chev = new Shape(); chev.moveTo(.012, -.075); chev.lineTo(-.02, 0); chev.lineTo(.012, .075); chev.lineTo(.026, .075); chev.lineTo(-.006, 0); chev.lineTo(.026, -.075); chev.closePath();
+    const chevG = new ExtrudeGeometry(chev, { depth: .004, bevelEnabled: false });
+    [0, .042].forEach((dx) => lay(new Mesh(chevG, gold), 2.06 + dx, 0));
+    const ds21 = canvasTex(256, 64, (g, w, h) => { g.clearRect(0, 0, w, h); g.fillStyle = '#d6b25c'; g.font = 'italic 700 52px Georgia, serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('DS21', w / 2, h / 2 + 2); });
+    lay(new Mesh(new PlaneGeometry(.2, .05), new MeshBasicMaterial({ map: ds21, transparent: true, depthWrite: false })), 2.2, -.33, .006);
   }
 
-  /* Plaque, sans inscription */
   /* Roues */
   const tireMat = new MeshStandardMaterial({ color: 0x0c0c0c, roughness: .82 });
   const hubMap = hubTexture(s.hub, s.hubTint);
@@ -312,6 +392,7 @@ export function buildCar(spec: CarSpec, env: Texture) {
       const tire = new Mesh(tireG, tireMat); tire.rotation.x = Math.PI / 2; spin.add(tire);
       const rim = new Mesh(new TorusGeometry(s.wheelR * .66, .012, 8, 36), rimMat); rim.position.z = sg * s.wheelW * .49; spin.add(rim);
       const hub = new Mesh(new CircleGeometry(s.wheelR * .64, 36), hubMat); hub.position.z = sg * s.wheelW * .505; if (sg < 0) hub.rotation.y = Math.PI; spin.add(hub);
+      if (s.hub === 'ds') { const dome = new Mesh(new SphereGeometry(s.wheelR * .45, 28, 12, 0, Math.PI * 2, 0, Math.PI / 2), chrome); dome.rotation.x = sg * Math.PI / 2; dome.scale.y = .32; dome.position.z = sg * s.wheelW * .5; spin.add(dome); }
       root.add(w); wheels.push(spin);
     });
   });
