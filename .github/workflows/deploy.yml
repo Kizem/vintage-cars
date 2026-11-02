@@ -1,7 +1,8 @@
 name: Deploy to GitHub Pages
 
-# Production (main) at the site root, and the 3d-design preview under /3d-design/.
-# Both are rebuilt on every run, so one never removes the other.
+# Publishes the branch that triggered the run at the site root: the last
+# deployment wins. To switch versions, run this workflow (Actions tab,
+# "Run workflow") on main or on 3d-design.
 on:
   push:
     branches: [main, 3d-design]
@@ -21,32 +22,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: main
-          path: site-main
-      - uses: actions/checkout@v4
-        with:
-          ref: 3d-design
-          path: site-3d
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Build main (site root)
-        working-directory: site-main
-        run: npm ci && npm run build
-      - name: Build 3d-design (preview)
-        working-directory: site-3d
-        run: npm ci && npm run build
-      - name: Assemble
-        run: |
-          mkdir -p out
-          cp -r site-main/dist/. out/
-          mkdir -p out/3d-design
-          cp -r site-3d/dist/. out/3d-design/
+          cache: npm
+      - run: npm ci
+      - run: npm run build
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: out
+          path: dist
 
   deploy:
     needs: build
