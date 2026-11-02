@@ -69,6 +69,8 @@ export interface Experience {
   title: Localized;
   /** Chapter text, two sentences at most. */
   description: Localized;
+  /** Second paragraph, under the first. */
+  detail: Localized;
   cta: Localized;
   image: MediaAsset;
 }

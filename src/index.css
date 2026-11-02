@@ -43,6 +43,20 @@ body { margin: 0; background: var(--ivory); }
 .em-mono > span:first-child { transform: translate(.1em, -.12em); }
 .em-mono > span:last-child { transform: translate(-.08em, .36em); }
 .em-mono--lg { font-size: clamp(6rem, 13cqw, 11rem); }
+.em-mono--sm { font-size: 1.55rem; }
+
+/* --- Logo : monogramme et nom, en haut à gauche ; au-dessus du titre du garage sur téléphone --- */
+.em-brand { display: inline-flex; align-items: center; gap: .7rem; color: inherit; text-decoration: none; pointer-events: auto; min-height: 44px; }
+.em-brand__word { font-family: var(--font-display); font-weight: 400; font-size: 1.05rem; letter-spacing: .1em; text-transform: uppercase; }
+.em-nav .em-brand--nav { position: absolute; left: max(1.5rem, env(safe-area-inset-left, 0px)); top: .35rem; display: inline-flex; padding: .35rem 0 0; background: none; }
+.em-brand--garage { display: none; }
+@media (max-width: 1099px) { .em-nav .em-brand--nav .em-brand__word { display: none; } }
+@media (max-width: 699px) {
+  .em-nav .em-brand--nav { display: none; }
+  .em-brand--garage { display: inline-flex; pointer-events: auto; }
+  .em-brand--garage .em-mono { display: none; }
+  .em-parking__top { gap: .2rem; top: 2.6rem; }
+}
 
 /* --- Compteur --- */
 .em-odo { display: inline-flex; gap: 2px; font-variant-numeric: tabular-nums; vertical-align: -.22em; }
@@ -159,6 +173,24 @@ body { margin: 0; background: var(--ivory); }
 .em-figure__frame { position: relative; width: 100%; height: var(--fig-h, 24rem); overflow: hidden; background: var(--forest-deep); }
 .em-figure__frame img { display: block; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .em-figure__frame img:not([src]) { visibility: hidden; }
+
+/* --- Chapitres d'expériences, à la manière d'un portfolio : texte à gauche, photo entière à droite --- */
+.em-sc--exp { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); padding: clamp(3.8rem, 9cqh, 5.5rem) 0 clamp(1.6rem, 4cqh, 3rem); align-items: start; }
+.em-exp__head, .em-exp__body { grid-column: 1; padding-inline: clamp(1.5rem, 4cqw, 4rem); display: flex; flex-direction: column; align-items: center; }
+.em-exp__body { align-self: center; padding-bottom: clamp(2rem, 8cqh, 6rem); }
+.em-exp__body .em-text + .em-text { margin-top: 1rem; }
+.em-exp__media { grid-column: 2; grid-row: 1 / 3; align-self: stretch; min-height: 0; padding-inline: clamp(1.5rem, 4cqw, 4rem); display: flex; --img-w: calc(50cqw - 2 * clamp(1.5rem, 4cqw, 4rem)); --img-max: calc(100cqh - clamp(3.8rem, 9cqh, 5.5rem) - clamp(1.6rem, 4cqh, 3rem) - 2.6rem); }
+.em-figure--natural { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .8rem; height: 100%; }
+.em-figure__cap { font-size: .8rem; }
+.em-figure--natural .em-figure__frame { width: auto; height: auto; max-width: 100%; background: none; }
+.em-figure--natural .em-figure__frame img { position: static; width: auto; height: auto; max-width: var(--img-w, 100%); max-height: var(--img-max); object-fit: contain; }
+@container (max-width: 899px) {
+  .em-sc--exp { display: flex; flex-direction: column; justify-content: flex-start; padding-inline: max(16px, env(safe-area-inset-left, 0px)); gap: clamp(.7rem, 2cqh, 1.4rem); }
+  .em-exp__head, .em-exp__body { padding-inline: 0; padding-bottom: 0; }
+  .em-exp__media { order: 0; padding: 0; width: 100%; flex: none; --img-w: calc(100cqw - 2 * max(16px, env(safe-area-inset-left, 0px))); --img-max: clamp(7rem, 28cqh, 20rem); }
+  .em-exp__head { order: -1; }
+  .em-exp__body { order: 1; }
+}
 .em-text { margin: 0; max-width: 36rem; font-size: 1.0625rem; line-height: 1.65; text-wrap: pretty; }
 .em-text + .em-text { margin-top: 1.2rem; }
 .em-text--small { font-size: .875rem; color: var(--ink-soft); margin-top: 1.1rem; }

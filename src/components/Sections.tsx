@@ -8,7 +8,7 @@ import { ActionLink } from './ui';
 
 /* Les sections calmes, sur l'ivoire, sous le parking. Une idée par section. */
 
-/** Un chapitre : N°, titre, image, texte, action qui préremplit l'expérience. */
+/** Un chapitre, à la manière d'un portfolio : N° et titre en haut, texte et action plus bas, la photo entière à côté. */
 export function Chapter({ experience: x, n, inert }: { experience: Experience; n: number; inert: boolean }) {
   const { t, l } = useI18n();
   const { startEnquiry } = useEnquiry();
@@ -16,32 +16,38 @@ export function Chapter({ experience: x, n, inert }: { experience: Experience; n
   return (
     <section
       id={id}
-      className="em-sc em-sc--chapter"
+      className="em-sc em-sc--exp"
       data-tone="light"
       data-part={n > 1 ? 'sortie-1' : undefined}
       inert={inert}
       aria-labelledby={`${id}-title`}
     >
-      <p className="em-no">{fill(t.chapter.number, { n })}</p>
-      <h2 className="em-title" id={`${id}-title`}>
-        {l(x.title)}
-      </h2>
-      <SectionImage image={x.image} sizes="(max-width: 62rem) 100vw, 62rem" />
-      <p className="em-text">{l(x.description)}</p>
-      <ActionLink onClick={() => startEnquiry({ experience: x.id })}>{l(x.cta)}</ActionLink>
+      <div className="em-exp__head">
+        <p className="em-no">{fill(t.chapter.number, { n })}</p>
+        <h2 className="em-title" id={`${id}-title`}>
+          {l(x.title)}
+        </h2>
+      </div>
+      <div className="em-exp__body">
+        <p className="em-text">{l(x.description)}</p>
+        <p className="em-text">{l(x.detail)}</p>
+        <ActionLink onClick={() => startEnquiry({ experience: x.id })}>{l(x.cta)}</ActionLink>
+      </div>
+      <div className="em-exp__media">
+        <SectionImage image={x.image} sizes="(max-width: 899px) 100vw, 50vw" natural />
+      </div>
     </section>
   );
 }
 
-/** Bon à savoir : image à droite, les faits, les questions dépliables. */
-export function GoodToKnow({ n, inert }: { n: number; inert: boolean }) {
+/** Bon à savoir : des explications sur les expériences (pas un chapitre numéroté), image à droite. */
+export function GoodToKnow({ inert }: { inert: boolean }) {
   const { t } = useI18n();
   const g = t.goodToKnow;
   return (
     <section id="savoir" className="em-sc em-sc--split em-sc--flip" data-tone="light" data-part="sortie-1" inert={inert} aria-labelledby="savoir-title">
       <SectionImage image={sectionImages.practical} sizes="(max-width: 899px) 100vw, 40vw" />
       <div className="em-sc__col">
-        <p className="em-no">{fill(t.chapter.number, { n })}</p>
         <h2 className="em-title" id="savoir-title">
           {g.title}
         </h2>

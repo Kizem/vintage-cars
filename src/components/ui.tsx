@@ -1,4 +1,5 @@
 import type { MouseEvent, ReactNode } from 'react';
+import { scrollToId } from '../lib/pageNav';
 
 /** Le symbole de marque : É et M décalés. */
 export function Monogram() {
@@ -7,6 +8,27 @@ export function Monogram() {
       <span>É</span>
       <span>M</span>
     </span>
+  );
+}
+
+/** Le logo, toujours visible : monogramme et nom de la maison. Mène au garage. */
+export function Brand({ className = '' }: { className?: string }) {
+  return (
+    <a
+      className={`em-brand ${className}`}
+      aria-label="Époque Motors"
+      href="#garage"
+      onClick={(e) => {
+        e.preventDefault();
+        scrollToId('garage');
+      }}
+    >
+      <span className="em-mono em-mono--sm" aria-hidden="true">
+        <span>É</span>
+        <span>M</span>
+      </span>
+      <span className="em-brand__word">Époque Motors</span>
+    </a>
   );
 }
 

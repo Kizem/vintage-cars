@@ -35,12 +35,14 @@ function useNear(ref: RefObject<HTMLElement | null>) {
   return near;
 }
 
-export function SectionImage({ image, sizes }: { image: MediaAsset; sizes: string }) {
+/** `natural` : la photo entière (sans recadrage), légende au-dessus, comme dans un portfolio. */
+export function SectionImage({ image, sizes, natural = false }: { image: MediaAsset; sizes: string; natural?: boolean }) {
   const { l } = useI18n();
   const frame = useRef<HTMLDivElement>(null);
   const near = useNear(frame);
   return (
-    <figure className="em-figure">
+    <figure className={`em-figure${natural ? ' em-figure--natural' : ''}`}>
+      {natural && image.caption && <figcaption className="em-figure__cap">{l(image.caption)}</figcaption>}
       <div className="em-figure__frame" ref={frame}>
         <img
           src={near ? image.src : undefined}
@@ -50,7 +52,7 @@ export function SectionImage({ image, sizes }: { image: MediaAsset; sizes: strin
           height={image.height}
           alt={l(image.alt)}
           decoding="async"
-          style={{ objectPosition: image.focalPoint }}
+          style={natural ? undefined : { objectPosition: image.focalPoint }}
         />
         {image.credit && <span className="em-credit">{l(image.credit)}</span>}
       </div>

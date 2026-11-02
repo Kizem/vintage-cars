@@ -1,6 +1,7 @@
 import { useEffect, useState, type MouseEvent } from 'react';
 import { primaryNav } from '../data/site';
 import { useI18n } from '../i18n/I18nContext';
+import { Brand } from './ui';
 import { currentIndex, scroller, scrollToId, sections } from '../lib/pageNav';
 
 /**
@@ -49,6 +50,7 @@ export function TopNav() {
 
   return (
     <nav className={`em-nav em-nav--${tone} em-nav--fixed`} aria-label={t.nav.label}>
+      <Brand className="em-brand--nav" />
       <ul>
         {primaryNav.map((item, i) => (
           <li key={item.id}>

@@ -26,7 +26,7 @@ function Page() {
         {experiences.map((x, i) => (
           <Chapter key={x.id} experience={x} n={i + 1} inert={focusOpen} />
         ))}
-        <GoodToKnow n={experiences.length + 1} inert={focusOpen} />
+        <GoodToKnow inert={focusOpen} />
         <About inert={focusOpen} />
         <Write inert={focusOpen} />
       </main>
