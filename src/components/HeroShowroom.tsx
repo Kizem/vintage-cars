@@ -5,6 +5,7 @@ import { fill, useI18n } from '../i18n/I18nContext';
 import { useEnquiry } from '../context/EnquiryContext';
 import { Button, ButtonLink } from './ui/Button';
 import { VehicleDetail } from './VehicleDetail';
+import { Plinth } from './ui/Plinth';
 
 const cars = vehicles.filter((v): v is Vehicle & Required<Pick<Vehicle, 'miniature'>> => Boolean(v.miniature));
 
@@ -419,17 +420,5 @@ export function HeroShowroom() {
 
       <VehicleDetail vehicle={getVehicle(photos)} onClose={closePhotos} onNavigate={navigatePhotos} />
     </section>
-  );
-}
-
-/** A turntable seen in perspective: top face, edge, and a glint that travels round the rim. */
-function Plinth() {
-  return (
-    <svg className="showroom-plinth" viewBox="0 0 400 74" fill="none" aria-hidden="true">
-      <path d="M8 30 v14 a192 26 0 0 0 384 0 v-14" className="plinth-edge" />
-      <ellipse cx="200" cy="30" rx="192" ry="26" className="plinth-top" />
-      <ellipse cx="200" cy="30" rx="150" ry="19" className="plinth-ring" />
-      <ellipse cx="200" cy="30" rx="192" ry="26" className="plinth-glint" pathLength={1000} />
-    </svg>
   );
 }

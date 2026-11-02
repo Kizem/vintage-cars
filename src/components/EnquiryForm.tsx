@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState, type ChangeEvent, type FormEvent, type ReactNode } from 'react';
+import { useEffect, useId, useRef, useState, type CSSProperties, type ChangeEvent, type FormEvent, type ReactNode } from 'react';
 import { experiences } from '../data/experiences';
 import { site } from '../data/site';
 import { getVehicle, vehicles } from '../data/vehicles';
@@ -16,6 +16,7 @@ import {
 } from '../lib/enquiry';
 import { Button, ButtonLink } from './ui/Button';
 import { Reveal } from './ui/Reveal';
+import { Plinth } from './ui/Plinth';
 
 type Status = 'idle' | 'submitting' | SubmitResult['status'];
 
@@ -145,7 +146,8 @@ export function EnquiryForm() {
           </h2>
           <p className="mb-12 max-w-sm text-[1.0625rem] leading-relaxed text-muted-ink">{f.text}</p>
 
-          <dl className="space-y-6 border-t border-line pt-8 text-[0.975rem]">
+          <span aria-hidden="true" className="motion-rule block h-px bg-line" />
+          <dl className="space-y-6 pt-8 text-[0.975rem]">
             <div>
               <dt className="eyebrow mb-1 text-muted-ink">{f.email}</dt>
               <dd>
@@ -221,16 +223,35 @@ export function EnquiryForm() {
                     )}
                   </Field>
                   <Field name="vehicle" label={f.vehicle} optionalLabel={t.common.optional} error={err('vehicle')}>
-                    {(a) => (
-                      <select {...a} name="vehicle" value={values.vehicle} onChange={update} className="field-control">
-                        <option value="">{f.noPreference}</option>
-                        {vehicles.map((v) => (
-                          <option key={v.slug} value={v.slug}>
-                            {l(v.name)}
-                          </option>
-                        ))}
-                      </select>
-                    )}
+                    {(a) => {
+                      const mini = getVehicle(values.vehicle)?.miniature;
+                      return (
+                        <div className="relative">
+                          <select
+                            {...a}
+                            name="vehicle"
+                            value={values.vehicle}
+                            onChange={update}
+                            className={`field-control ${mini ? 'pr-[7.75rem]!' : ''}`}
+                          >
+                            <option value="">{f.noPreference}</option>
+                            {vehicles.map((v) => (
+                              <option key={v.slug} value={v.slug}>
+                                {l(v.name)}
+                              </option>
+                            ))}
+                          </select>
+                          {/* The chosen car on a small lit plinth (decorative: the select names it). */}
+                          {mini && (
+                            <span key={values.vehicle} aria-hidden="true" className="form-mini">
+                              <span className="form-mini-beam motion-beam" />
+                              <img src={mini.src} alt="" width={mini.width} height={mini.height} decoding="async" draggable={false} />
+                              <Plinth className="form-plinth" />
+                            </span>
+                          )}
+                        </div>
+                      );
+                    }}
                   </Field>
                   <Field name="date" label={f.date} optionalLabel={t.common.optional} error={err('date')} hint={f.dateHint}>
                     {(a) => <input {...a} name="date" type="date" min={todayISO()} value={values.date} onChange={update} className="field-control" />}
@@ -291,7 +312,8 @@ export function EnquiryForm() {
                   )}
                 </div>
 
-                <div className="mt-10 flex flex-col gap-6 border-t border-line pt-8 sm:flex-row sm:items-center sm:justify-between">
+                <span aria-hidden="true" className="motion-gauge motion-rule mt-10 block text-charcoal/25" style={{ '--draw-delay': '600ms' } as CSSProperties} />
+                <div className="flex flex-col gap-6 pt-8 sm:flex-row sm:items-center sm:justify-between">
                   <Button type="submit" arrow disabled={status === 'submitting'} aria-busy={status === 'submitting'}>
                     {status === 'submitting' ? f.submitting : f.submit}
                   </Button>

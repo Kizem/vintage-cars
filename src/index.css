@@ -941,3 +941,71 @@ dialog[open] {
     transition: none;
   }
 }
+
+/* --- Enquiry form: the chosen car on a small lit plinth ---------------------- */
+.form-mini {
+  position: absolute;
+  right: 1.75rem;
+  bottom: 0;
+  display: flex;
+  width: 6.5rem;
+  height: 100%;
+  flex-direction: column;
+  justify-content: flex-end;
+  pointer-events: none;
+}
+.form-mini img {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 2.35rem;
+  object-fit: contain;
+  object-position: bottom;
+  animation: form-mini-in 0.9s var(--ease-editorial) both 0.15s;
+}
+.form-mini-beam {
+  --beam-rest: 0.7;
+  --beam-delay: 0ms;
+  inset: -0.5rem 0 0.5rem;
+}
+.form-plinth {
+  display: block;
+  width: 92%;
+  margin: -0.45rem auto -0.6rem;
+  overflow: visible;
+}
+.form-plinth .plinth-edge {
+  fill: rgb(179 154 112 / 0.16);
+  stroke: rgb(179 154 112 / 0.4);
+}
+.form-plinth .plinth-top {
+  fill: var(--color-offwhite);
+  stroke: var(--color-champagne);
+}
+.form-plinth .plinth-ring {
+  stroke: rgb(179 154 112 / 0.3);
+}
+.form-plinth .plinth-glint {
+  display: none;
+}
+@keyframes form-mini-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .form-mini img {
+    animation-name: fade-in;
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
