@@ -1,0 +1,388 @@
+import { useEffect, useRef, useState, type PointerEvent } from 'react';
+import { useEnquiry } from '../../context/EnquiryContext';
+import { vehicles } from '../../data/vehicles';
+import { fill, useI18n } from '../../i18n/I18nContext';
+import { CLOSE_FOCUS, currentIndex, isLocked, reducedMotion, setLock } from '../../lib/pageNav';
+import type { ParkingCar, ParkingEngine } from '../../scene/parking';
+import { hasWebGL } from '../../scene/webgl';
+import { Arrow, Monogram, Odometer } from '../ui';
+import { CarProfile } from './CarProfile';
+import { PhotoCarousel, type CarouselHandle } from './PhotoCarousel';
+import { VehicleSheet } from './VehicleSheet';
+
+const cars: ParkingCar[] = vehicles.map((v, i) => ({ n: i + 1, model: v.rendering.model, behaviour: v.rendering.behaviour }));
+const total = vehicles.length;
+/** Les voitures alternent seules toutes les 5 secondes environ… */
+const AUTO_EVERY = 5200;
+/** …sauf dans les 9 secondes qui suivent un geste (et au démarrage). */
+const QUIET = 9000;
+
+interface Drag { x: number; sx: number; moved: boolean; id: number }
+
+/**
+ * Le parking en 3D : la scène three.js est chargée à part, à la demande.
+ * En attendant : le fond sombre, le monogramme et le nom de la voiture.
+ * Sans WebGL (ou contexte perdu) : le profil vectoriel, avec les mêmes commandes.
+ */
+export function Parking({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
+  const { t, l } = useI18n();
+  const { startEnquiry } = useEnquiry();
+  const rootRef = useRef<HTMLDivElement>(null);
+  const host = useRef<HTMLDivElement>(null);
+  const engine = useRef<ParkingEngine | null>(null);
+  const heading = useRef<HTMLHeadingElement>(null);
+  const nameBtn = useRef<HTMLButtonElement>(null);
+  const carousel = useRef<CarouselHandle>(null);
+  const [gl, setGl] = useState(hasWebGL);
+  const [active, setActive] = useState(0);
+  const [mounted, setMounted] = useState(false);
+  const [ready, setReady] = useState(false);
+  /* les changements de voiture ne sont annoncés que s'ils viennent du visiteur */
+  const [announce, setAnnounce] = useState(false);
+  const unmount = useRef(0);
+  const paused = useRef(false);
+  const flatHover = useRef(false);
+  const refocusName = useRef(false);
+  const lastTouch = useRef(performance.now());
+  const latest = useRef({ gl, open, active });
+  latest.current = { gl, open, active };
+  const car = vehicles[active];
+  const name = l(car.name);
+
+  /* Démarrage de la scène, une fois la police du pochoir disponible pour les numéros au sol.
+     Le canvas est créé ici et détruit au démontage : jamais deux canvas, même en StrictMode. */
+  useEffect(() => {
+    const box = host.current;
+    if (!gl || !box) return;
+    let dead = false;
+    let eng: ParkingEngine | null = null;
+    const canvas = document.createElement('canvas');
+    canvas.setAttribute('aria-hidden', 'true');
+    const stop = () => {
+      canvas.removeEventListener('webglcontextlost', fallBack);
+      eng?.dispose();
+      eng = null;
+      engine.current = null;
+      canvas.remove();
+    };
+    function fallBack() {
+      dead = true;
+      stop();
+      setGl(false);
+    }
+    canvas.addEventListener('webglcontextlost', fallBack);
+    box.appendChild(canvas);
+    const font = document.fonts?.load('700 200px "Stardos Stencil"').catch(() => undefined);
+    Promise.all([import('../../scene/parking'), font])
+      .then(([{ createParking }]) => {
+        if (dead) return;
+        eng = createParking(canvas, cars, {
+          reduced: reducedMotion(),
+          start: latest.current.active,
+          onReady: () => {
+            lastTouch.current = performance.now();
+            setReady(true);
+          },
+        });
+        engine.current = eng;
+        eng.pause(paused.current);
+        eng.open(latest.current.open);
+        eng.start();
+      })
+      .catch(() => {
+        if (!dead) fallBack();
+      });
+    return () => {
+      dead = true;
+      stop();
+    };
+  }, [gl]);
+
+  /* Pause hors écran */
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el || !window.IntersectionObserver) return;
+    const io = new IntersectionObserver((es) => {
+      paused.current = !es[0].isIntersecting;
+      engine.current?.pause(paused.current);
+    });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  /* Les voitures alternent toutes seules, tant qu'on ne touche à rien */
+  useEffect(() => {
+    if (reducedMotion()) return;
+    const id = window.setInterval(() => {
+      if (paused.current || document.hidden || latest.current.open) return;
+      if (performance.now() - lastTouch.current < QUIET) return;
+      const a = document.activeElement;
+      if (a && rootRef.current?.contains(a) && a.matches(':focus-visible')) return;
+      const e = engine.current;
+      if (e) {
+        if (e.state.drag || e.state.open || e.state.hover >= 0) return;
+        e.step(1);
+        setActive(e.active());
+      } else if (!latest.current.gl) {
+        if (flatHover.current) return;
+        setActive((x) => (x + 1) % total);
+      } else return;
+      setAnnounce(false);
+    }, AUTO_EVERY);
+    return () => clearInterval(id);
+  }, []);
+
+  const step = (d: number) => {
+    lastTouch.current = performance.now();
+    refocusName.current = document.activeElement === nameBtn.current;
+    setAnnounce(true);
+    const e = engine.current;
+    if (e) {
+      e.step(d);
+      setActive(e.active());
+    } else setActive((x) => (x + d + total) % total);
+  };
+
+  /* le nom est recréé à chaque voiture (pour son animation) : il garde le focus clavier */
+  useEffect(() => {
+    if (refocusName.current) nameBtn.current?.focus({ preventScroll: true });
+    refocusName.current = false;
+  }, [active]);
+
+  const openSheet = () => {
+    clearTimeout(unmount.current);
+    setMounted(true);
+    onOpenChange(true);
+    engine.current?.open(true);
+  };
+  const closeSheet = (restoreFocus: boolean) => {
+    lastTouch.current = performance.now();
+    onOpenChange(false);
+    engine.current?.open(false);
+    clearTimeout(unmount.current);
+    unmount.current = window.setTimeout(() => setMounted(false), 500);
+    if (restoreFocus) window.setTimeout(() => nameBtn.current?.focus({ preventScroll: true }), 60);
+  };
+  const actions = useRef({ step, closeSheet });
+  actions.current = { step, closeSheet };
+
+  useEffect(() => {
+    if (open) heading.current?.focus({ preventScroll: true });
+  }, [open, active]);
+
+  /* Pendant le focus, la page ne change plus de section */
+  useEffect(() => {
+    setLock('focus', open);
+    return () => setLock('focus', false);
+  }, [open]);
+
+  /* Clavier : Échap ferme le focus ; ← → changent de voiture, ou de photo dans le focus */
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (isLocked('dialog') || e.metaKey || e.ctrlKey || e.altKey) return;
+      const a = document.activeElement;
+      if (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) return;
+      const isOpen = latest.current.open;
+      if (e.key === 'Escape' && isOpen) {
+        actions.current.closeSheet(true);
+        return;
+      }
+      if ((e.key === 'ArrowRight' || e.key === 'ArrowLeft') && currentIndex() === 0) {
+        e.preventDefault();
+        const d = e.key === 'ArrowRight' ? 1 : -1;
+        if (isOpen) carousel.current?.step(d);
+        else actions.current.step(d);
+      }
+    };
+    /* un clic dans le menu ferme le focus */
+    const onClose = (e: Event) => {
+      if (latest.current.open) actions.current.closeSheet((e as CustomEvent<string>).detail === 'garage');
+    };
+    window.addEventListener('keydown', onKey);
+    window.addEventListener(CLOSE_FOCUS, onClose);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      window.removeEventListener(CLOSE_FOCUS, onClose);
+    };
+  }, []);
+
+  /* Souris et doigt sur la scène */
+  const drag = useRef<Drag | null>(null);
+  const onDown = (e: PointerEvent<HTMLDivElement>) => {
+    if (e.button && e.button !== 0) return;
+    drag.current = { x: e.clientX, sx: e.clientX, moved: false, id: e.pointerId };
+    const en = engine.current;
+    if (en) en.setHover(en.pick(e.clientX, e.clientY));
+  };
+  const onMove = (e: PointerEvent<HTMLDivElement>) => {
+    const en = engine.current;
+    if (!en) return;
+    const r = e.currentTarget.getBoundingClientRect();
+    const d = drag.current;
+    if (e.pointerType === 'mouse' || d) en.pointer(((e.clientX - r.left) / r.width - 0.5) * 2, ((e.clientY - r.top) / r.height - 0.5) * 2);
+    if (d) {
+      const dx = e.clientX - d.x;
+      if (!d.moved && Math.abs(e.clientX - d.sx) > 7) {
+        d.moved = true;
+        en.drag(true);
+        try {
+          e.currentTarget.setPointerCapture(d.id);
+        } catch {
+          /* sans capture */
+        }
+      }
+      if (d.moved) {
+        en.dragBy(dx);
+        const near = ((Math.round(en.state.pos) % total) + total) % total;
+        if (near !== active) setActive(near);
+      }
+      d.x = e.clientX;
+      return;
+    }
+    if (e.pointerType === 'mouse') {
+      en.setHover(open ? -1 : en.pick(e.clientX, e.clientY));
+      e.currentTarget.style.cursor = en.state.hover >= 0 ? 'pointer' : 'grab';
+    }
+  };
+  const onUp = (e: PointerEvent<HTMLDivElement>) => {
+    const en = engine.current;
+    const d = drag.current;
+    drag.current = null;
+    lastTouch.current = performance.now();
+    if (!en || !d) return;
+    if (d.moved) {
+      en.drag(false);
+      setActive(en.active());
+      setAnnounce(true);
+      if (e.pointerType !== 'mouse') en.setHover(-1);
+      return;
+    }
+    const hit = en.pick(e.clientX, e.clientY);
+    if (e.pointerType !== 'mouse') window.setTimeout(() => en.setHover(-1), 700);
+    if (hit < 0) return;
+    if (hit !== en.active()) {
+      en.go(hit);
+      setActive(hit);
+    }
+    if (!open) openSheet();
+  };
+  const onCancel = () => {
+    const en = engine.current;
+    const d = drag.current;
+    drag.current = null;
+    if (!en) return;
+    if (d?.moved) {
+      en.drag(false);
+      setActive(en.active());
+    }
+    en.setHover(-1);
+  };
+  const onLeave = () => {
+    const en = engine.current;
+    if (!en) return;
+    en.setHover(-1);
+    en.pointer(0, 0);
+  };
+
+  /* Sans WebGL : glisser change de voiture, toucher ouvre le focus */
+  const flatDown = (e: PointerEvent<HTMLDivElement>) => {
+    if (e.button && e.button !== 0) return;
+    drag.current = { x: e.clientX, sx: e.clientX, moved: false, id: e.pointerId };
+  };
+  const flatUp = (e: PointerEvent<HTMLDivElement>) => {
+    const d = drag.current;
+    drag.current = null;
+    if (!d) return;
+    const dx = e.clientX - d.sx;
+    if (Math.abs(dx) > 40) step(dx < 0 ? 1 : -1);
+    else if (Math.abs(dx) < 8) openSheet();
+  };
+
+  const hover = (on: boolean) => {
+    flatHover.current = on;
+    engine.current?.setHover(on ? active : -1);
+  };
+
+  return (
+    <div className={`em-parking${open ? ' is-open' : ''}${ready || !gl ? ' is-ready' : ''}`} ref={rootRef}>
+      {gl ? (
+        <div
+          className="em-parking__gl"
+          ref={host}
+          onPointerDown={onDown}
+          onPointerMove={onMove}
+          onPointerUp={onUp}
+          onPointerCancel={onCancel}
+          onPointerLeave={onLeave}
+        />
+      ) : (
+        <div
+          className="em-parking__flat"
+          role="img"
+          aria-label={l(car.rendering.alt)}
+          onPointerDown={flatDown}
+          onPointerUp={flatUp}
+          onPointerCancel={() => (drag.current = null)}
+          onPointerEnter={() => (flatHover.current = true)}
+          onPointerLeave={() => (flatHover.current = false)}
+        >
+          <CarProfile model={car.rendering.model} />
+        </div>
+      )}
+      <div className="em-parking__intro" aria-hidden="true">
+        <Monogram />
+      </div>
+      <div className="em-parking__top">
+        <h1 className="em-parking__h1">{t.garage.h1}</h1>
+      </div>
+      <div className="em-parking__bottom" inert={open}>
+        <button type="button" className="em-parking__arrow" aria-label={t.garage.prev} onClick={() => step(-1)}>
+          <Arrow flip />
+        </button>
+        <div className="em-parking__who" aria-live={announce ? 'polite' : 'off'}>
+          <p className="em-no">
+            <span className="em-sr">{t.garage.place} </span>
+            <Odometer value={active + 1} digits={1} label={`${active + 1} / ${total}`} /> <span aria-hidden="true">- {total}</span>
+          </p>
+          <button
+            ref={nameBtn}
+            type="button"
+            className="em-parking__name"
+            key={car.slug}
+            onClick={openSheet}
+            aria-label={fill(t.garage.seeSheet, { name })}
+            onMouseEnter={() => hover(true)}
+            onMouseLeave={() => hover(false)}
+            onFocus={() => hover(true)}
+            onBlur={() => hover(false)}
+          >
+            {name}
+          </button>
+          <p className="em-parking__sub">
+            <span className="em-only-hover">{t.garage.slide}</span>
+            <span className="em-only-touch">{t.garage.slideTouch}</span>
+          </p>
+        </div>
+        <button type="button" className="em-parking__arrow" aria-label={t.garage.next} onClick={() => step(1)}>
+          <Arrow />
+        </button>
+      </div>
+      <aside className="em-parking__panel" aria-label={t.focus.label} inert={!open}>
+        {mounted && (
+          <div className="em-focus">
+            <PhotoCarousel
+              key={car.slug}
+              ref={carousel}
+              photos={[car.image, ...(car.gallery ?? [])]}
+              label={fill(t.focus.photosOf, { name })}
+            />
+            <VehicleSheet car={car} n={active + 1} headingRef={heading} onEnquire={() => startEnquiry({ vehicle: car.slug })} />
+            <button type="button" className="em-focus__close" onClick={() => closeSheet(true)} aria-label={t.focus.close}>
+              {t.focus.closeShort}
+            </button>
+          </div>
+        )}
+      </aside>
+    </div>
+  );
+}

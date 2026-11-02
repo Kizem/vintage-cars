@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
 import type { ExperienceId } from '../data/types';
+import { scrollToId } from '../lib/pageNav';
 
 export interface EnquiryPrefill {
   experience?: ExperienceId;
@@ -10,7 +11,7 @@ export interface EnquiryPrefill {
 
 interface EnquiryContextValue {
   prefill: EnquiryPrefill | null;
-  /** Pre-select values in the enquiry form and scroll to it. */
+  /** Pre-select values in the enquiry form and go to the Enquire section. */
   startEnquiry: (p: Omit<EnquiryPrefill, 'nonce'>) => void;
 }
 
@@ -21,11 +22,7 @@ export function EnquiryProvider({ children }: { children: ReactNode }) {
 
   const startEnquiry = useCallback((p: Omit<EnquiryPrefill, 'nonce'>) => {
     setPrefill({ ...p, nonce: Date.now() });
-    requestAnimationFrame(() => {
-      const target = document.getElementById('contact');
-      target?.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
-      window.setTimeout(() => document.getElementById('enquiry-fullName')?.focus({ preventScroll: true }), 700);
-    });
+    scrollToId('ecrire', { focusHeading: true });
   }, []);
 
   const value = useMemo(() => ({ prefill, startEnquiry }), [prefill, startEnquiry]);

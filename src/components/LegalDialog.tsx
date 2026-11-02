@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { site } from '../data/site';
 import { useI18n } from '../i18n/I18nContext';
+import { setLock } from '../lib/pageNav';
 
 /**
  * Legal pages placeholder, opened by the #legal-notice and #privacy links.
+ * While it is open, the wheel and the keys do not change section.
  * TODO: replace the texts in the dictionaries with the final versions
  * validated by counsel (mentions légales, GDPR privacy policy).
  */
@@ -31,6 +33,8 @@ export function LegalDialog() {
     if (!d) return;
     if (page && !d.open) d.showModal();
     if (!page && d.open) d.close();
+    setLock('dialog', page !== null);
+    return () => setLock('dialog', false);
   }, [page]);
 
   const onClose = () => {
@@ -48,24 +52,20 @@ export function LegalDialog() {
       onClose={onClose}
       onClick={(e) => e.target === e.currentTarget && ref.current?.close()}
       aria-labelledby="legal-title"
-      className="m-auto w-[min(92vw,640px)] rounded-sm bg-offwhite p-0 text-charcoal"
+      className="em-legal"
     >
       {content && (
-        <div className="p-8 sm:p-12">
-          <p className="eyebrow mb-4 text-muted-ink">{site.name}</p>
-          <h2 id="legal-title" className="mb-6 text-[2.4rem] leading-tight text-forest">
+        <div className="em-legal__in">
+          <p className="em-no">{site.name}</p>
+          <h2 id="legal-title" className="em-legal__title">
             {content.title}
           </h2>
-          <div className="space-y-4 text-[15px] leading-relaxed text-charcoal/85">
-            {content.body.map((p) => (
-              <p key={p}>{p}</p>
-            ))}
-          </div>
-          <button
-            type="button"
-            onClick={() => ref.current?.close()}
-            className="mt-10 border-b border-forest pb-1 text-[12px] font-medium tracking-[0.18em] text-forest uppercase"
-          >
+          {content.body.map((p) => (
+            <p key={p} className="em-text">
+              {p}
+            </p>
+          ))}
+          <button type="button" className="em-action" onClick={() => ref.current?.close()}>
             {t.legal.close}
           </button>
         </div>

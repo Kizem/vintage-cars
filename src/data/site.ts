@@ -26,70 +26,46 @@ export const site = {
   },
 };
 
-type NavKey = keyof Dictionary['nav'];
+/** The page, one full-screen section each, in order. */
+export const sectionIds = ['garage', 'sortie-1', 'sortie-2', 'sortie-3', 'savoir', 'apropos', 'ecrire'] as const;
+export type SectionId = (typeof sectionIds)[number];
 
-/** Header navigation (kept to four entries on purpose; short label for Practical). */
-export const primaryNav: { key: NavKey; href: string }[] = [
-  { key: 'collection', href: '#collection' },
-  { key: 'experiences', href: '#experiences' },
-  { key: 'practicalShort', href: '#practical' },
-  { key: 'contact', href: '#contact' },
+/**
+ * Top menu (four entries on purpose). A section without its own entry
+ * underlines the entry of its chapter (data-part).
+ */
+export const primaryNav: { key: keyof Dictionary['nav']['items']; id: SectionId }[] = [
+  { key: 'garage', id: 'garage' },
+  { key: 'experiences', id: 'sortie-1' },
+  { key: 'about', id: 'apropos' },
+  { key: 'write', id: 'ecrire' },
 ];
 
-/** Footer navigation: every section, Our Story included. */
-export const footerNav: { key: NavKey; href: string }[] = [
-  { key: 'collection', href: '#collection' },
-  { key: 'experiences', href: '#experiences' },
-  { key: 'story', href: '#story' },
-  { key: 'practical', href: '#practical' },
-  { key: 'contact', href: '#contact' },
-];
-
-// Generated image (not a photograph of the collection car): always labelled as an illustration.
-export const heroImage: MediaAsset = {
-  src: 'images/hero/hero-ds-paris.webp',
-  srcSet: 'images/hero/hero-ds-paris-960.webp 960w, images/hero/hero-ds-paris.webp 1672w',
-  alt: {
-    en: 'A grey Citroën DS on a wet cobbled Paris street at dusk, the Eiffel Tower in the distance (illustrative image)',
-    fr: 'Une Citroën DS grise sur les pavés mouillés d’une rue de Paris au crépuscule, la tour Eiffel au loin (image d’illustration)',
+/** Visuals of the sections that have no experience. Generated images, labelled as illustrations. */
+export const sectionImages: { practical: MediaAsset; about: MediaAsset } = {
+  // Good to know (prototype: v-paris).
+  practical: {
+    src: 'images/practical/rue-paris-ds.webp',
+    srcSet: 'images/practical/rue-paris-ds-960.webp 960w, images/practical/rue-paris-ds.webp 1672w',
+    width: 1672,
+    height: 941,
+    alt: {
+      en: 'A grey Citroën DS on a wet cobbled Paris street at dusk, the Eiffel Tower in the distance (illustrative image)',
+      fr: 'Une Citroën DS grise sur les pavés mouillés d’une rue de Paris au crépuscule, la tour Eiffel au loin (image d’illustration)',
+    },
+    credit: { en: 'Illustrative image', fr: 'Image d’illustration' },
+    focalPoint: '80% 62%',
   },
-  credit: { en: 'Illustrative image', fr: 'Image d’illustration' },
-  placeholderLabel: { en: 'Hero, Citroën DS in Paris', fr: 'Visuel principal, Citroën DS à Paris' },
-  brief: {
-    en: 'Cinematic landscape (desktop 16:9, mobile 4:5 crop), Citroën DS on a Haussmann boulevard, blue hour, car in the lower third.',
-    fr: 'Paysage cinématographique (16:9 desktop, recadrage 4:5 mobile), Citroën DS sur un boulevard haussmannien, heure bleue, voiture dans le tiers inférieur.',
-  },
-  // Keeps the car in frame on portrait (mobile) crops.
-  focalPoint: '68% 70%',
-};
-
-export const storyImages: { primary: MediaAsset; detail: MediaAsset } = {
-  // Generated image, labelled as an illustration.
-  primary: {
+  // About (prototype: v-volant).
+  about: {
     src: 'images/story/interieur-volant.webp',
+    width: 825,
+    height: 1024,
     alt: {
       en: 'Close-up of an ivory vintage steering wheel with chrome spokes, cream leather seats behind (illustrative image)',
       fr: 'Gros plan sur un volant ancien ivoire aux branches chromées, sièges en cuir crème en arrière-plan (image d’illustration)',
     },
     credit: { en: 'Illustrative image', fr: 'Image d’illustration' },
-    placeholderLabel: { en: 'Story, interior detail', fr: 'Histoire, détail intérieur' },
-    brief: {
-      en: 'Editorial portrait, steering wheel and chrome detail, shallow depth of field. 4:5.',
-      fr: 'Portrait éditorial, volant et chromes, faible profondeur de champ. 4:5.',
-    },
-  },
-  // Generated image (the “E” of Époque on an ivory bonnet), labelled as an illustration.
-  detail: {
-    src: 'images/story/monogramme.webp',
-    alt: {
-      en: 'A chrome script “E” monogram on the ivory bonnet of a vintage car (illustrative image)',
-      fr: 'Un monogramme «\u00a0E\u00a0» chromé sur le capot ivoire d’une voiture ancienne (image d’illustration)',
-    },
-    credit: { en: 'Illustrative image', fr: 'Image d’illustration' },
-    placeholderLabel: { en: 'Story, badge detail', fr: 'Histoire, détail du monogramme' },
-    brief: {
-      en: 'Macro detail of a badge or emblem, warm neutral tones. 1:1.',
-      fr: 'Macro d’un monogramme ou d’un emblème, tons neutres et chauds. 1:1.',
-    },
+    focalPoint: '50% 45%',
   },
 };

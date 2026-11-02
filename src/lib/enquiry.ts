@@ -9,7 +9,6 @@ export interface EnquiryPayload {
   /** Vehicle slug, or '' for no preference. */
   vehicle: string;
   date: string;
-  guests: string;
   message: string;
   consent: boolean;
   /** Honeypot, must stay empty. */
@@ -25,7 +24,6 @@ export const emptyEnquiry: EnquiryPayload = {
   experience: '',
   vehicle: '',
   date: '',
-  guests: '2',
   message: '',
   consent: false,
   company: '',
@@ -47,9 +45,6 @@ export function validateEnquiry(v: EnquiryPayload): EnquiryErrors {
   else if (!EMAIL_RE.test(v.email.trim())) e.email = 'emailInvalid';
   if (!v.experience) e.experience = 'experienceRequired';
   if (v.date && v.date < todayISO()) e.date = 'datePast';
-  const guests = Number(v.guests);
-  if (!v.guests || !Number.isInteger(guests) || guests < 1) e.guests = 'guestsRequired';
-  else if (guests > 500) e.guests = 'guestsTooMany';
   if (v.message.length > 2000) e.message = 'messageTooLong';
   if (!v.consent) e.consent = 'consentRequired';
   return e;
@@ -81,7 +76,6 @@ export async function submitEnquiry(v: EnquiryPayload, locale: Locale): Promise<
         experience: v.experience,
         vehicle: v.vehicle || null,
         date: v.date || null,
-        guests: Number(v.guests),
         message: v.message.trim(),
         consent: v.consent,
         locale,

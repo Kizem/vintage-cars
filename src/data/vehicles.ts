@@ -33,7 +33,6 @@ export const vehicles: Vehicle[] = [
         fr: 'La Peugeot 504 berline bleue de la collection, vue de trois-quarts avant',
       },
       caption: { en: 'Three-quarter front', fr: 'Trois-quarts avant' },
-      placeholderLabel: { en: 'Peugeot 504, front', fr: 'Peugeot 504, avant' },
       focalPoint: '42% 60%',
     },
     // Specifications provided by the owner (listing: roadstr.fr/cars/peugeot-504-1971-saint-denis).
@@ -60,7 +59,6 @@ export const vehicles: Vehicle[] = [
           fr: 'La Peugeot 504 berline bleue de la collection, vue de trois-quarts arrière',
         },
         caption: { en: 'Three-quarter rear', fr: 'Trois-quarts arrière' },
-        placeholderLabel: { en: 'Peugeot 504, rear', fr: 'Peugeot 504, arrière' },
         focalPoint: '50% 60%',
       },
     ],
@@ -122,7 +120,6 @@ export const vehicles: Vehicle[] = [
         fr: 'La Citroën DS 21 grise de la collection, vue de trois-quarts arrière',
       },
       caption: { en: 'Three-quarter rear', fr: 'Trois-quarts arrière' },
-      placeholderLabel: { en: 'Citroën DS 21, rear', fr: 'Citroën DS 21, arrière' },
     },
     // Then three illustrative photos supplied by the owner (third-party, not the
     // collection car), always labelled as such.
@@ -137,7 +134,6 @@ export const vehicles: Vehicle[] = [
           fr: 'Une Citroën DS 21 berline grise dans une rue de Paris, vue de trois-quarts arrière (photo d’illustration)',
         },
         caption: { en: 'In a Paris street', fr: 'Dans une rue de Paris' },
-        placeholderLabel: { en: 'Citroën DS 21, rear', fr: 'Citroën DS 21, arrière' },
         credit: { en: 'Illustrative photo', fr: 'Photo d’illustration' },
       },
       {
@@ -149,7 +145,6 @@ export const vehicles: Vehicle[] = [
           fr: 'Une Citroën DS 21 devant les Invalides, à Paris (photo d’illustration)',
         },
         caption: { en: 'In front of Les Invalides', fr: 'Devant les Invalides' },
-        placeholderLabel: { en: 'Citroën DS 21, Les Invalides', fr: 'Citroën DS 21, les Invalides' },
         credit: { en: 'Illustrative photo', fr: 'Photo d’illustration' },
       },
       {
@@ -161,7 +156,6 @@ export const vehicles: Vehicle[] = [
           fr: 'Une Citroën DS 21 de profil, place Vendôme, à Paris (photo d’illustration)',
         },
         caption: { en: 'Side view, Place Vendôme', fr: 'De profil, place Vendôme' },
-        placeholderLabel: { en: 'Citroën DS 21, Place Vendôme', fr: 'Citroën DS 21, place Vendôme' },
         credit: { en: 'Illustrative photo', fr: 'Photo d’illustration' },
       },
     ],
@@ -216,7 +210,6 @@ export const vehicles: Vehicle[] = [
         fr: 'La Mercedes-Benz /8 berline de la collection, vue de trois-quarts avant',
       },
       caption: { en: 'Three-quarter front', fr: 'Trois-quarts avant' },
-      placeholderLabel: { en: 'Mercedes-Benz /8, front', fr: 'Mercedes-Benz /8, avant' },
     },
     gallery: [
       {
@@ -229,7 +222,6 @@ export const vehicles: Vehicle[] = [
           fr: 'La Mercedes-Benz /8 phares allumés, à la sortie de son garage',
         },
         caption: { en: 'Headlights on', fr: 'Phares allumés' },
-        placeholderLabel: { en: 'Mercedes-Benz /8, headlights', fr: 'Mercedes-Benz /8, phares' },
       },
       {
         src: 'images/collection/mercedes-3-profil.webp',
@@ -241,7 +233,6 @@ export const vehicles: Vehicle[] = [
           fr: 'La Mercedes-Benz /8 berline vue de profil',
         },
         caption: { en: 'Side view', fr: 'De profil' },
-        placeholderLabel: { en: 'Mercedes-Benz /8, profile', fr: 'Mercedes-Benz /8, profil' },
       },
       {
         src: 'images/collection/mercedes-4-calandre.webp',
@@ -253,7 +244,6 @@ export const vehicles: Vehicle[] = [
           fr: 'Calandre et phares de la Mercedes-Benz /8',
         },
         caption: { en: 'Grille and headlights', fr: 'Calandre et phares' },
-        placeholderLabel: { en: 'Mercedes-Benz /8, grille', fr: 'Mercedes-Benz /8, calandre' },
       },
     ],
     rendering: {

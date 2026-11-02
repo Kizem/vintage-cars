@@ -1,29 +1,22 @@
 import type { Localized } from '../i18n/locales';
 import type { CarModelKey } from '../scene/carspecs';
 
-/**
- * A photograph slot. Leave `src` empty to render a clearly labelled placeholder;
- * drop the final file in /public/images/... and set `src` to replace it.
- */
+/** A photograph or illustration, stored in /public/images/<section>/. */
 export interface MediaAsset {
-  /** Path relative to the site root, e.g. 'images/collection/citroen-ds.jpg'. Empty = placeholder. */
-  src?: string;
-  /** Optional responsive sources, e.g. 'images/x-800.jpg 800w, images/x-1600.jpg 1600w'. */
+  /** Path relative to the site root, e.g. 'images/collection/citroen-ds.webp'. */
+  src: string;
+  /** Optional responsive sources, e.g. 'images/x-800.webp 800w, images/x.webp 1500w'. */
   srcSet?: string;
   /** Intrinsic size in pixels, rendered as width / height attributes. */
-  width?: number;
-  height?: number;
-  /** Accessible description of the final photograph. */
+  width: number;
+  height: number;
+  /** Accessible description of the image. */
   alt: Localized;
   /** Short caption shown under the photo in the vehicle carousel. */
   caption?: Localized;
-  /** Short label displayed on the placeholder (what the photograph should show). */
-  placeholderLabel: Localized;
-  /** Art-direction brief for the photographer. Shown on the placeholder. */
-  brief?: Localized;
   /** CSS object-position for cropping, e.g. '50% 60%'. */
   focalPoint?: string;
-  /** Credit or notice shown on the photo, e.g. “Illustrative photo”. */
+  /** Notice shown on the image, e.g. “Illustrative image” or “Illustrative photo”. */
   credit?: Localized;
 }
 
@@ -43,26 +36,25 @@ export interface VehicleRendering {
 }
 
 export interface Vehicle {
-  /** URL-safe identifier, also used in the ?car= deep link. */
+  /** URL-safe identifier, also the value of the enquiry form's car field. */
   slug: string;
   name: Localized;
   marque: string;
-  /** Large letters shown on the image placeholder. */
+  /** Short mark of the model, e.g. 'DS'. */
   mark: string;
   category: Localized;
-  /** Short description shown on cards. */
   description: Localized;
   /** One line for the vehicle sheet in the parking focus. Falls back to `description`. */
   summary?: Localized;
-  /** Optional longer text for the detail view. Falls back to `description`. */
+  /** Optional longer history of the model. */
   story?: Localized<string[]>;
   /** Optional verified facts (year, colour, seats…). Only add confirmed information. */
   details?: { label: Localized; value: Localized }[];
   availability: AvailabilityStatus;
   service: ServiceMode;
-  /** Main photograph, used on the card and as the first slide of the detail view. */
+  /** First photo of the carousel in the vehicle focus. */
   image: MediaAsset;
-  /** Additional photographs shown after `image` in the detail view carousel. */
+  /** Photos shown after `image` in the carousel. */
   gallery?: MediaAsset[];
   rendering: VehicleRendering;
 }
@@ -71,12 +63,12 @@ export type ExperienceId = 'private-tours' | 'chauffeured' | 'events';
 
 export interface Experience {
   id: ExperienceId;
-  index: string;
+  /** Name in the enquiry form's experience list. */
   label: Localized;
+  /** Chapter title. */
   title: Localized;
+  /** Chapter text, two sentences at most. */
   description: Localized;
-  /** Typical duration, shown under the description. */
-  duration: Localized;
   cta: Localized;
   image: MediaAsset;
 }
