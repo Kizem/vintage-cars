@@ -102,9 +102,6 @@ export const en = {
     duration: 'Duration',
     pause: 'Pause the slideshow',
     play: 'Play the slideshow',
-    footLabel: 'Private & by enquiry',
-    footText:
-      'Every experience is private and arranged on enquiry. Itineraries, timings and arrangements are discussed with you personally and confirmed before your visit.',
   },
   story: {
     eyebrow: 'Our Story',

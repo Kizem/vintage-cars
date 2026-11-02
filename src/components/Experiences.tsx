@@ -305,11 +305,6 @@ export function Experiences() {
             </div>
           </div>
         </Reveal>
-
-        <Reveal className="mt-20 grid gap-6 border-t border-line-light pt-8 sm:grid-cols-2 lg:mt-28">
-          <p className="eyebrow text-champagne">{t.experiences.footLabel}</p>
-          <p className="max-w-xl text-[0.975rem] leading-relaxed text-ivory/70 sm:justify-self-end">{t.experiences.footText}</p>
-        </Reveal>
       </div>
     </section>
   );

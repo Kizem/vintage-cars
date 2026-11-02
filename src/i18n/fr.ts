@@ -102,9 +102,6 @@ export const fr: Dictionary = {
     duration: 'Durée',
     pause: 'Mettre le diaporama en pause',
     play: 'Relancer le diaporama',
-    footLabel: 'Sur mesure et sur demande',
-    footText:
-      'Toutes nos expériences sont privées. Itinéraire, horaires et déroulé sont définis avec vous, puis confirmés avant votre venue.',
   },
   story: {
     eyebrow: 'Notre histoire',
