@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { useI18n } from '../i18n/I18nContext';
 import { Reveal } from './ui/Reveal';
+
+const draw = (ms: number) => ({ '--draw-delay': `${ms}ms` }) as CSSProperties;
 
 /**
  * Compact practical section: title and key facts, the three steps on one
@@ -26,8 +28,10 @@ export function PracticalInfo() {
             </h2>
           </div>
           <dl className="grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-4 lg:col-span-8 lg:pb-2">
-            {p.facts.map((f) => (
-              <div key={f.label} className="border-t border-line pt-4">
+            {p.facts.map((f, i) => (
+              <div key={f.label}>
+                {/* Graduated rule, like the scale of a period instrument; drawn once. */}
+                <span aria-hidden="true" className="motion-gauge motion-rule mb-4 block text-charcoal/25" style={draw(300 + i * 120)} />
                 <dt className="eyebrow mb-1.5 text-muted-ink">{f.label}</dt>
                 <dd className="font-display text-[1.3rem] leading-snug text-forest">{f.value}</dd>
               </div>
@@ -40,7 +44,8 @@ export function PracticalInfo() {
           <h3 className="eyebrow mb-6 font-sans text-muted-ink">{p.howItWorks}</h3>
           <ol className="grid gap-6 sm:grid-cols-3 sm:gap-8">
             {p.steps.map((step, i) => (
-              <li key={step.title} className="flex gap-4">
+              <li key={step.title} className="relative flex gap-4 pt-6">
+                <span aria-hidden="true" className="motion-gauge motion-rule absolute inset-x-0 top-0 text-champagne/60" style={draw(350 + i * 220)} />
                 <span aria-hidden="true" className="w-9 shrink-0 font-display text-[1.9rem] leading-none text-champagne italic">
                   {String(i + 1).padStart(2, '0')}
                 </span>
@@ -54,7 +59,8 @@ export function PracticalInfo() {
         </Reveal>
 
         {/* FAQ, collapsed by default */}
-        <Reveal delay={150} className="mt-12 border-t border-line pt-6">
+        <Reveal delay={150} className="mt-12 pt-6">
+          <span aria-hidden="true" className="motion-rule -mt-6 mb-6 block h-px bg-line" />
           <button
             type="button"
             aria-expanded={faqOpen}
