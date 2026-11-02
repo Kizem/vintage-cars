@@ -1,8 +1,11 @@
 name: Deploy to GitHub Pages
 
+# Publishes the branch that triggered the run at the site root: the last
+# deployment wins. To switch versions, run this workflow (Actions tab,
+# "Run workflow") on main or on le-garage.
 on:
   push:
-    branches: [main]
+    branches: [main, le-garage]
   workflow_dispatch:
 
 permissions:
