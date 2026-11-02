@@ -166,15 +166,16 @@ export function buildCar(spec: CarSpec, env: Texture) {
     const y0 = (x: number) => Math.min(be(x), de(x)) - .02;
     const box = (x: number, y: number, z: number, sx: number, sy: number, sz: number, mat: Material, lean = 0) => { const m = new Mesh(new BoxGeometry(sx, sy, sz, 2, 2, 2), mat); m.position.set(x, y, z); m.rotation.z = lean; body.add(m); return m; };
     /* planche de bord crème sous le pare-brise */
-    box(gl.xa + .42, y0(gl.xa + .42) + .05, 0, .22, .08, hw(gl.xa + .42) * 1.5, trim);
+    const at = (f: number) => lerp(gl.xa, gl.xd, f);
+    box(at(.15), y0(at(.15)) + .05, 0, .22, .08, hw(at(.15)) * 1.5, trim);
     /* volant monobranche crème, à gauche */
-    const wheel = new Mesh(new TorusGeometry(.18, .013, 8, 36), trim); wheel.position.set(gl.xa + .68, y0(gl.xa + .68) + .17, .38); wheel.rotation.set(0, Math.PI / 2, -.55); body.add(wheel);
-    const spoke = new Mesh(new CylinderGeometry(.009, .009, .18, 8), trim); spoke.position.set(gl.xa + .7, y0(gl.xa + .7) + .1, .38); spoke.rotation.x = .15; body.add(spoke);
+    const wheel = new Mesh(new TorusGeometry(.18, .013, 8, 36), trim); wheel.position.set(at(.24), y0(at(.24)) + .17, .38); wheel.rotation.set(0, Math.PI / 2, -.55); body.add(wheel);
+    const spoke = new Mesh(new CylinderGeometry(.009, .009, .18, 8), trim); spoke.position.set(at(.245), y0(at(.245)) + .1, .38); spoke.rotation.x = .15; body.add(spoke);
     /* dossiers avant et banquette arrière */
-    [.36, -.36].forEach((z) => box(.32, y0(.32) + .17, z, .12, .36, .46, seat, -.2));
-    box(1.3, y0(1.3) + .16, 0, .13, .34, 1.24, seat, -.24);
+    [.36, -.36].forEach((z) => box(at(.41), y0(at(.41)) + .17, z, .12, .36, .46, seat, -.2));
+    box(at(.76), y0(at(.76)) + .16, 0, .13, .34, 1.24, seat, -.24);
     /* tablette arrière */
-    box(1.72, y0(1.72) + .03, 0, .36, .02, hw(1.72) * 1.6, seat);
+    box(at(.9), y0(at(.9)) + .03, 0, .36, .02, hw(at(.9)) * 1.6, seat);
   }
   const glassGeo = loft(stations(gl.xa - .05, gl.xd + .05, 54), (x) => { const out: Pt[] = []; for (let k = 40; k >= 0; k--) { const [z, y] = gh(x, k / 40); out.push([z, y]); } return out.reverse().map((p) => p).reverse(); }, { caps: false });
   /* vitrage : sombre et réfléchissant, ou teinté et transparent quand l'habitacle est modélisé */
@@ -255,6 +256,27 @@ export function buildCar(spec: CarSpec, env: Texture) {
   const amber = new MeshStandardMaterial({ color: 0xc97d1c, roughness: .22, metalness: .3, envMap: env, emissive: 0x7a3d05, emissiveIntensity: .15 });
   const red = new MeshStandardMaterial({ color: 0x8c1414, roughness: .25, emissive: 0x500707, emissiveIntensity: .5 });
   const nx = -s.L / 2; const tx = s.L / 2;
+  /* Outils de pose communs : surface du nez et de la poupe, dessus de caisse, pièces posées à plat */
+  const gold = new MeshStandardMaterial({ color: 0xc8a24c, metalness: 1, roughness: .26, envMap: env, envMapIntensity: 1.3 });
+  const crease = new MeshBasicMaterial({ color: 0x2b2e2e });
+  /* x de la surface pour une demi-largeur donnée, au nez et à la poupe */
+  const surfX = (z: number, front: boolean) => {
+    let a = front ? nx : 1.2; let b = front ? -1.5 : tx;
+    for (let k = 0; k < 30; k++) { const m = (a + b) / 2; if ((hw(m) >= z) === front) b = m; else a = m; }
+    return (a + b) / 2;
+  };
+  /* hauteur du dessus de la caisse à une distance z de l'axe */
+  const topY = (x: number, z: number) => {
+    const sec = halfSection(x);
+    for (let i = sec.length - 1; i > 0; i--) { const [z1, y1] = sec[i]; const [z0, y0] = sec[i - 1]; if (z0 >= z && z1 <= z) return lerp(y1, y0, (z - z1) / Math.max(1e-6, z0 - z1)); }
+    return de(x);
+  };
+  /* orientation (autour de Y) d'un élément posé sur la face avant, pour qu'il regarde selon la normale de l'aile */
+  const yawAt = (x: number) => { const d = (hw(x + .01) - hw(x - .01)) / .02; return Math.atan2(1, Math.max(.001, d)); };
+  const lay = (m: Mesh, x: number, z: number, lift = .004) => {
+    const slope = (topY(x + .02, Math.abs(z)) - topY(x - .02, Math.abs(z))) / .04;
+    const g = new Group(); g.position.set(x, topY(x, Math.abs(z)) + lift, z); g.rotation.z = Math.atan(slope); m.rotation.x = -Math.PI / 2; g.add(m); body.add(g);
+  };
 
   if (s.lampKind === 'mercedes') {
     /* calandre haute, phares verticaux, double pare-chocs */
@@ -279,50 +301,67 @@ export function buildCar(spec: CarSpec, env: Texture) {
     [1, -1].forEach((sg) => { const m = plate(tx - .012, .72, sg * .6, .42, .15, .02, red, .014); m.rotation.y = Math.PI / 2; });
     const tp = new Mesh(new BoxGeometry(.012, .014, .62), chrome); tp.position.set(tx + .004, .84, 0); body.add(tp);
   } else if (s.lampKind === 'peugeot') {
-    /* un bandeau sombre : phares trapézoïdaux et calandre à fines barrettes */
-    plate(nx + .02, .7, 0, 1.46, .23, .02, dark, .03);
-    for (let i = 0; i < 6; i++) { const b = new Mesh(new BoxGeometry(.014, .011, .62), chrome); b.position.set(nx - .018, .625 + i * .03, 0); body.add(b); }
-    const grilleFrame = new Mesh(new BoxGeometry(.012, .19, .64), chrome); grilleFrame.position.set(nx - .006, .7, 0); body.add(grilleFrame);
-    const grilleIn = new Mesh(new BoxGeometry(.012, .17, .62), dark); grilleIn.position.set(nx - .012, .7, 0); body.add(grilleIn);
+    /* Peugeot 504 berline, d'après les photos de la voiture : face verticale à peine inclinée, optiques
+       trapézoïdales (bord intérieur en biais) cerclées de chrome, calandre noire à fines lamelles chromées
+       et lion au centre, clignotants orange sous les optiques, pare-chocs chromés à butoirs noirs ;
+       poupe tricorps aux feux verticaux orange et rouge, plaque, jonc de malle, sortie d'échappement. */
+    const rubber = new MeshStandardMaterial({ color: 0x111111, roughness: .55, envMap: env, envMapIntensity: .35 });
+    const lampGlass = new MeshPhysicalMaterial({ color: 0xffffff, roughness: .03, transparent: true, opacity: .28, clearcoat: 1, envMap: env, envMapIntensity: 1.6, depthWrite: false });
+    const gy = .73;
+    const fx = surfX(.3, true);
+    /* calandre : cadre chromé, fond noir, lamelles horizontales, lion */
+    plate(fx + .004, gy, 0, .7, .19, .018, chrome, .012);
+    plate(fx - .004, gy, 0, .66, .16, .012, dark, .012);
+    for (let i = 0; i < 6; i++) { const b = new Mesh(new BoxGeometry(.008, .007, .64), chrome); b.position.set(fx - .022, gy - .065 + i * .026, 0); body.add(b); }
+    const lion = plate(fx - .026, gy, 0, .045, .06, .012, gold, .006);
+    lion.scale.set(1, 1, .6);
+    /* optique : trapèze, bord extérieur vertical, bord intérieur en biais vers le bas */
+    const lamp = new Shape(); lamp.moveTo(-.165, -.075); lamp.lineTo(.165, -.075); lamp.lineTo(.165, .085); lamp.lineTo(-.1, .085); lamp.closePath();
     [1, -1].forEach((sg) => {
-      /* phare : trapèze penché, l'arête haute plus courte vers l'intérieur */
-      const a = new Shape(); a.moveTo(-.2, -.092); a.lineTo(.2, -.092); a.lineTo(.2, .1); a.lineTo(-.13, .1); a.closePath();
-      const rim = new Mesh(new ExtrudeGeometry(a, { depth: .012, bevelEnabled: true, bevelSize: .012, bevelThickness: .004, bevelSegments: 1 }), chrome);
-      const l = new Mesh(new ExtrudeGeometry(a, { depth: .012, bevelEnabled: false }), lens);
-      [rim, l].forEach((m) => { m.position.set(nx - .012, .7, sg * .535); m.rotation.y = -Math.PI / 2; if (sg < 0) m.scale.x = -1; body.add(m); });
-      l.position.x -= .014;
-      /* clignotant sous le phare */
-      const t = new Mesh(new BoxGeometry(.014, .045, .3), amber); t.position.set(nx - .005, .555, sg * .53); body.add(t);
-      /* feux arrière verticaux */
-      const rr = plate(tx - .015, .76, sg * .6, .2, .24, .02, red, .012); rr.rotation.y = Math.PI / 2;
+      const z = .515; const x = surfX(z, true) + .004;
+      const parts: [Material, number, boolean][] = [[chrome, .0, true], [dark, -.008, false], [lens, -.012, false], [lampGlass, -.02, false]];
+      parts.forEach(([mat, dx, bevel]) => {
+        const m = new Mesh(new ExtrudeGeometry(lamp, { depth: .01, bevelEnabled: bevel, bevelSize: .014, bevelThickness: .004, bevelSegments: 2 }), mat);
+        m.position.set(x + dx, gy, sg * z); m.rotation.y = -Math.PI / 2; if (sg < 0) m.scale.x = -1;
+        if (mat === lens) m.scale.set(sg < 0 ? -.86 : .86, .82, 1);
+        body.add(m);
+      });
+      lampPoints.push([x - .03, gy, sg * z]);
+      /* clignotant orange sous l'optique */
+      plate(surfX(.53, true) - .002, .615, sg * .53, .3, .045, .008, amber, .01);
+      /* butoirs noirs, avant et arrière */
+      [[nx - .03, .52], [tx + .03, .54]].forEach(([bx, by]) => { const o = new Mesh(new CapsuleGeometry(.032, .12, 4, 12), rubber); o.position.set(bx, by, sg * .36); body.add(o); });
+      /* poignées de portes chromées */
+      [.14, 1.08].forEach((hx) => { const h = new Mesh(new CapsuleGeometry(.011, .1, 4, 8), chrome); h.rotation.z = Math.PI / 2; h.position.set(hx, be(hx) - .065, sg * (hw(hx) + .008)); body.add(h); });
+      /* feux arrière verticaux : orange en haut, rouge en bas, cerclés de chrome */
+      const xr = surfX(.66, false) - .01;
+      const bez = plate(xr + .004, .75, sg * .66, .15, .25, .015, chrome, .01); bez.rotation.y = Math.PI / 2;
+      const am = plate(xr + .012, .83, sg * .66, .12, .07, .01, amber, .01); am.rotation.y = Math.PI / 2;
+      const rd = plate(xr + .012, .72, sg * .66, .12, .14, .01, red, .01); rd.rotation.y = Math.PI / 2;
     });
-    lampPoints.push([nx - .03, .7, .535], [nx - .03, .7, -.535]);
-    bumper(nx + .03, .47, .06, .027, .85, .5);
-    bumper(tx - .03, .5, .06, .027, .85, .5);
-    [1, -1].forEach((sg) => { const o = new Mesh(new BoxGeometry(.05, .13, .045), chrome); o.position.set(nx - .045, .46, sg * .32); body.add(o); });
-    const lion = new Mesh(new CylinderGeometry(.028, .028, .012, 16), chrome); lion.rotation.z = Math.PI / 2; lion.position.set(nx - .03, .845, 0); body.add(lion);
+    /* pare-chocs chromés */
+    bumper(nx + .03, .52, .06, .03, .7, .45);
+    bumper(tx - .03, .54, .06, .03, .7, .45);
+    /* plaques sans inscription, jonc de malle */
+    const pf = new Mesh(new BoxGeometry(.012, .11, .52), black); pf.position.set(nx - .03, .43, 0); body.add(pf);
+    const xp = surfX(.25, false);
+    const pr = new Mesh(new BoxGeometry(.012, .11, .52), black); pr.position.set(xp + .006, .68, 0); body.add(pr);
+    const jonc = new Mesh(new BoxGeometry(.012, .018, .9), chrome); jonc.position.set(surfX(.45, false) + .002, .79, 0); body.add(jonc);
+    /* sortie d'échappement, côté gauche */
+    const ex = new Mesh(new CylinderGeometry(.024, .024, .22, 14), dark); ex.rotation.z = Math.PI / 2; ex.position.set(tx - .12, .3, .45); body.add(ex);
+    /* lignes du capot et monogramme 504 sur le capot et la malle */
+    [1, -1].forEach((sg) => { const cl: P3[] = []; for (let i = 0; i <= 18; i++) { const x = lerp(-2.15, -1.05, i / 18); const z = hw(x) * .8; cl.push([x, topY(x, z) + .002, sg * z]); } body.add(tube(cl, .003, crease)); });
+    const badge = canvasTex(256, 64, (g, w, h) => { g.clearRect(0, 0, w, h); g.fillStyle = '#e8eaea'; g.font = '700 50px Arial, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('504', w / 2, h / 2 + 2); });
+    const badgeMat = new MeshBasicMaterial({ map: badge, transparent: true, depthWrite: false });
+    const b1 = new Mesh(new PlaneGeometry(.14, .035), badgeMat); b1.rotation.z = Math.PI / 2;
+    lay(b1, -2.08, 0);
+    lay(new Mesh(new PlaneGeometry(.12, .03), badgeMat), 2.1, .4);
   } else {
     /* DS 21, d'après les photos : nez large et arrondi, double optique (grande à l'extérieur, petite à l'intérieur)
        aux ampoules jaunes sous un globe, clignotants aux angles, pare-chocs à butoirs, prise d'air noire ;
        poupe effilée : feux rouges rectangulaires, plaque, chevrons dorés et monogramme DS21 sur la malle,
        feux en trompette en haut des montants arrière. */
-    const gold = new MeshStandardMaterial({ color: 0xc8a24c, metalness: 1, roughness: .26, envMap: env, envMapIntensity: 1.3 });
     const globe = new MeshPhysicalMaterial({ color: 0xffffff, roughness: .02, transparent: true, opacity: .2, clearcoat: 1, clearcoatRoughness: .02, envMap: env, envMapIntensity: 1.6, depthWrite: false });
-    const crease = new MeshBasicMaterial({ color: 0x2b2e2e });
-    /* x de la surface pour une demi-largeur donnée, au nez et à la poupe */
-    const surfX = (z: number, front: boolean) => {
-      let a = front ? nx : 1.2; let b = front ? -1.5 : tx;
-      for (let k = 0; k < 30; k++) { const m = (a + b) / 2; if ((hw(m) >= z) === front) b = m; else a = m; }
-      return (a + b) / 2;
-    };
-    /* hauteur du dessus de la caisse à une distance z de l'axe */
-    const topY = (x: number, z: number) => {
-      const sec = halfSection(x);
-      for (let i = sec.length - 1; i > 0; i--) { const [z1, y1] = sec[i]; const [z0, y0] = sec[i - 1]; if (z0 >= z && z1 <= z) return lerp(y1, y0, (z - z1) / Math.max(1e-6, z0 - z1)); }
-      return de(x);
-    };
-    /* orientation (autour de Y) d'un élément posé sur la face avant, pour qu'il regarde selon la normale de l'aile */
-    const yawAt = (x: number) => { const d = (hw(x + .01) - hw(x - .01)) / .02; return Math.atan2(1, Math.max(.001, d)); };
 
     [1, -1].forEach((sg) => {
       const pods: [number, number][] = [[.66, .085], [.47, .068]];
@@ -366,10 +405,6 @@ export function buildCar(spec: CarSpec, env: Texture) {
     const plateBox = new Mesh(new BoxGeometry(.02, .11, .5), black); plateBox.position.set(xp - .004, .6, 0); body.add(plateBox);
     const handle = new Mesh(new CapsuleGeometry(.012, .05, 4, 8), chrome); handle.rotation.x = Math.PI / 2; handle.position.set(xp - .03, .7, 0); body.add(handle);
     /* chevrons dorés sur la malle, pointe vers l'avant ; monogramme DS21 à droite */
-    const lay = (m: Mesh, x: number, z: number, lift = .004) => {
-      const slope = (topY(x + .02, Math.abs(z)) - topY(x - .02, Math.abs(z))) / .04;
-      const g = new Group(); g.position.set(x, topY(x, Math.abs(z)) + lift, z); g.rotation.z = Math.atan(slope); m.rotation.x = -Math.PI / 2; g.add(m); body.add(g);
-    };
     const chev = new Shape(); chev.moveTo(.012, -.075); chev.lineTo(-.02, 0); chev.lineTo(.012, .075); chev.lineTo(.026, .075); chev.lineTo(-.006, 0); chev.lineTo(.026, -.075); chev.closePath();
     const chevG = new ExtrudeGeometry(chev, { depth: .004, bevelEnabled: false });
     [0, .042].forEach((dx) => lay(new Mesh(chevG, gold), 2.06 + dx, 0));
@@ -392,7 +427,7 @@ export function buildCar(spec: CarSpec, env: Texture) {
       const tire = new Mesh(tireG, tireMat); tire.rotation.x = Math.PI / 2; spin.add(tire);
       const rim = new Mesh(new TorusGeometry(s.wheelR * .66, .012, 8, 36), rimMat); rim.position.z = sg * s.wheelW * .49; spin.add(rim);
       const hub = new Mesh(new CircleGeometry(s.wheelR * .64, 36), hubMat); hub.position.z = sg * s.wheelW * .505; if (sg < 0) hub.rotation.y = Math.PI; spin.add(hub);
-      if (s.hub === 'ds') { const dome = new Mesh(new SphereGeometry(s.wheelR * .45, 28, 12, 0, Math.PI * 2, 0, Math.PI / 2), chrome); dome.rotation.x = sg * Math.PI / 2; dome.scale.y = .32; dome.position.z = sg * s.wheelW * .5; spin.add(dome); }
+      if (s.hub === 'ds' || s.hub === 'peugeot') { const dome = new Mesh(new SphereGeometry(s.wheelR * .45, 28, 12, 0, Math.PI * 2, 0, Math.PI / 2), chrome); dome.rotation.x = sg * Math.PI / 2; dome.scale.y = .32; dome.position.z = sg * s.wheelW * .5; spin.add(dome); }
       root.add(w); wheels.push(spin);
     });
   });
