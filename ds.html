@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Atelier 3D, développement</title>
+    <style>
+      html, body { margin: 0; height: 100%; background: #101c16; color: #ede9df; font: 500 12px/1.4 Barlow, Arial, sans-serif; letter-spacing: .12em; text-transform: uppercase; }
+      canvas { display: block; width: 100%; height: 100%; }
+      nav { position: fixed; left: 0; right: 0; bottom: 16px; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+      button { font: inherit; letter-spacing: inherit; color: inherit; background: none; border: 0; border-bottom: 1px solid currentColor; padding: 10px 4px 4px; min-height: 44px; cursor: pointer; }
+    </style>
+  </head>
+  <body>
+    <!-- Atelier de développement : non publié (seul index.html est construit). npm run dev, puis /ds.html?car=ds -->
+    <nav id="views"></nav>
+    <script type="module" src="/src/scene/viewer.ts"></script>
+  </body>
+</html>

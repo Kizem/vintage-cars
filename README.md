@@ -41,6 +41,17 @@ Seven full-screen sections, in this order: `garage`, `sortie-1`, `sortie-2`,
   Without WebGL, the vector side profile of the car replaces the scene.
 - With `prefers-reduced-motion`: no alternation, no animated scrolling, no intro.
 
+### 3D workshop (development only)
+
+`npm run dev`, then open `/ds.html?car=ds` (or `p504`, `w114`): one car on its
+own, an orbit camera and fixed views (three-quarter front, front, side,
+three-quarter rear, rear, top). It is not part of the build (`src/scene/viewer.ts`).
+The cars are procedural three.js models in `src/scene/carmodels.ts`, from the
+proportions in `src/scene/carspecs.ts`. The Citroën DS follows the photos of
+the collection car: silver-grey paint and roof, twin yellow headlamps under
+glass, chrome bumpers with overriders, tinted glass with the dark red and
+cream interior, rectangular tail lamps, gold chevrons and DS21 script.
+
 ## Languages (EN / FR)
 
 The site is bilingual, with an EN | FR link in the menu (same page, no reload).
