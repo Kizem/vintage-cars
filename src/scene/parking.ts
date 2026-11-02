@@ -375,7 +375,7 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
       release(scene);
       envRT.dispose();
       renderer.dispose();
-      renderer.forceContextLoss();
+      if (!renderer.getContext().isContextLost()) renderer.forceContextLoss();
     },
   };
   return api;
