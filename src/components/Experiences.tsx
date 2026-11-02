@@ -7,6 +7,13 @@ import { Reveal } from './ui/Reveal';
 import { Media } from './ui/Media';
 import { Button } from './ui/Button';
 
+/** Stops on the decorative route [x %, y %], on the curve drawn below (viewBox 1200 × 48). */
+const ROUTE_STOPS: [number, number][] = [
+  [26.667, 25],
+  [53.333, 62.5],
+  [81.667, 29.167],
+];
+
 /** Time each experience stays on screen when the slideshow plays. */
 const DURATION_MS = 11000;
 
@@ -102,14 +109,39 @@ export function Experiences() {
           text={t.experiences.text}
         />
 
-        <Reveal className="mt-16 lg:mt-24">
+        {/* A route traced in champagne, purely graphic: one stop per experience, the current one lit. */}
+        <Reveal className="mt-12 lg:mt-16">
+          <div aria-hidden="true" className="exp-route relative h-10 overflow-hidden text-champagne sm:h-12">
+            <svg viewBox="0 0 1200 48" preserveAspectRatio="none" className="absolute inset-0 h-full w-full">
+              <path
+                d="M0 34 C140 34 180 12 320 12 S520 30 640 30 S860 14 980 14 S1140 26 1200 26"
+                fill="none"
+                stroke="currentColor"
+                strokeOpacity="0.55"
+                strokeDasharray="1 5"
+                vectorEffect="non-scaling-stroke"
+              />
+            </svg>
+            {ROUTE_STOPS.map(([x, y], i) => (
+              <span
+                key={x}
+                data-active={i === active ? '' : undefined}
+                className="exp-stop"
+                style={{ left: `${x}%`, top: `${y}%` }}
+              />
+            ))}
+            <span className="exp-route-cover bg-forest" />
+          </div>
+        </Reveal>
+
+        <Reveal className="mt-10 lg:mt-14">
           <div
             ref={stageRef}
             className="grid gap-10 lg:grid-cols-12 lg:items-stretch lg:gap-14"
           >
             {/* Images: crossfade, slight settle-in zoom on the active one */}
             <div
-              className="relative order-1 aspect-[4/3] touch-pan-y overflow-hidden rounded-xs bg-forest-deep select-none lg:order-2 lg:col-span-7 lg:aspect-auto lg:min-h-[560px]"
+              className="motion-depth relative order-1 aspect-[4/3] touch-pan-y overflow-hidden rounded-xs bg-forest-deep select-none [--depth:22px] lg:order-2 lg:col-span-7 lg:aspect-auto lg:min-h-[560px]"
               onPointerDown={onPointerDown}
               onPointerUp={onPointerUp}
               onPointerCancel={() => (swipeX.current = null)}
@@ -134,10 +166,12 @@ export function Experiences() {
                   />
                 </div>
               ))}
+              {/* Light falling on each new image, then fading out (the image stays clean). */}
+              <span key={active} aria-hidden="true" className="exp-beam motion-beam" />
             </div>
 
-            {/* Tabs + text */}
-            <div className="order-2 flex flex-col lg:order-1 lg:col-span-5 lg:py-2">
+            {/* Tabs + text: the front plane of the diorama */}
+            <div className="motion-depth order-2 flex flex-col [--depth:-8px] lg:order-1 lg:col-span-5 lg:py-2">
               <div role="tablist" aria-label={t.experiences.tabsLabel} className="grid grid-cols-3 gap-3 sm:gap-4 lg:grid-cols-1 lg:gap-0">
                 {experiences.map((exp, i) => {
                   const selected = i === active;

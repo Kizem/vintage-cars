@@ -866,3 +866,57 @@ dialog[open] {
     display: none;
   }
 }
+
+/* --- Experiences: route and light on the stage ------------------------------ */
+.exp-route-cover {
+  position: absolute;
+  inset: 0;
+  transform: translateX(101%);
+  transition: transform 2.2s var(--ease-editorial) 200ms;
+}
+.js-reveal .reveal:not(.is-visible) .exp-route-cover {
+  transform: none;
+}
+.exp-stop {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  margin: -3.5px 0 0 -3.5px;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+  background: var(--color-forest);
+  transition: transform 0.6s var(--ease-editorial);
+}
+.exp-stop::after {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0;
+  transition: opacity 0.6s var(--ease-editorial);
+}
+.exp-stop[data-active] {
+  transform: scale(1.45);
+}
+.exp-stop[data-active]::after {
+  opacity: 1;
+}
+.exp-beam {
+  --beam-rest: 0;
+  inset: 0;
+  /* Soft-edged on photographs: a pool of light from above rather than a hard cone. */
+  clip-path: none;
+  background: radial-gradient(ellipse 42% 95% at 50% 0, rgb(179 154 112 / 0.3), rgb(179 154 112 / 0) 100%);
+  mix-blend-mode: screen;
+}
+@media (prefers-reduced-motion: reduce) {
+  .exp-route-cover,
+  .js-reveal .reveal:not(.is-visible) .exp-route-cover {
+    transform: translateX(101%);
+    transition: none;
+  }
+  .exp-stop {
+    transition: none;
+  }
+}
