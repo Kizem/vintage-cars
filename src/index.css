@@ -227,8 +227,14 @@ button, input, select, textarea { font-variant-numeric: lining-nums; }
 .em-sc--split .em-text:first-of-type { margin-top: clamp(1.4rem, 4cqh, 2.5rem); }
 @container (max-width: 899px) {
   .em-sc--split, .em-sc--flip { --fig-h: clamp(7rem, 24cqh, 14rem); display: flex; flex-direction: column; justify-content: flex-start; gap: clamp(.9rem, 2.6cqh, 2rem); padding-inline: max(16px, env(safe-area-inset-left, 0px)); }
-  .em-sc--flip .em-sc__col { order: 0; }
-  .em-sc__col { width: 100%; flex: 1 1 auto; }
+  /* Comme les chapitres : le titre, puis la photo, puis le contenu. La colonne s'efface pour que le titre
+     remonte au-dessus de la photo ; l'écart ne sépare que ces trois temps. */
+  .em-sc--split, .em-sc--flip { gap: 0; }
+  .em-sc--split .em-sc__col { display: contents; }
+  .em-sc--split .em-sc__col > .em-title { order: -1; }
+  .em-sc--split .em-sc__col > :not(.em-title) { order: 1; }
+  .em-sc--split > .em-figure { margin-block: clamp(.9rem, 2.6cqh, 2rem); }
+  .em-sc--split .em-title + * { margin-top: 0; }
 }
 .em-title { margin: .25rem 0 0; font-family: var(--font-display); font-weight: 300; text-transform: uppercase; font-size: clamp(2.1rem, min(5.4cqw, 7.5cqh), 4.8rem); line-height: 1.04; letter-spacing: .002em; text-wrap: balance; }
 .em-figure { margin: 0; width: 100%; }

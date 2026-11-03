@@ -110,31 +110,32 @@ export const vehicles: Vehicle[] = [
     ],
     availability: 'on-request',
     service: 'chauffeur',
-    // The collection car, photographed in its garage: no illustration notice.
+    // First photo, at the owner's request: an illustrative photo supplied by the owner
+    // (third-party, not the collection car), labelled as such.
     image: {
-      src: 'images/collection/ds-garage.webp',
-      width: 1200,
-      height: 833,
+      src: 'images/collection/citroen-ds-illustration-1.webp',
+      width: 920,
+      height: 613,
       alt: {
-        en: 'The grey Citroën DS 21 of the collection, three-quarter rear view',
-        fr: 'La Citroën DS 21 grise de la collection, vue de trois-quarts arrière',
+        en: 'A grey Citroën DS 21 saloon in a Paris street, three-quarter rear view (illustrative photo)',
+        fr: 'Une Citroën DS 21 berline grise dans une rue de Paris, vue de trois-quarts arrière (photo d’illustration)',
       },
-      caption: { en: 'Three-quarter rear', fr: 'Trois-quarts arrière' },
+      caption: { en: 'In a Paris street', fr: 'Dans une rue de Paris' },
+      credit: { en: 'Illustrative photo', fr: 'Photo d’illustration' },
     },
-    // Then three illustrative photos supplied by the owner (third-party, not the
-    // collection car), always labelled as such.
+    // Then the collection car, photographed in its garage (no illustration notice),
+    // and two more illustrative photos, always labelled as such.
     // TODO: confirm the rights to use them, or replace them with more photos of the actual car.
     gallery: [
       {
-        src: 'images/collection/citroen-ds-illustration-1.webp',
-        width: 920,
-        height: 613,
+        src: 'images/collection/ds-garage.webp',
+        width: 1200,
+        height: 833,
         alt: {
-          en: 'A grey Citroën DS 21 saloon in a Paris street, three-quarter rear view (illustrative photo)',
-          fr: 'Une Citroën DS 21 berline grise dans une rue de Paris, vue de trois-quarts arrière (photo d’illustration)',
+          en: 'The grey Citroën DS 21 of the collection, three-quarter rear view',
+          fr: 'La Citroën DS 21 grise de la collection, vue de trois-quarts arrière',
         },
-        caption: { en: 'In a Paris street', fr: 'Dans une rue de Paris' },
-        credit: { en: 'Illustrative photo', fr: 'Photo d’illustration' },
+        caption: { en: 'Three-quarter rear', fr: 'Trois-quarts arrière' },
       },
       {
         src: 'images/collection/citroen-ds-illustration-2.webp',

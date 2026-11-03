@@ -65,6 +65,8 @@ Seven full-screen sections, in this order (`sectionIds` in `src/data/site.ts`):
 - A section never exceeds the screen, except when a Good to know answer is open,
   or on small phones when the form shows its errors (the navigation then lets
   the visitor read the section to the end first).
+- On phones and tablets (≤ 899 px), every section reads in the same order:
+  title, photo, content (chapters, Good to know and About alike).
 - There is exactly one `h1`, in the garage.
 
 ## 4. The 3D showroom (`src/scene/`)
@@ -177,6 +179,8 @@ Data lives in `src/data/*.ts` (`{ en, fr }` fields) and `src/i18n/{en,fr}.ts`.
   owner provides real ones. Nothing is invented.
 - Generated images keep « Illustrative image », third-party photos keep
   « Illustrative photo ». Collection photos must show the actual cars.
+  Exception chosen by the owner: the DS sheet opens on an illustrative photo
+  (Paris street), the collection car comes second.
 - Experience images show no visible caption: the caption stays in the
   `<figcaption>`, visually hidden, for screen readers (with the `alt` text).
   The « Illustrative image » credit stays visible.
