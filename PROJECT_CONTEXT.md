@@ -129,7 +129,12 @@ Data lives in `src/data/*.ts` (`{ en, fr }` fields) and `src/i18n/{en,fr}.ts`.
   not confirmed.
 - The events chapter says: « Les voitures se louent aussi, avec ou sans
   chauffeur selon le modèle. »
-- Good to know has no numbered item N°4.
+- Good to know has no numbered item N°4. Its questions are an accordion
+  (dividers, a + that turns into −), deliberately unlike the chapter actions.
+- Experience chapters, in this order: N°1 Events, N°2 Private Paris Tours,
+  N°3 Chauffeured (`src/data/experiences.ts`). Each chapter's action sits at the
+  same distance from the bottom of its section, whatever the text length; the
+  text is centred in the space above it.
 - No guest count anywhere: not as a field, in validation, in the payload or in the copy.
 - Contact details in `site.ts` stay placeholders with their TODO until the
   owner provides real ones. Nothing is invented.
@@ -146,6 +151,8 @@ Data lives in `src/data/*.ts` (`{ en, fr }` fields) and `src/i18n/{en,fr}.ts`.
 - While no endpoint is set, the status is `not-configured`. The UI must never
   claim the enquiry was sent; it offers a pre-filled email instead.
 - A honeypot field (`company`) drops basic bots silently.
+- The Écrire footer (contact, hours, legal links) sits at the very bottom of
+  the page; the title and the form are centred in the space above it.
 - In the Écrire section, the form (and its result messages) sits in a framed
   panel (`--plate-ink` background, `--champagne` rule, filled `--forest`
   submit button), so it stands apart from the title and the footer. On phones

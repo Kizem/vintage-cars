@@ -1,13 +1,43 @@
 import type { Experience } from './types';
 
 /**
- * The three chapters under the parking (sections sortie-1 to sortie-3).
+ * The three chapters under the parking (sections sortie-1 to sortie-3), in this order:
+ * events, private tours, chauffeured.
  * All experiences are enquiry-based. Self-drive is only offered for some
  * cars (see `service` in vehicles.ts: Peugeot 504 and Mercedes-Benz /8),
  * on enquiry and subject to conditions; the Citroën DS is chauffeur-only.
  * Do not add a dedicated self-drive experience here without a confirmed offer.
  */
 export const experiences: Experience[] = [
+  {
+    id: 'events',
+    label: { en: 'Events & Special Occasions', fr: 'Événements et grandes occasions' },
+    title: { en: 'Events', fr: 'Événements' },
+    description: {
+      en: 'Weddings, private celebrations, photoshoots and company events, with a vintage car for the day.',
+      fr: 'Mariage, fête privée, shooting photo ou événement d’entreprise : une voiture de collection pour la journée.',
+    },
+    // Self-drive depends on the car (see `service` in vehicles.ts and the FAQ).
+    detail: {
+      en: 'The cars can also be hired, with or without a chauffeur depending on the model.',
+      fr: 'Les voitures se louent aussi, avec ou sans chauffeur selon le modèle.',
+    },
+    cta: { en: 'Enquire about your event', fr: 'Parler de votre événement' },
+    // Generated image, labelled as an illustration.
+    image: {
+      src: 'images/experiences/evenements-chateau.webp',
+      width: 1024,
+      height: 434,
+      alt: {
+        en: 'An ivory vintage saloon decorated with white ribbons in the gravel courtyard of a French château (illustrative image)',
+        fr: 'Une berline ancienne ivoire ornée de rubans blancs dans la cour d’un château (image d’illustration)',
+      },
+      credit: { en: 'Illustrative image', fr: 'Image d’illustration' },
+      caption: { en: 'Events, château courtyard', fr: 'Événements, cour de château' },
+      // Keeps the car in frame on the narrower mobile and tablet crops.
+      focalPoint: '74% 60%',
+    },
+  },
   {
     id: 'private-tours',
     label: { en: 'Private Paris Tours', fr: 'Visites privées de Paris' },
@@ -61,35 +91,6 @@ export const experiences: Experience[] = [
       credit: { en: 'Illustrative image', fr: 'Image d’illustration' },
       caption: { en: 'Chauffeured, the arrival', fr: 'Avec chauffeur, l’arrivée' },
       focalPoint: '46% 62%',
-    },
-  },
-  {
-    id: 'events',
-    label: { en: 'Events & Special Occasions', fr: 'Événements et grandes occasions' },
-    title: { en: 'Events', fr: 'Événements' },
-    description: {
-      en: 'Weddings, private celebrations, photoshoots and company events, with a vintage car for the day.',
-      fr: 'Mariage, fête privée, shooting photo ou événement d’entreprise : une voiture de collection pour la journée.',
-    },
-    // Self-drive depends on the car (see `service` in vehicles.ts and the FAQ).
-    detail: {
-      en: 'The cars can also be hired, with or without a chauffeur depending on the model.',
-      fr: 'Les voitures se louent aussi, avec ou sans chauffeur selon le modèle.',
-    },
-    cta: { en: 'Enquire about your event', fr: 'Parler de votre événement' },
-    // Generated image, labelled as an illustration.
-    image: {
-      src: 'images/experiences/evenements-chateau.webp',
-      width: 1024,
-      height: 434,
-      alt: {
-        en: 'An ivory vintage saloon decorated with white ribbons in the gravel courtyard of a French château (illustrative image)',
-        fr: 'Une berline ancienne ivoire ornée de rubans blancs dans la cour d’un château (image d’illustration)',
-      },
-      credit: { en: 'Illustrative image', fr: 'Image d’illustration' },
-      caption: { en: 'Events, château courtyard', fr: 'Événements, cour de château' },
-      // Keeps the car in frame on the narrower mobile and tablet crops.
-      focalPoint: '74% 60%',
     },
   },
 ];
