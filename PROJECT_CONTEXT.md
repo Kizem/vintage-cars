@@ -237,6 +237,14 @@ Data lives in `src/data/*.ts` (`{ en, fr }` fields) and `src/i18n/{en,fr}.ts`.
    Everything but `scene` runs without WebGL (vector profile, fast) and waits
    on conditions rather than fixed delays. Headless WebGL is software
    (SwiftShader, 1 to 5 fps): keep it to the one `scene` file.
-3. For 3D model changes, capture the workshop views of each car before and
+3. Which suite to run:
+   - light changes (copy, styles, a single component, a fix): the fast suite;
+   - structural changes (the 3D scene or parking behaviour, page navigation,
+     the vehicle sheet, layout of several sections, the form, dependencies or
+     build): the full suites as well, one after the other, about an hour:
+     `t1-layout`, `t4-variants`, `t7-carousel`, `t2-desktop` (FR, then EN at
+     1280x640), `t3-mobile`. Known false failure: the simulated finger swipe
+     between sections in `t3-mobile` (checked by hand on a phone).
+4. For 3D model changes, capture the workshop views of each car before and
    after, and compare them.
-4. Commit messages: short, in English, with the session attribution lines.
+5. Commit messages: short, in English, with the session attribution lines.
