@@ -119,6 +119,9 @@ export function usePageNavigation() {
     const sc = scroller();
     if (!sc) return;
     let quietUntil = 0;
+    /* petits crans cumulés au sein d'un même geste (certaines souris, Firefox en lignes) */
+    let acc = 0;
+    let accAt = 0;
     const onWheel = (e: WheelEvent) => {
       if (e.ctrlKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
       if (isLocked('focus')) {
@@ -147,7 +150,13 @@ export function usePageNavigation() {
         quietUntil = now + 150;
         return;
       }
-      if (Math.abs(e.deltaY) < 3) return;
+      /* en pixels, quelle que soit l'unité de la molette (pixels, lignes ou pages) */
+      const dy = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? sc.clientHeight : 1);
+      if (now - accAt > 200 || Math.sign(acc) !== dir) acc = 0;
+      acc += dy;
+      accAt = now;
+      if (Math.abs(acc) < 3) return;
+      acc = 0;
       quietUntil = now + 150;
       goSection(dir);
     };
