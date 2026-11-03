@@ -59,7 +59,7 @@ Seven full-screen sections, in this order (`sectionIds` in `src/data/site.ts`):
   leads back to the garage: monogram and name at the top left on desktop,
   monogram only at the top left of the menu on phones (the garage also shows
   the name above its h1 on phones).
-- A discreet round « back to top » button (`.em-top`, in `TopNav.tsx`) appears
+- A discreet square « back to top » button (`.em-top`, in `TopNav.tsx`) appears
   from the second experience onwards, bottom right; it never covers the chapter
   actions, and in Écrire it sits just above the footer on phones.
 - A section never exceeds the screen, except when a Good to know answer is open,
@@ -183,6 +183,16 @@ Data lives in `src/data/*.ts` (`{ en, fr }` fields) and `src/i18n/{en,fr}.ts`.
 - Figures are lining everywhere (`font-variant-numeric: lining-nums` on body
   and form controls): Cormorant's default old-style figures drop below the
   capitals (« PEUGEOT 504 », « DS 21 »).
+- French typography: a non-breaking space (U+00A0) before « : ; ? ! » in every
+  French string (dictionary, data, generated email).
+- Design charter: no radius, no card, no shadow; `--phare` only for the cars'
+  light in the scene. Keyboard focus is always a 1 px outline in
+  `currentColor`, 4 px away (global rule in `index.css`); the filled submit
+  button keeps that outline in `--forest`, since its own text is ivory.
+- Photos in the vehicle sheet show no visible caption (« Trois-quarts avant »…):
+  the caption stays for screen readers; the « Photo d'illustration » credit
+  stays visible on third-party photos.
+- The garage subtitle (the h1 under the menu) is `clamp(.8rem, 1.1cqw, .95rem)`.
 - Colours come only from the design-system tokens in `index.css`:
   `--ink`, `--ink-soft`, `--forest`, `--forest-deep`, `--ivory`, `--champagne`,
   `--phare`, `--plate`, `--plate-ink`, `--error`.
@@ -201,7 +211,13 @@ Data lives in `src/data/*.ts` (`{ en, fr }` fields) and `src/i18n/{en,fr}.ts`.
   submit button), so it stands apart from the title and the footer. On phones
   the panel runs edge to edge to keep the sentence's full width.
 
-## 7. Tests and checks before pushing
+## 7. Frozen versions
+
+- `le-garage-v1` (git tag): the validated version, with the vehicle sheet
+  inside the garage. Return to it with `git checkout le-garage-v1`; to deploy
+  it again, run the Pages workflow on that commit.
+
+## 8. Tests and checks before pushing
 
 1. `npm run typecheck` and `npm run build`.
 2. Playwright regression suites (kept in the session scratchpad, not in the

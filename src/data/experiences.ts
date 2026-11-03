@@ -21,14 +21,14 @@ export const experiences: Experience[] = [
       ],
       fr: [
         'Rendez vos grands moments plus mémorables encore, avec l’élégance intemporelle d’une automobile de collection.',
-        'Mariage, moment romantique, événement privé ou shooting photo professionnel : une voiture d’époque apporte une touche singulière à chaque décor.',
+        'Mariage, moment romantique, événement privé ou shooting photo professionnel : une voiture d’époque apporte une touche singulière à chaque décor.',
         'Qu’elle soit la vedette de vos photos ou qu’elle vous accompagne tout au long de la journée, une voiture de collection apporte du caractère, de l’élégance et le sentiment d’un jour à part. Une belle façon de créer des souvenirs durables et de donner à votre événement une touche vraiment personnelle.',
       ],
     },
     /** Smartphones: one shorter paragraph. */
     summary: {
       en: 'Add a touch of timeless elegance to your special occasions. Weddings, photoshoots and private events: a vintage automobile brings character and distinction to your most memorable moments.',
-      fr: 'Une touche d’élégance intemporelle pour vos grandes occasions. Mariage, shooting photo ou événement privé : une automobile de collection apporte caractère et distinction à vos moments les plus mémorables.',
+      fr: 'Une touche d’élégance intemporelle pour vos grandes occasions. Mariage, shooting photo ou événement privé : une automobile de collection apporte caractère et distinction à vos moments les plus mémorables.',
     },
     cta: { en: 'Enquire about your event', fr: 'Parler de votre événement' },
     // Generated image, labelled as an illustration.

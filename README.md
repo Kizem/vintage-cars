@@ -39,7 +39,8 @@ Seven full-screen sections, in this order: `garage`, `sortie-1`, `sortie-2`,
 - The parking (`src/scene/`, three.js) shows graphic renderings of the three
   cars, never presented as photos. ← → change car, the cars alternate on their
   own every 5 seconds (paused for 9 seconds after a gesture, and on hover or
-  focus). A click on a car opens its photos and specifications.
+  focus). A click on the car opens its sheet (photos and specifications) inside the
+  garage, next to the car: on the right in landscape, from the bottom in portrait.
   Without WebGL, the vector side profile of the car replaces the scene.
 - With `prefers-reduced-motion`: no alternation, no animated scrolling, no intro.
 
@@ -93,7 +94,7 @@ src/
 Images live in `public/images/<section>/` (`collection`, `experiences`,
 `practical`, `story`) and are declared in `src/data/*.ts` with their `width`,
 `height`, `alt`, optional `srcSet` and `credit`. Section images load as their
-section approaches; carousel photos load when the car focus opens.
+section approaches; carousel photos load when the vehicle sheet opens.
 
 Collection images must show the **actual cars** of the collection. A
 generated image keeps “Illustrative image”, a third-party photo keeps

@@ -10,7 +10,8 @@ export interface CarouselHandle {
 }
 
 /**
- * Les photos de la voiture, entières (sans recadrage), avec leur légende.
+ * Les photos de la voiture, entières (sans recadrage). La légende est réservée aux lecteurs d'écran ;
+ * la mention « Photo d'illustration » reste affichée.
  * Flèches à l'écran, glissement du doigt, ← → au clavier (relayés par le parking).
  * Monté seulement à l'ouverture de la fiche : les photos ne se chargent qu'à ce moment.
  */
@@ -71,8 +72,9 @@ export function PhotoCarousel({ photos, label, ref }: { photos: MediaAsset[]; la
       </div>
       <div className="em-carousel__bar">
         <p className="em-carousel__cap" aria-live="polite">
-          {p.caption && l(p.caption)}
-          {p.credit && <span>{l(p.credit)}</span>}
+          {/* la légende (« Trois-quarts avant »…) n'est pas affichée : elle reste lue par les lecteurs d'écran */}
+          {p.caption && <span className="em-sr">{l(p.caption)}</span>}
+          {p.credit && <span className="em-carousel__credit">{l(p.credit)}</span>}
         </p>
         {n > 1 && (
           <div className="em-carousel__pager">

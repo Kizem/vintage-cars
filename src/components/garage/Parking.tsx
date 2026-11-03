@@ -217,13 +217,13 @@ export function Parking({ open, onOpenChange }: { open: boolean; onOpenChange: (
     if (open) heading.current?.focus({ preventScroll: true });
   }, [open]);
 
-  /* Pendant le focus, la page ne change plus de section */
+  /* Fiche ouverte, la page ne change plus de section */
   useEffect(() => {
     setLock('focus', open);
     return () => setLock('focus', false);
   }, [open]);
 
-  /* Clavier : Échap ferme le focus ; ← → changent de voiture, ou de photo dans le focus */
+  /* Clavier : Échap ferme la fiche ; ← → changent de voiture, ou de photo quand la fiche est ouverte */
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (isLocked('dialog') || e.metaKey || e.ctrlKey || e.altKey) return;
@@ -241,7 +241,7 @@ export function Parking({ open, onOpenChange }: { open: boolean; onOpenChange: (
         else actions.current.step(d);
       }
     };
-    /* un clic dans le menu ferme le focus */
+    /* un clic dans le menu ferme la fiche */
     const onClose = (e: Event) => {
       if (latest.current.open) actions.current.closeSheet((e as CustomEvent<string>).detail === 'garage');
     };
@@ -344,7 +344,7 @@ export function Parking({ open, onOpenChange }: { open: boolean; onOpenChange: (
     en.pointer(0, 0);
   };
 
-  /* Sans WebGL : glisser change de voiture, toucher ouvre le focus */
+  /* Sans WebGL : glisser change de voiture, toucher le profil ouvre la fiche */
   const flatDown = (e: PointerEvent<HTMLDivElement>) => {
     if (e.button && e.button !== 0) return;
     lastTouch.current = performance.now();
@@ -452,7 +452,7 @@ export function Parking({ open, onOpenChange }: { open: boolean; onOpenChange: (
               <Arrow />
             </button>
           </div>
-          <button type="button" className="em-focus__close" onClick={() => closeSheet(true)} aria-label={t.focus.close}>
+          <button type="button" className="em-panel__close" onClick={() => closeSheet(true)} aria-label={t.focus.close}>
             {t.focus.closeShort}
           </button>
         </div>
