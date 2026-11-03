@@ -243,8 +243,10 @@ Data lives in `src/data/*.ts` (`{ en, fr }` fields) and `src/i18n/{en,fr}.ts`.
      the vehicle sheet, layout of several sections, the form, dependencies or
      build): the full suites as well, one after the other, about an hour:
      `t1-layout`, `t4-variants`, `t7-carousel`, `t2-desktop` (FR, then EN at
-     1280x640), `t3-mobile`. Known false failure: the simulated finger swipe
-     between sections in `t3-mobile` (checked by hand on a phone).
+     1280x640), `t3-mobile`. The finger swipe between sections is not
+     simulated (a CDP touch does not trigger native snap scrolling): the suites
+     check the snap settings instead, and the real gesture is checked by hand
+     on a phone.
 4. For 3D model changes, capture the workshop views of each car before and
    after, and compare them.
 5. Commit messages: short, in English, with the session attribution lines.
