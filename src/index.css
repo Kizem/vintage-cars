@@ -190,6 +190,8 @@ body { margin: 0; background: var(--ivory); }
   .em-exp__media { order: 0; padding: 0; width: 100%; flex: none; --img-w: calc(100cqw - 2 * max(16px, env(safe-area-inset-left, 0px))); --img-max: clamp(7rem, 28cqh, 20rem); }
   .em-exp__head { order: -1; }
   .em-exp__body { order: 1; }
+  /* les blocs prennent toute la largeur, pour que les titres courts restent centrés (N°3) */
+  .em-exp__head, .em-exp__body { align-self: stretch; }
 }
 .em-text { margin: 0; max-width: 36rem; font-size: 1.0625rem; line-height: 1.65; text-wrap: pretty; }
 .em-text + .em-text { margin-top: 1.2rem; }
@@ -233,6 +235,30 @@ body { margin: 0; background: var(--ivory); }
 #ecrire { justify-content: space-evenly; }
 #ecrire .em-form__s { font-size: clamp(1.35rem, min(3.4cqw, 4.2cqh), 3rem); }
 #ecrire .em-foot { margin-top: .8rem; }
+/* Le formulaire dans un encadré : fond champagne clair, filet champagne, bouton plein.
+   Le titre et le pied de page restent sur le fond de la section. */
+#ecrire .em-form, #ecrire .em-done { box-sizing: border-box; width: min(100%, 60rem); margin-inline: auto; background: var(--plate-ink); border: 1px solid var(--champagne); padding: clamp(1rem, 3.2cqh, 2.4rem) clamp(1rem, 4cqw, 3.5rem); }
+#ecrire .em-done { margin-top: .8rem; }
+#ecrire .em-form button[type='submit'] { background: var(--forest); color: var(--ivory); border: 0; padding: .8rem 1.8rem; margin-top: clamp(.6rem, 1.6cqh, 1.1rem); }
+#ecrire .em-form button[type='submit']:focus-visible { outline: 2px solid var(--forest); outline-offset: 3px; }
+#ecrire .em-form button[type='submit'][disabled] { opacity: .7; cursor: default; }
+#ecrire .em-form .em-text--small { margin-top: .8rem; }
+/* Écrans bas : l'encadré se resserre */
+@container (max-height: 700px) {
+  #ecrire .em-form, #ecrire .em-done { padding-block: .7rem .8rem; }
+  #ecrire .em-form__consent { margin-top: .5rem; }
+  #ecrire .em-form__errors { margin-top: .5rem; line-height: 1.35; }
+  #ecrire .em-form button[type='submit'] { margin-top: .4rem; }
+  #ecrire .em-form .em-text--small { margin-top: .4rem; }
+}
+/* Sur téléphone, l'encadré va d'un bord à l'autre : la phrase garde toute la largeur de l'écran */
+@container (max-width: 599px) {
+  #ecrire .em-form, #ecrire .em-done { width: auto; margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); align-self: stretch; border-inline: 0; padding: .9rem max(16px, env(safe-area-inset-left, 0px)) 1rem; }
+  #ecrire .em-form__consent { margin-top: .7rem; }
+  #ecrire .em-form__errors { margin-top: .6rem; font-size: .875rem; line-height: 1.4; }
+  #ecrire .em-form .em-text--small { margin-top: .5rem; line-height: 1.45; }
+  #ecrire .em-foot { margin-top: .5rem; }
+}
 .em-foot p { margin: 0; }
 
 @media (prefers-reduced-motion: reduce) {

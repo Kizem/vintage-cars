@@ -51,7 +51,9 @@ Seven full-screen sections, in this order (`sectionIds` in `src/data/site.ts`):
 - Top menu: exactly four entries (Garage, Experiences, About, Write).
 - The Époque Motors logo (`Brand` in `components/ui.tsx`) stays visible and
   leads back to the garage.
-- A section never exceeds the screen, except when a Good to know answer is open.
+- A section never exceeds the screen, except when a Good to know answer is open,
+  or on small phones when the form shows its errors (the navigation then lets
+  the visitor read the section to the end first).
 - There is exactly one `h1`, in the garage.
 
 ## 4. The 3D showroom (`src/scene/`)
@@ -144,6 +146,10 @@ Data lives in `src/data/*.ts` (`{ en, fr }` fields) and `src/i18n/{en,fr}.ts`.
 - While no endpoint is set, the status is `not-configured`. The UI must never
   claim the enquiry was sent; it offers a pre-filled email instead.
 - A honeypot field (`company`) drops basic bots silently.
+- In the Écrire section, the form (and its result messages) sits in a framed
+  panel (`--plate-ink` background, `--champagne` rule, filled `--forest`
+  submit button), so it stands apart from the title and the footer. On phones
+  the panel runs edge to edge to keep the sentence's full width.
 
 ## 7. Tests and checks before pushing
 
