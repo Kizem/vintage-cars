@@ -90,8 +90,10 @@ export function scrollToId(id: SectionId, opts: { focusHeading?: boolean } = {})
   requestCloseFocus(id);
   const el = document.getElementById(id);
   if (!el) return;
+  /* le focus attend la fin du rendu en cours : la section, inerte pendant la fiche, doit d'abord redevenir active
+     (sans animation, en mouvement réduit, l'arrivée est immédiate) */
   const arrive = () => {
-    if (opts.focusHeading) el.querySelector<HTMLElement>('h2[tabindex="-1"]')?.focus({ preventScroll: true });
+    if (opts.focusHeading) window.setTimeout(() => el.querySelector<HTMLElement>('h2[tabindex="-1"]')?.focus({ preventScroll: true }), 0);
   };
   if (scroller()) animateTo(sectionTop(el), arrive);
   else {

@@ -389,7 +389,8 @@ export function Parking({ open, onOpenChange }: { open: boolean; onOpenChange: (
           onPointerDown={flatDown}
           onPointerUp={flatUp}
           onPointerCancel={() => (drag.current = null)}
-          onPointerEnter={() => (flatHover.current = true)}
+          /* seul le survol du profil suspend l'alternance : le calque couvre toute la scène (clic dans le vide) */
+          onPointerMove={(e) => (flatHover.current = !!(e.target as Element).closest?.('.em-profile'))}
           onPointerLeave={() => {
             flatHover.current = false;
             drag.current = null;

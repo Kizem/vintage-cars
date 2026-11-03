@@ -222,12 +222,21 @@ Data lives in `src/data/*.ts` (`{ en, fr }` fields) and `src/i18n/{en,fr}.ts`.
 ## 8. Tests and checks before pushing
 
 1. `npm run typecheck` and `npm run build`.
-2. Playwright regression suites (kept in the session scratchpad, not in the
-   repository), run against `vite preview`:
-   - layout, desktop (EN / FR), mobile, variants, carousel, sub-path;
-   - no console errors.
-3. Headless runs use SwiftShader, which renders at only 1 to 5 fps, so tests
-   wait for convergence rather than for fixed delays.
-4. For 3D changes, capture the workshop views of each car before and after
-   the change and compare them.
-5. Commit messages: short, in English, with the session attribution lines.
+2. The fast Playwright suite (session scratchpad, `tests/fast/run.sh`, not in
+   the repository), against `vite preview`. Five files run in parallel, about
+   35 s in all:
+   - `layout`: seven sections, one h1, nothing overflows (5 sizes × FR/EN),
+     menu on one line, long or short chapter texts, language switch;
+   - `sheet`: the vehicle sheet on desktop and phone (place, focus, arrows,
+     photos, captions, closing, wheel and finger scrolling, enquiry);
+   - `nav-form`: wheel (including small notches), keys, menu, back to top,
+     form errors and the `not-configured` state;
+   - `scene`: the real WebGL scene, with reduced motion: ready, sheet, empty
+     click, context loss;
+   - `timing`: the 504 stays 9 s, then one car every 5 s.
+   Everything but `scene` runs without WebGL (vector profile, fast) and waits
+   on conditions rather than fixed delays. Headless WebGL is software
+   (SwiftShader, 1 to 5 fps): keep it to the one `scene` file.
+3. For 3D model changes, capture the workshop views of each car before and
+   after, and compare them.
+4. Commit messages: short, in English, with the session attribution lines.
