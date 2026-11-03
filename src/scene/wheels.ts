@@ -16,8 +16,8 @@ export function buildWheels(s: CarSpec, mats: CarMaterials, root: Group) {
       const tire = new Mesh(tireG, mats.tire); tire.rotation.x = Math.PI / 2; spin.add(tire);
       const rim = new Mesh(new TorusGeometry(s.wheelR * .66, .012, 8, 36), mats.chrome); rim.position.z = sg * s.wheelW * .49; spin.add(rim);
       const hub = new Mesh(new CircleGeometry(s.wheelR * .64, 36), mats.hub); hub.position.z = sg * s.wheelW * .505; if (sg < 0) hub.rotation.y = Math.PI; spin.add(hub);
-      /* enjoliveur bombé chromé */
-      const dome = new Mesh(new SphereGeometry(s.wheelR * .45, 28, 12, 0, Math.PI * 2, 0, Math.PI / 2), mats.chrome); dome.rotation.x = sg * Math.PI / 2; dome.scale.y = s.hub === 'mercedes' ? .22 : .32; dome.position.z = sg * s.wheelW * .5; spin.add(dome);
+      /* enjoliveur bombé chromé (DS, 504) ; celui de la Mercedes reste plat et peint, avec son étoile */
+      if (s.hub !== 'mercedes') { const dome = new Mesh(new SphereGeometry(s.wheelR * .45, 28, 12, 0, Math.PI * 2, 0, Math.PI / 2), mats.chrome); dome.rotation.x = sg * Math.PI / 2; dome.scale.y = .32; dome.position.z = sg * s.wheelW * .5; spin.add(dome); }
       root.add(w); wheels.push(spin);
     });
   });

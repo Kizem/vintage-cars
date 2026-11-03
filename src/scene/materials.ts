@@ -11,9 +11,12 @@ function hubTexture(style: CarSpec['hub'], tint: string) {
     const c = w / 2;
     g.fillStyle = tint; g.beginPath(); g.arc(c, c, c, 0, 7); g.fill();
     if (style === 'mercedes') {
-      g.strokeStyle = 'rgba(40,40,40,.55)'; g.lineWidth = 3; g.beginPath(); g.arc(c, c, c * .62, 0, 7); g.stroke();
-      for (let i = 0; i < 24; i++) { const a = i / 24 * 6.283; g.strokeStyle = 'rgba(40,40,40,.32)'; g.lineWidth = 2; g.beginPath(); g.moveTo(c + Math.cos(a) * c * .66, c + Math.sin(a) * c * .66); g.lineTo(c + Math.cos(a) * c * .97, c + Math.sin(a) * c * .97); g.stroke(); }
-      g.fillStyle = 'rgba(30,30,30,.82)'; for (let i = 0; i < 3; i++) { const a = i / 3 * 6.283 - 1.571; g.beginPath(); g.moveTo(c + Math.cos(a) * c * .46, c + Math.sin(a) * c * .46); g.lineTo(c + Math.cos(a + 1.5) * c * .07, c + Math.sin(a + 1.5) * c * .07); g.lineTo(c + Math.cos(a - 1.5) * c * .07, c + Math.sin(a - 1.5) * c * .07); g.fill(); }
+      /* enjoliveur ivoire cerclé de chrome, étoile à trois branches au centre */
+      g.fillStyle = '#d9dcdc'; g.beginPath(); g.arc(c, c, c, 0, 7); g.fill();
+      g.fillStyle = tint; g.beginPath(); g.arc(c, c, c * .8, 0, 7); g.fill();
+      g.strokeStyle = 'rgba(40,40,40,.45)'; g.lineWidth = 3; g.beginPath(); g.arc(c, c, c * .8, 0, 7); g.stroke();
+      g.strokeStyle = 'rgba(60,60,60,.85)'; g.lineWidth = 4; g.beginPath(); g.arc(c, c, c * .3, 0, 7); g.stroke();
+      g.fillStyle = 'rgba(60,60,60,.9)'; for (let i = 0; i < 3; i++) { const a = i / 3 * 6.283 - 1.571; g.beginPath(); g.moveTo(c + Math.cos(a) * c * .29, c + Math.sin(a) * c * .29); g.lineTo(c + Math.cos(a + 1.5) * c * .045, c + Math.sin(a + 1.5) * c * .045); g.lineTo(c + Math.cos(a - 1.5) * c * .045, c + Math.sin(a - 1.5) * c * .045); g.fill(); }
     } else if (style === 'peugeot') {
       g.fillStyle = '#1c1c1b'; for (let i = 0; i < 10; i++) { const a = i / 10 * 6.283; g.beginPath(); g.ellipse(c + Math.cos(a) * c * .74, c + Math.sin(a) * c * .74, c * .11, c * .055, a, 0, 7); g.fill(); }
       g.strokeStyle = 'rgba(30,30,30,.5)'; g.lineWidth = 3; g.beginPath(); g.arc(c, c, c * .42, 0, 7); g.stroke();
@@ -75,7 +78,10 @@ export function createMaterials(s: CarSpec, env: Texture, be: (x: number) => num
       ? new MeshPhysicalMaterial({ side: DoubleSide, color: s.cabin.glass, roughness: .04, clearcoat: 1, clearcoatRoughness: .03, transparent: true, opacity: s.cabin.opacity, depthWrite: false, envMap: env, envMapIntensity: 1.1 })
       : new MeshPhysicalMaterial({ side: DoubleSide, color: 0x0d1513, metalness: .2, roughness: .08, clearcoat: 1, clearcoatRoughness: .05, envMap: env, envMapIntensity: .8 }),
     tire: new MeshStandardMaterial({ color: 0x0c0c0c, roughness: .82 }),
-    hub: new MeshStandardMaterial({ map: hubTexture(s.hub, s.hubTint), metalness: .85, roughness: .32, envMap: env, envMapIntensity: 1.1 }),
+    /** enjoliveur dessiné : métal poli, sauf l'enjoliveur ivoire de la Mercedes, peint comme la caisse */
+    hub: s.hub === 'mercedes'
+      ? new MeshStandardMaterial({ map: hubTexture(s.hub, s.hubTint), metalness: .25, roughness: .28, envMap: env, envMapIntensity: 1.1 })
+      : new MeshStandardMaterial({ map: hubTexture(s.hub, s.hubTint), metalness: .85, roughness: .32, envMap: env, envMapIntensity: 1.1 }),
     env,
   };
 }

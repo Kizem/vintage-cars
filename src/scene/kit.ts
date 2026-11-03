@@ -130,10 +130,10 @@ export function buildBody(s: CarSpec, mats: CarMaterials, curves: CarCurves) {
   /* --- Outils de pose pour les détails --- */
   const nx = -s.L / 2; const tx = s.L / 2;
   /** Pare-chocs tubulaire qui suit la largeur de la caisse ; `wrap` le recourbe aux angles. */
-  const bumper = (x0: number, y: number, depth: number, r: number, flat: number, wrap: number) => {
+  const bumper = (x0: number, y: number, depth: number, r: number, flat: number, wrap: number, mat: Material = chrome) => {
     const pts: P3[] = []; const sg = Math.sign(x0);
     for (let i = 0; i <= 26; i++) { const t = i / 26 * 2 - 1; const w0 = hw(x0 - sg * .35); const z = t * w0 * 1.03; pts.push([x0 + sg * Math.abs(depth) - sg * Math.pow(Math.abs(t), 4) * wrap, y, z]); }
-    body.add(tube(pts, r, chrome, flat));
+    body.add(tube(pts, r, mat, flat));
   };
   /** Plaque aux angles arrondis tournée vers l'avant (-X) ; rotation.y = π/2 pour la tourner vers l'arrière. */
   const plate = (x: number, y: number, z: number, w: number, h: number, r: number, mat: Material, thick = .02, yaw = 0) => {
