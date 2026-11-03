@@ -213,9 +213,11 @@ Data lives in `src/data/*.ts` (`{ en, fr }` fields) and `src/i18n/{en,fr}.ts`.
 
 ## 7. Frozen versions
 
-- `le-garage-v1` (git tag): the validated version, with the vehicle sheet
-  inside the garage. Return to it with `git checkout le-garage-v1`; to deploy
-  it again, run the Pages workflow on that commit.
+- `le-garage-v1` (branch, commit `9f47e67`): the validated version, with the
+  vehicle sheet inside the garage. It is a snapshot: never commit to it. Return
+  to it with `git checkout le-garage-v1`; to deploy it again, reset
+  `le-garage` to that commit with a new commit, or run the Pages workflow on it.
+  (A git tag could not be pushed from the cloud session, hence the branch.)
 
 ## 8. Tests and checks before pushing
 
