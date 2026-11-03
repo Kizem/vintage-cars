@@ -20,6 +20,7 @@ export const fr: Dictionary = {
       write: 'Écrire',
     },
     otherLanguage: 'English',
+    backToTop: 'Revenir en haut de la page',
   },
   garage: {
     h1: 'Expériences privées en voiture de collection, à Paris',

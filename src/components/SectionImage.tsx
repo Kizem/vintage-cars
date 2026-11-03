@@ -35,14 +35,15 @@ function useNear(ref: RefObject<HTMLElement | null>) {
   return near;
 }
 
-/** `natural` : la photo entière (sans recadrage), légende au-dessus, comme dans un portfolio. */
+/** `natural` : la photo entière (sans recadrage), comme dans un portfolio. Sa légende n'est pas affichée :
+    elle reste lue par les lecteurs d'écran, en description de la figure. */
 export function SectionImage({ image, sizes, natural = false }: { image: MediaAsset; sizes: string; natural?: boolean }) {
   const { l } = useI18n();
   const frame = useRef<HTMLDivElement>(null);
   const near = useNear(frame);
   return (
     <figure className={`em-figure${natural ? ' em-figure--natural' : ''}`}>
-      {natural && image.caption && <figcaption className="em-figure__cap">{l(image.caption)}</figcaption>}
+      {natural && image.caption && <figcaption className="em-sr">{l(image.caption)}</figcaption>}
       <div className="em-figure__frame" ref={frame}>
         <img
           src={near ? image.src : undefined}

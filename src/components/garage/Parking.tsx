@@ -34,6 +34,8 @@ export function Parking({ open, onOpenChange }: { open: boolean; onOpenChange: (
   const nameBtn = useRef<HTMLButtonElement>(null);
   const carousel = useRef<CarouselHandle>(null);
   const [gl, setGl] = useState(hasWebGL);
+  /* nouvel essai de la scène après une perte du contexte WebGL (fréquent au chargement sur mobile) */
+  const [glTry, setGlTry] = useState(0);
   const [active, setActive] = useState(0);
   const [mounted, setMounted] = useState(false);
   const [ready, setReady] = useState(false);
@@ -57,6 +59,7 @@ export function Parking({ open, onOpenChange }: { open: boolean; onOpenChange: (
     const box = host.current;
     if (!gl || !box) return;
     let dead = false;
+    let retry = 0;
     let eng: ParkingEngine | null = null;
     const canvas = document.createElement('canvas');
     canvas.setAttribute('aria-hidden', 'true');
@@ -67,10 +70,16 @@ export function Parking({ open, onOpenChange }: { open: boolean; onOpenChange: (
       engine.current = null;
       canvas.remove();
     };
-    function fallBack() {
+    /* Contexte perdu ou scène impossible à créer : on garde le fond sombre et on réessaie deux fois,
+       avec un canvas neuf ; le profil vectoriel ne remplace la scène qu'en dernier recours. */
+    function fallBack(e?: Event) {
+      e?.preventDefault();
+      if (dead) return;
       dead = true;
       stop();
-      setGl(false);
+      setReady(false);
+      if (glTry < 2) retry = window.setTimeout(() => setGlTry((n) => n + 1), 700);
+      else setGl(false);
     }
     canvas.addEventListener('webglcontextlost', fallBack);
     box.appendChild(canvas);
@@ -78,27 +87,30 @@ export function Parking({ open, onOpenChange }: { open: boolean; onOpenChange: (
     Promise.all([import('../../scene/parking'), font])
       .then(([{ createParking }]) => {
         if (dead) return;
-        eng = createParking(canvas, cars, {
-          reduced: reducedMotion(),
-          start: latest.current.active,
-          onReady: () => {
-            lastTouch.current = performance.now();
-            setReady(true);
-          },
-        });
-        engine.current = eng;
-        eng.pause(paused.current);
-        eng.open(latest.current.open);
-        eng.start();
+        try {
+          eng = createParking(canvas, cars, {
+            reduced: reducedMotion(),
+            start: latest.current.active,
+            onReady: () => {
+              lastTouch.current = performance.now();
+              setReady(true);
+            },
+          });
+          engine.current = eng;
+          eng.pause(paused.current);
+          eng.open(latest.current.open);
+          eng.start();
+        } catch {
+          fallBack();
+        }
       })
-      .catch(() => {
-        if (!dead) fallBack();
-      });
+      .catch(() => fallBack());
     return () => {
       dead = true;
+      clearTimeout(retry);
       stop();
     };
-  }, [gl]);
+  }, [gl, glTry]);
 
   /* Pause hors écran */
   useEffect(() => {
@@ -340,9 +352,11 @@ export function Parking({ open, onOpenChange }: { open: boolean; onOpenChange: (
           <CarProfile model={car.rendering.model} />
         </div>
       )}
-      <div className="em-parking__intro" aria-hidden="true">
-        <Monogram />
-      </div>
+      {gl && (
+        <div className="em-parking__intro" aria-hidden="true">
+          <Monogram />
+        </div>
+      )}
       <div className="em-parking__top">
         <Brand className="em-brand--garage" />
         <h1 className="em-parking__h1">{t.garage.h1}</h1>

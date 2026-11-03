@@ -27,7 +27,7 @@ so a push to `le-garage` is a production release.
 | Build | Vite 8, `base: './'` | Relative paths work on any Pages sub-path. |
 | UI | React 19, TypeScript 7 strict, plain CSS | No CSS framework, design tokens in `index.css`. |
 | 3D | three.js **0.170.0, pinned**, loaded with a dynamic import | Keeps the first load light; the parking is its own chunk (`parking-*.js`). |
-| Fallback | Vector side profile (`sideProfileSVG` in `carspecs.ts`) | Shown when WebGL is missing. |
+| Fallback | Vector side profile (`sideProfileSVG` in `carspecs.ts`) | Shown only when WebGL is missing, or after the WebGL context is lost three times in a row (each loss first rebuilds the scene on a new canvas). Never shown together with the intro monogram. |
 | Fonts | Self-hosted woff2 (`src/assets/fonts`) | No third-party requests. |
 | Tests | Playwright, outside the repository (session scratchpad) | Playwright is **not** a dependency; never run `playwright install`. |
 
@@ -50,7 +50,12 @@ Seven full-screen sections, in this order (`sectionIds` in `src/data/site.ts`):
 - Navigation is locked while the car focus or the legal dialog is open.
 - Top menu: exactly four entries (Garage, Experiences, About, Write).
 - The Époque Motors logo (`Brand` in `components/ui.tsx`) stays visible and
-  leads back to the garage.
+  leads back to the garage: monogram and name at the top left on desktop,
+  monogram only at the top left of the menu on phones (the garage also shows
+  the name above its h1 on phones).
+- A discreet round « back to top » button (`.em-top`, in `TopNav.tsx`) appears
+  from the second experience onwards, bottom right; it never covers the chapter
+  actions, and in Écrire it sits just above the footer on phones.
 - A section never exceeds the screen, except when a Good to know answer is open,
   or on small phones when the form shows its errors (the navigation then lets
   the visitor read the section to the end first).
@@ -140,6 +145,9 @@ Data lives in `src/data/*.ts` (`{ en, fr }` fields) and `src/i18n/{en,fr}.ts`.
   owner provides real ones. Nothing is invented.
 - Generated images keep « Illustrative image », third-party photos keep
   « Illustrative photo ». Collection photos must show the actual cars.
+- Experience images show no visible caption: the caption stays in the
+  `<figcaption>`, visually hidden, for screen readers (with the `alt` text).
+  The « Illustrative image » credit stays visible.
 - Colours come only from the design-system tokens in `index.css`:
   `--ink`, `--ink-soft`, `--forest`, `--forest-deep`, `--ivory`, `--champagne`,
   `--phare`, `--plate`, `--plate-ink`, `--error`.

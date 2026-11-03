@@ -19,6 +19,7 @@ export const en = {
     },
     /** Link to the other language, written in that language. */
     otherLanguage: 'Français',
+    backToTop: 'Back to the top of the page',
   },
   garage: {
     h1: 'Private vintage car experiences in Paris',
