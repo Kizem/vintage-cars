@@ -1,5 +1,7 @@
 # Époque Motors | Website
 
+Read `PROJECT_CONTEXT.md` first: architecture, decisions and business rules.
+
 Landing page for **ÉPOQUE MOTORS**, private vintage car experiences in Paris.
 *Private vintage car experiences in Paris, by enquiry.*
 
@@ -46,11 +48,11 @@ Seven full-screen sections, in this order: `garage`, `sortie-1`, `sortie-2`,
 `npm run dev`, then open `/ds.html?car=ds` (or `p504`, `w114`): one car on its
 own, an orbit camera and fixed views (three-quarter front, front, side,
 three-quarter rear, rear, top). It is not part of the build (`src/scene/viewer.ts`).
-The cars are procedural three.js models in `src/scene/carmodels.ts`, from the
-proportions in `src/scene/carspecs.ts`. The Citroën DS follows the photos of
-the collection car: silver-grey paint and roof, twin yellow headlamps under
-glass, chrome bumpers with overriders, tinted glass with the dark red and
-cream interior, rectangular tail lamps, gold chevrons and DS21 script.
+The cars are procedural three.js models built to one shared specification:
+a data sheet per car (`src/scene/carspecs.ts`), shared materials, body, wheels
+and presentation (camera, lights, rendering), and one details module per car
+in `src/scene/models/`. The workshop uses the same presentation as the parking.
+See `PROJECT_CONTEXT.md` for the architecture and the rules.
 
 ## Languages (EN / FR)
 
@@ -76,8 +78,9 @@ src/
   lib/enquiry.ts   form validation + submission service
   lib/pageNav.ts   one gesture, one section (wheel, keys, menu)
   context/         enquiry pre-fill (car / chapter actions → form)
-  scene/           the 3D parking (parking.ts, carmodels.ts) and the car
-                   proportions shared with the SVG fallback (carspecs.ts)
+  scene/           the 3D showroom: car data sheets (carspecs.ts), shared
+                   kit (geometry, materials, kit, wheels, presentation),
+                   per-car details (models/), the parking (parking.ts)
   components/      TopNav, garage/ (Parking, PhotoCarousel, VehicleSheet,
                    CarProfile), Sections, EnquirySentence, SectionImage,
                    LegalDialog, ui (Monogram, Odometer, Counter, Arrow, ActionLink)
