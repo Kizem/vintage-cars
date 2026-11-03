@@ -1,13 +1,14 @@
 /* Le parking en vraie 3D (three.js). Les voitures sont des représentations graphiques modélisées
    dans carmodels.ts, en attendant de nouvelles photos. Ce module est chargé à la demande. */
 import {
-  WebGLRenderer, Scene, PerspectiveCamera, Group, Mesh, PlaneGeometry, BoxGeometry,
-  MeshStandardMaterial, MeshBasicMaterial, CanvasTexture, PointLight, HemisphereLight, Fog, Color,
-  SRGBColorSpace, RepeatWrapping, AdditiveBlending, Sprite, SpriteMaterial, Vector3, DirectionalLight, ACESFilmicToneMapping,
+  WebGLRenderer, Scene, Group, Mesh, PlaneGeometry, BoxGeometry,
+  MeshStandardMaterial, MeshBasicMaterial, CanvasTexture, Fog, Color,
+  SRGBColorSpace, RepeatWrapping, AdditiveBlending, Sprite, SpriteMaterial, Vector3,
   type Object3D,
 } from 'three';
 import { buildCar } from './carmodels';
 import { SPECS, type CarModelKey } from './carspecs';
+import { addStudioLights, carLightIntensity, configureRenderer, createCamera, createCarLight } from './presentation';
 import { release, studioEnvironment } from './studio';
 
 export interface ParkingCar {
@@ -61,17 +62,12 @@ function softBlob() {
 export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], opts: ParkingOptions) {
   const motion = !opts.reduced;
   const renderer = new WebGLRenderer({ canvas: canvasEl, antialias: true, alpha: false, powerPreference: 'high-performance' });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-  renderer.outputColorSpace = SRGBColorSpace;
-  renderer.toneMapping = ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.12;
+  configureRenderer(renderer);
   const fogColor = new Color('#0c1511');
   renderer.setClearColor(fogColor, 1);
   const scene = new Scene();
   scene.fog = new Fog(fogColor, 15, 36);
-  const camera = new PerspectiveCamera(30, 1, .1, 90);
-
-  scene.add(new HemisphereLight(0xe6eadf, 0x16241c, .62));
+  const camera = createCamera();
 
   /* --- Le lieu --- */
   const floorTex = tex(speckle('#172a22', 18), [10, 10]);
@@ -141,7 +137,7 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
   /* --- Reflets --- */
   const envRT = studioEnvironment(renderer);
   const env = envRT.texture;
-  const sun = new DirectionalLight(0xfff6e4, 1.1); sun.position.set(-3, 8, 7); scene.add(sun);
+  addStudioLights(scene);
 
   const shadowTex = tex(canvas(256, 256, (g, w, h) => {
     const d = g.createImageData(w, h);
@@ -196,8 +192,7 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
     num.rotation.x = -Math.PI / 2; num.rotation.z = -.28; num.position.set(0, .014, 3.5); num.renderOrder = 2;
     scene.add(num);
 
-    const light = new PointLight(0xf2efe3, 0, 13, 1.5);
-    light.position.set(0, 3.2, 0);
+    const light = createCarLight();
     scene.add(light);
     scene.add(group);
     return { i, car, model, group, mirrorWheels, mirrorBody, lamps, beam, num, light, hover: 0, spin: 0, lastX: 0, lastZ: 0, tgtHover: 0, yaw: 1.1, init: false };
@@ -299,7 +294,7 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
       u.lamps.forEach((sp) => { sp.material.opacity = lampV * .85; });
       u.beam.material.opacity = lampV * .3;
       u.light.position.x = x;
-      u.light.intensity = (4 + near * 11 + u.hover * 12) * edge * intro * flicker * (st.portrait ? .6 : 1);
+      u.light.intensity = carLightIntensity(near, u.hover) * edge * intro * flicker * (st.portrait ? .6 : 1);
     });
     init = false;
 
