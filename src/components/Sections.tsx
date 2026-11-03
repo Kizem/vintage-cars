@@ -30,8 +30,15 @@ export function Chapter({ experience: x, n, inert }: { experience: Experience; n
       </div>
       <div className="em-exp__body">
         <div className="em-exp__copy">
-          <p className="em-text">{l(x.description)}</p>
-          <p className="em-text">{l(x.detail)}</p>
+          {/* texte complet sur ordinateur et tablette, version courte sur smartphone (bascule en CSS) */}
+          <div className="em-exp__long">
+            {l(x.body).map((para) => (
+              <p className="em-text" key={para}>
+                {para}
+              </p>
+            ))}
+          </div>
+          <p className="em-text em-exp__short">{l(x.summary)}</p>
         </div>
         <ActionLink onClick={() => startEnquiry({ experience: x.id })}>{l(x.cta)}</ActionLink>
       </div>

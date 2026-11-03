@@ -13,14 +13,22 @@ export const experiences: Experience[] = [
     id: 'events',
     label: { en: 'Events & Special Occasions', fr: 'Événements et grandes occasions' },
     title: { en: 'Events', fr: 'Événements' },
-    description: {
-      en: 'Weddings, private celebrations, photoshoots and company events, with a vintage car for the day.',
-      fr: 'Mariage, fête privée, shooting photo ou événement d’entreprise : une voiture de collection pour la journée.',
+    body: {
+      en: [
+        'Make your special moments even more memorable with the timeless elegance of a vintage automobile.',
+        'From wedding celebrations and romantic occasions to private events and professional photoshoots, a classic car brings a distinctive touch to every setting.',
+        'Whether it takes centre stage in your photographs or accompanies you throughout your event, our vintage cars add character, elegance and a sense of occasion. A beautiful way to create lasting memories and give your event a truly personal touch.',
+      ],
+      fr: [
+        'Rendez vos grands moments plus mémorables encore, avec l’élégance intemporelle d’une automobile de collection.',
+        'Mariage, moment romantique, événement privé ou shooting photo professionnel : une voiture d’époque apporte une touche singulière à chaque décor.',
+        'Qu’elle soit la vedette de vos photos ou qu’elle vous accompagne tout au long de la journée, une voiture de collection apporte du caractère, de l’élégance et le sentiment d’un jour à part. Une belle façon de créer des souvenirs durables et de donner à votre événement une touche vraiment personnelle.',
+      ],
     },
-    // Self-drive depends on the car (see `service` in vehicles.ts and the FAQ).
-    detail: {
-      en: 'The cars can also be hired, with or without a chauffeur depending on the model.',
-      fr: 'Les voitures se louent aussi, avec ou sans chauffeur selon le modèle.',
+    /** Smartphones: one shorter paragraph. */
+    summary: {
+      en: 'Add a touch of timeless elegance to your special occasions. Weddings, photoshoots and private events: a vintage automobile brings character and distinction to your most memorable moments.',
+      fr: 'Une touche d’élégance intemporelle pour vos grandes occasions. Mariage, shooting photo ou événement privé : une automobile de collection apporte caractère et distinction à vos moments les plus mémorables.',
     },
     cta: { en: 'Enquire about your event', fr: 'Parler de votre événement' },
     // Generated image, labelled as an illustration.
@@ -42,13 +50,22 @@ export const experiences: Experience[] = [
     id: 'private-tours',
     label: { en: 'Private Paris Tours', fr: 'Visites privées de Paris' },
     title: { en: 'Private Paris Tours', fr: 'Visites privées de Paris' },
-    description: {
-      en: 'Explore the French capital in an iconic vintage car, with a passionate local guide, at your own pace.',
-      fr: 'Parcourez la capitale à bord d’une voiture de collection, avec un guide parisien passionné. Vous découvrez Paris à votre rythme.',
+    body: {
+      en: [
+        'Discover Paris from a different perspective, aboard an iconic vintage automobile.',
+        'Our private tours invite you to explore the capital at a gentler pace, away from the usual tourist experience. Let yourself be driven through the streets of Paris, admire its architecture and rediscover its most emblematic landmarks from the comfort of a classic car.',
+        'Whether you’re discovering the city for the first time or seeing it with fresh eyes, every journey offers a more intimate way to experience the timeless charm of Paris.',
+      ],
+      fr: [
+        'Découvrez Paris sous un autre jour, à bord d’une automobile de collection mythique.',
+        'Nos visites privées vous invitent à parcourir la capitale à un rythme plus doux, loin des circuits touristiques habituels. Laissez-vous conduire dans les rues de Paris, admirez son architecture et redécouvrez ses monuments les plus emblématiques, depuis le confort d’une voiture d’époque.',
+        'Que vous découvriez la ville pour la première fois ou que vous la regardiez d’un œil neuf, chaque trajet offre une manière plus intime de vivre le charme intemporel de Paris.',
+      ],
     },
-    detail: {
-      en: 'The route is built with you, from the landmarks to quieter streets, for 2 hours or a whole day.',
-      fr: 'L’itinéraire se construit avec vous, des grands monuments aux rues plus discrètes, le temps de 2\u00a0h ou d’une journée.',
+    /** Smartphones: one shorter paragraph. */
+    summary: {
+      en: 'Discover Paris aboard an iconic vintage car. Enjoy a private guided tour through the capital, taking in its architecture, landmarks and timeless charm from a different perspective.',
+      fr: 'Découvrez Paris à bord d’une voiture de collection mythique. Une visite guidée privée à travers la capitale, pour en apprécier l’architecture, les monuments et le charme intemporel sous un autre angle.',
     },
     cta: { en: 'Enquire about a private tour', fr: 'Demander une visite privée' },
     // Generated image, labelled as an illustration.
@@ -70,13 +87,22 @@ export const experiences: Experience[] = [
     id: 'chauffeured',
     label: { en: 'Chauffeured Experiences', fr: 'Voiture avec chauffeur' },
     title: { en: 'Chauffeured Experiences', fr: 'Voiture avec chauffeur' },
-    description: {
-      en: 'A vintage car with a dedicated chauffeur, for a private journey or a Parisian day out.',
-      fr: 'Une voiture de collection et son chauffeur, rien que pour vous, le temps d’un trajet privé ou d’une journée parisienne.',
+    body: {
+      en: [
+        'Some journeys deserve more than an ordinary ride.',
+        'Enjoy the elegance of a vintage automobile with your own private chauffeur. Whether you’re heading to a special address, exploring Paris at your own pace or simply looking to make an ordinary journey memorable, our chauffeured experiences offer a distinctive way to travel.',
+        'Sit back, take in the scenery and enjoy the pleasure of being driven through the city in a car with character. A personal experience designed around your plans and your occasion.',
+      ],
+      fr: [
+        'Certains trajets méritent mieux qu’un simple déplacement.',
+        'Profitez de l’élégance d’une automobile de collection, avec un chauffeur rien que pour vous. Pour vous rendre à une adresse particulière, découvrir Paris à votre rythme ou simplement rendre un trajet ordinaire mémorable, nos expériences avec chauffeur offrent une façon singulière de voyager.',
+        'Installez-vous, regardez défiler la ville et savourez le plaisir de vous laisser conduire dans une voiture de caractère. Une expérience personnelle, pensée autour de vos projets et de votre occasion.',
+      ],
     },
-    detail: {
-      en: 'The meeting point and the schedule are agreed with you in advance, in English or in French.',
-      fr: 'Le lieu de rendez-vous et le programme sont convenus avec vous à l’avance, en français ou en anglais.',
+    /** Smartphones: one shorter paragraph. */
+    summary: {
+      en: 'Enjoy the elegance of a vintage car and the comfort of a private chauffeur. From special journeys to personalised experiences, make every ride through Paris a memorable one.',
+      fr: 'L’élégance d’une voiture de collection et le confort d’un chauffeur privé. Pour un trajet particulier ou une expérience sur mesure, chaque déplacement dans Paris devient un moment à retenir.',
     },
     cta: { en: 'Enquire about a chauffeured journey', fr: 'Demander un trajet avec chauffeur' },
     // Generated image, labelled as an illustration.

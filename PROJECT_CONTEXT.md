@@ -136,8 +136,14 @@ Data lives in `src/data/*.ts` (`{ en, fr }` fields) and `src/i18n/{en,fr}.ts`.
 - Service per car: Peugeot 504 and Mercedes /8 offer chauffeur or self-drive
   on enquiry; the DS is chauffeur only. Do not add a self-drive offer that is
   not confirmed.
-- The events chapter says: « Les voitures se louent aussi, avec ou sans
-  chauffeur selon le modèle. »
+- Chapter texts (editorial update supplied by the owner): each experience has
+  `body` (three paragraphs, desktop and tablet) and `summary` (one shorter
+  paragraph). The short version shows on smartphones, portrait or landscape,
+  and on windows too low for the three paragraphs: container query
+  `(max-width: 699px) or (max-height: 650px) or ((max-width: 1099px) and
+  (max-height: 760px))` in `index.css`, thresholds measured so that no chapter
+  overflows. The former events line about hire with or without chauffeur was
+  replaced by this update.
 - Good to know has no numbered item N°4. Its questions are an accordion
   (dividers, a + that turns into −), deliberately unlike the chapter actions.
 - Experience chapters, in this order: N°1 Events, N°2 Private Paris Tours,

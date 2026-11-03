@@ -67,10 +67,10 @@ export interface Experience {
   label: Localized;
   /** Chapter title. */
   title: Localized;
-  /** Chapter text, two sentences at most. */
-  description: Localized;
-  /** Second paragraph, under the first. */
-  detail: Localized;
+  /** Chapter text on desktop and tablet: one entry per paragraph. */
+  body: Localized<string[]>;
+  /** Shorter chapter text on smartphones, a single paragraph. */
+  summary: Localized;
   cta: Localized;
   image: MediaAsset;
 }
