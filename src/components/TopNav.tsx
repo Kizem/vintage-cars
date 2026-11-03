@@ -82,8 +82,25 @@ export function TopNav() {
             </li>
           ))}
           <li className="em-nav__lang">
-            <a href={`?lang=${other}`} hrefLang={other} lang={other} aria-label={t.nav.otherLanguage} onClick={switchLanguage}>
-              {other.toUpperCase()}
+            <a
+              href={`?lang=${other}`}
+              hrefLang={other}
+              lang={other}
+              aria-label={t.nav.otherLanguage}
+              title={t.nav.otherLanguage}
+              onClick={switchLanguage}
+            >
+              <svg className="em-lang__globe" width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+                <circle cx="6.5" cy="6.5" r="6" stroke="currentColor" />
+                <ellipse cx="6.5" cy="6.5" rx="2.6" ry="6" stroke="currentColor" />
+                <path d="M.5 6.5h12" stroke="currentColor" />
+              </svg>
+              {(['fr', 'en'] as const).map((code, i) => (
+                <span key={code} className={code === locale ? 'em-lang__cur' : 'em-lang__other'} aria-hidden="true">
+                  {i > 0 && <span className="em-lang__sep">/</span>}
+                  {code.toUpperCase()}
+                </span>
+              ))}
             </a>
           </li>
         </ul>

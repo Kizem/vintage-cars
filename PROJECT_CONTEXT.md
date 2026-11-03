@@ -48,7 +48,11 @@ Seven full-screen sections, in this order (`sectionIds` in `src/data/site.ts`):
   absorbs inertia. ↑ ↓ and Page Up / Down move one section; F toggles fullscreen.
 - `animateTo` dispatches a synthetic `scroll` event on arrival.
 - Navigation is locked while the car focus or the legal dialog is open.
-- Top menu: exactly four entries (Garage, Experiences, About, Write).
+- Top menu: exactly four entries (Garage, Experiences, About, Write), then the
+  language switch: a thin-line globe and « FR / EN » (current language in
+  full, the other dimmed) on desktop; the globe and the other language on
+  phones; the globe alone below 341 px. Its accessible name is the other
+  language (« English » / « Français »).
 - The Époque Motors logo (`Brand` in `components/ui.tsx`) stays visible and
   leads back to the garage: monogram and name at the top left on desktop,
   monogram only at the top left of the menu on phones (the garage also shows
@@ -148,6 +152,9 @@ Data lives in `src/data/*.ts` (`{ en, fr }` fields) and `src/i18n/{en,fr}.ts`.
 - Experience images show no visible caption: the caption stays in the
   `<figcaption>`, visually hidden, for screen readers (with the `alt` text).
   The « Illustrative image » credit stays visible.
+- Figures are lining everywhere (`font-variant-numeric: lining-nums` on body
+  and form controls): Cormorant's default old-style figures drop below the
+  capitals (« PEUGEOT 504 », « DS 21 »).
 - Colours come only from the design-system tokens in `index.css`:
   `--ink`, `--ink-soft`, `--forest`, `--forest-deep`, `--ivory`, `--champagne`,
   `--phare`, `--plate`, `--plate-ink`, `--error`.

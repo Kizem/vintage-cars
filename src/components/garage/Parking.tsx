@@ -112,6 +112,12 @@ export function Parking({ open, onOpenChange }: { open: boolean; onOpenChange: (
     };
   }, [gl, glTry]);
 
+  /* Les 9 secondes de la première voiture comptent à partir de son apparition à l'écran (la classe is-ready
+     posée), pas du premier rendu de la scène, qui la précède un peu sur un appareil lent. */
+  useEffect(() => {
+    if (ready) lastTouch.current = performance.now();
+  }, [ready]);
+
   /* Pause hors écran */
   useEffect(() => {
     const el = rootRef.current;

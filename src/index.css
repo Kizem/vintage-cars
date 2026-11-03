@@ -28,7 +28,9 @@
 @font-face { font-family: "Barlow"; src: url("./assets/fonts/barlow-500.woff2") format("woff2"); font-weight: 500; font-display: swap; }
 @font-face { font-family: "Stardos Stencil"; src: url("./assets/fonts/stardos-stencil-700.woff2") format("woff2"); font-weight: 700; font-display: swap; }
 
-body { margin: 0; background: var(--ivory); }
+/* chiffres alignés sur les capitales partout (Cormorant dessine par défaut des chiffres elzéviriens, qui descendent : « 504 », « 21 ») */
+body { margin: 0; background: var(--ivory); font-variant-numeric: lining-nums; }
+button, input, select, textarea { font-variant-numeric: lining-nums; }
 
 .em-page, .em-page *, [class^="em-"], [class^="em-"] * { box-sizing: border-box; }
 .em-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
@@ -63,11 +65,11 @@ body { margin: 0; background: var(--ivory); }
 }
 
 /* --- Compteur --- */
-.em-odo { display: inline-flex; gap: 2px; font-variant-numeric: tabular-nums; vertical-align: -.22em; }
+.em-odo { display: inline-flex; gap: 2px; font-variant-numeric: lining-nums tabular-nums; vertical-align: -.22em; }
 .em-odo__cell { display: block; height: 1.45em; width: 1.05em; overflow: hidden; background: var(--plate); color: var(--plate-ink); position: relative; }
 .em-odo__wheel { display: flex; flex-direction: column; transition: transform .9s cubic-bezier(.2,.75,.25,1); }
 .em-odo__wheel > span { display: block; height: 1.45em; line-height: 1.45em; text-align: center; }
-.em-counter { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.em-counter { font-variant-numeric: lining-nums tabular-nums; white-space: nowrap; }
 .em-arrow { display: block; flex: none; }
 .em-arrow--flip { transform: scaleX(-1); }
 
@@ -82,7 +84,7 @@ body { margin: 0; background: var(--ivory); }
 .em-nav { font-family: var(--font-sans); font-size: .72rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; }
 .em-nav ul { list-style: none; margin: 0; padding: 0; display: flex; justify-content: center; gap: 0 clamp(.7rem, 3vw, 2.2rem); flex-wrap: nowrap; }
 @media (max-width: 480px) { .em-nav { font-size: .64rem; letter-spacing: .1em; } }
-@media (max-width: 379px) {
+@media (max-width: 409px) {
   .em-nav { font-size: .6rem; letter-spacing: .06em; }
   .em-nav--fixed { padding-inline: max(10px, env(safe-area-inset-left, 0px)) max(10px, env(safe-area-inset-right, 0px)); gap: .3rem; }
   .em-nav .em-brand--nav { min-width: 32px; }
@@ -112,7 +114,22 @@ body { margin: 0; background: var(--ivory); }
 }
 .em-nav--dark { color: var(--ivory); }
 .em-nav--light { color: var(--ink); }
-.em-nav__lang { margin-left: clamp(.25rem, 1vw, 1rem); opacity: .75; }
+.em-nav__lang { margin-left: clamp(.25rem, 1vw, 1rem); }
+/* Langue : un globe au trait, puis FR / EN ; la langue affichée en plein, l'autre atténuée */
+.em-nav__lang a { display: inline-flex; align-items: center; gap: .45em; }
+.em-lang__globe { flex: none; width: 1.1em; height: 1.1em; opacity: .8; transition: transform .6s cubic-bezier(.22,.61,.36,1); }
+.em-nav__lang a:hover .em-lang__globe { transform: rotate(-25deg); }
+.em-lang__other { opacity: .5; transition: opacity .3s; }
+.em-nav__lang a:hover .em-lang__other { opacity: 1; }
+.em-lang__sep { margin: 0 .35em; opacity: .5; }
+/* téléphone : le globe et la langue proposée seulement */
+@media (max-width: 699px) {
+  .em-lang__cur { display: none; }
+  .em-lang__other { opacity: 1; }
+  .em-lang__other .em-lang__sep { display: none; }
+  .em-nav__lang a { gap: .35em; }
+}
+@media (max-width: 340px) { .em-lang__other { display: none; } .em-lang__globe { width: 1.35em; height: 1.35em; } }
 
 /* --- Parking --- */
 .em-parking { position: relative; width: 100%; container-type: inline-size; height: 100cqh; min-height: 30rem; background: #0c1511; color: var(--ivory); overflow: hidden; }
@@ -305,7 +322,7 @@ body { margin: 0; background: var(--ivory); }
 .em-foot p { margin: 0; }
 
 @media (prefers-reduced-motion: reduce) {
-  .em-odo__wheel, .em-parking__panel, .em-parking.is-open .em-parking__panel, .em-parking__name, .em-action, .em-faq summary::after, .em-top, .em-top svg, .em-parking__gl canvas { transition: none !important; animation: none !important; }
+  .em-odo__wheel, .em-parking__panel, .em-parking.is-open .em-parking__panel, .em-parking__name, .em-action, .em-faq summary::after, .em-lang__globe, .em-top, .em-top svg, .em-parking__gl canvas { transition: none !important; animation: none !important; }
   .em-parking__intro { display: none; }
 }
 
