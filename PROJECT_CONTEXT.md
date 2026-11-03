@@ -45,9 +45,11 @@ Seven full-screen sections, in this order (`sectionIds` in `src/data/site.ts`):
 
 - `src/lib/pageNav.ts`: `.em-scroll` holds the sections. One wheel or trackpad
   gesture moves one section; a quiet window measured with `e.timeStamp`
-  absorbs inertia. ↑ ↓ and Page Up / Down move one section; F toggles fullscreen.
+  absorbs inertia. Wheel deltas are converted to pixels (line and page modes)
+  and small notches add up within a gesture, so mice that report 1 line per
+  notch still change section. ↑ ↓ and Page Up / Down move one section; F toggles fullscreen.
 - `animateTo` dispatches a synthetic `scroll` event on arrival.
-- Navigation is locked while the car focus or the legal dialog is open.
+- Navigation is locked while the vehicle sheet or the legal dialog is open.
 - Top menu: exactly four entries (Garage, Experiences, About, Write), then the
   language switch: a thin-line globe and « FR / EN » (current language in
   full, the other dimmed) on desktop; the globe and the other language on
@@ -120,10 +122,30 @@ Parking behaviour (`parking.ts`, `components/garage/Parking.tsx`):
   focus.
 - ← → change car. A drag starts from the nearest bay and moves at most one car.
 - Clicking a neighbouring car only selects it; clicking the active car opens
-  its focus (photo carousel and specification sheet).
+  its sheet. Sheet open, clicking another visible car gives it the sheet.
+- The vehicle sheet opens inside the garage, next to the chosen car (no change
+  of screen): a full-height column on the right in landscape
+  (`--em-sheet-w: clamp(22rem, 36cqw, 34rem)`), rising from the bottom over 58 %
+  in portrait (`--em-sheet-h`). Translucent `--forest-deep` with a blur, a 1 px
+  ivory rule on the edge that meets the scene; no shadow, no radius.
+  - Top bar (under the site menu): previous / next car (« Voiture précédente :
+    {nom} »), « Fermer ». The arrows change car without closing the sheet.
+  - Content: N°, name (`.em-sheet__name`, unchanged), photos (whole, never
+    cropped), sentence, specifications (service and availability first),
+    « Demander cette voiture ». The sheet scrolls on its own. `VehicleSheet`
+    shows the photos by default; `withPhotos={false}` removes them.
+  - The chosen car comes further out, three-quarter front, headlamps on; its
+    neighbours back into their bays (wheels turning in reverse), their light
+    and floor number dimmed; the camera centres the chosen car in the free space
+    (`api.inset(f)`: the share of the scene covered by the sheet, measured by a
+    ResizeObserver in `Parking.tsx`). The bottom bar and the h1 fade out; a
+    « Représentation graphique » label stays on the scene.
+  - « Fermer », Escape or a click in the empty parking close it; dragging the
+    scene still works. Focus goes to the car name on opening only.
+  - Without WebGL the sheet opens the same way next to the vector profile.
 - `onReady` fires after the first rendered frame.
 - In portrait, the camera offset centres the projected box of the active car.
-- Rendering stops while the focus is open (`openT > .95`).
+- Rendering only stops off screen (the parking stays visible behind the sheet).
 - With `prefers-reduced-motion`: no alternation, no animated scroll, no intro.
 
 ## 5. Content and business rules

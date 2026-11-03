@@ -42,6 +42,10 @@ export const fr: Dictionary = {
     photosOf: 'Photos de la {name}',
     prevPhoto: 'Photo précédente',
     nextPhoto: 'Photo suivante',
+    prevCar: 'Voiture précédente\u00a0: {name}',
+    nextCar: 'Voiture suivante\u00a0: {name}',
+    /** Étiquette posée sur la scène pendant que la fiche est ouverte. */
+    rendering: 'Représentation graphique',
   },
   availabilityShort: {
     'on-request': 'Sur demande',

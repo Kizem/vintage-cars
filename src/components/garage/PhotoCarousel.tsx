@@ -12,7 +12,7 @@ export interface CarouselHandle {
 /**
  * Les photos de la voiture, entières (sans recadrage), avec leur légende.
  * Flèches à l'écran, glissement du doigt, ← → au clavier (relayés par le parking).
- * Monté seulement à l'ouverture du focus : les photos ne se chargent qu'à ce moment.
+ * Monté seulement à l'ouverture de la fiche : les photos ne se chargent qu'à ce moment.
  */
 export function PhotoCarousel({ photos, label, ref }: { photos: MediaAsset[]; label: string; ref?: Ref<CarouselHandle> }) {
   const { t, l } = useI18n();
@@ -58,7 +58,7 @@ export function PhotoCarousel({ photos, label, ref }: { photos: MediaAsset[]; la
             <img
               src={x.src}
               srcSet={x.srcSet}
-              sizes={x.srcSet ? '(max-width: 759px) 100vw, 64vw' : undefined}
+              sizes={x.srcSet ? '(orientation: portrait) 100vw, 34rem' : undefined}
               width={x.width}
               height={x.height}
               alt={l(x.alt)}

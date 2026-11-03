@@ -201,7 +201,7 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
   const EYE = { y: 2.55 };
 
   /* --- État --- */
-  const st = { pos: opts.start || 0, target: opts.start || 0, drag: false, dragFrom: opts.start || 0, hover: -1, mx: 0, my: 0, smx: 0, smy: 0, open: 0, openT: 0, w: 1, h: 1, portrait: false, dist: 16, cx: 0, visible: true, intro: motion ? 0 : 1, speed: 0 };
+  const st = { pos: opts.start || 0, target: opts.start || 0, drag: false, dragFrom: opts.start || 0, hover: -1, mx: 0, my: 0, smx: 0, smy: 0, open: 0, openT: 0, inset: 0, w: 1, h: 1, portrait: false, dist: 16, cx: 0, visible: true, intro: motion ? 0 : 1, speed: 0 };
   let last = performance.now(); let raf = 0; let shown = false;
   const v = new Vector3();
 
@@ -221,8 +221,8 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
 
   function frame(now: number) {
     raf = requestAnimationFrame(frame);
-    /* rien à dessiner hors écran, ni quand le focus couvre la scène (panneau opaque après ~0,9 s, openT ≈ 0,95) */
-    if (!st.visible || (st.open && st.openT > .95)) { last = now; return; }
+    /* rien à dessiner hors écran ; la fiche ouverte laisse le parking visible, le rendu continue */
+    if (!st.visible) { last = now; return; }
     const dt = Math.min(.05, (now - last) / 1000); last = now;
     tick(dt, now / 1000);
     renderer.render(scene, camera);
@@ -239,7 +239,7 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
       st.speed = dt > 0 ? (st.pos - prev) / dt : 0;
     }
     st.smx = damp(st.smx, st.mx, 3.2, dt); st.smy = damp(st.smy, st.my, 3.2, dt);
-    st.openT = damp(st.openT, st.open ? 1 : 0, 3.4, dt);
+    st.openT = motion ? damp(st.openT, st.open ? 1 : 0, 3.4, dt) : st.open;
     st.intro = motion ? Math.min(1, st.intro + dt / 2.2) : 1;
     const intro = 1 - Math.pow(1 - st.intro, 3);
 
@@ -248,26 +248,36 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
     items.forEach((it) => { it.g.position.x = it.k * S - shift; });
     doorTex.offset.x = st.pos % 1;
 
-    /* la caméra */
-    const panelShift = st.portrait ? 0 : st.openT * 1.55;
-    const lookY = st.portrait ? .75 + st.openT * -3.1 : .85;
-    const dist = st.dist * (1 + (st.portrait ? .16 : -.08) * st.openT) * (1 + .1 * (1 - intro));
-    camera.position.set(st.smx * (st.portrait ? .5 : 1.1) + panelShift + st.cx, EYE.y + st.smy * -.5 + (1 - intro) * .9, dist);
-    camera.lookAt(panelShift + st.smx * .25 + st.cx, lookY, 0);
+    /* La caméra. Fiche ouverte (o → 1), elle centre la voiture choisie dans l'espace laissé libre :
+       à gauche de la fiche en paysage, au-dessus en portrait. */
+    const o = st.openT;
+    const dist = st.dist * (1 + (st.portrait ? .06 : -.14) * o) * (1 + .1 * (1 - intro));
+    const carOut = 3.2 + .55 * o;
+    const carX = -carOut * .16 - .25; const carZ = -3.1 + carOut + .45;
+    const depth = dist - carZ; const tanH = Math.tan((camera.fov / 2) * Math.PI / 180);
+    const openShift = o * (carX + (st.portrait ? 0 : st.inset * depth * tanH * camera.aspect));
+    const lookY = st.portrait ? .75 - o * st.inset * depth * tanH : .85;
+    const par = 1 - .6 * o;
+    camera.position.set(st.smx * (st.portrait ? .5 : 1.1) * par + openShift + st.cx, EYE.y + st.smy * -.5 * par + (1 - intro) * .9, dist);
+    camera.lookAt(openShift + st.smx * .25 * par + st.cx, lookY, 0);
 
     /* les voitures */
     units.forEach((u) => {
       const w = wrap(u.i - st.pos);
       const near = 1 - smooth(0, 1, Math.abs(w));
       const edge = 1 - smooth(1.3, 1.5, Math.abs(w));
-      u.tgtHover = (st.hover === u.i && !st.open) || (st.open && near > .5) ? 1 : 0;
+      /* fiche ouverte : la voiture choisie reste allumée, le survol peut aussi allumer une voisine */
+      u.tgtHover = st.hover === u.i || (st.open && near > .5) ? 1 : 0;
       u.hover = damp(u.hover, u.tgtHover, 5, dt);
-      const out = near * 3.2;            /* la voiture sort de sa place */
+      const chosen = o * near; const away = o * (1 - near);
+      const out = near * 3.2 + chosen * .55;  /* la voiture sort de sa place, un peu plus quand sa fiche est ouverte */
       /* Garée : presque de face, dans l'axe de sa place. Active : de trois-quarts. Survolée : elle pivote encore. */
-      const yawT = lerp(1.2, .62, near) - u.hover * .26 + Math.max(-.5, Math.min(.5, st.speed * .22)) * (1 - near * .3);
+      const yawT = lerp(1.2, .62, near) - u.hover * .26 * (1 - chosen) + chosen * .2 + Math.max(-.5, Math.min(.5, st.speed * .22)) * (1 - near * .3);
       u.yaw = init ? yawT : damp(u.yaw, yawT, 7, dt);
-      const x = w * S - out * .16 - u.hover * .25;
-      const z = -3.1 + out + u.hover * .45;
+      /* les voisines reculent dans leur place, dans l'axe de l'épi (leurs roues tournent en marche arrière) */
+      const back = away * 1.9;
+      const x = w * S - out * .16 - u.hover * .25 + back * .36;
+      const z = -3.1 + out + u.hover * .45 - back * .93;
       u.group.position.set(x, 0, z);
       u.group.rotation.y = u.yaw;
       u.group.visible = edge > .01;
@@ -286,7 +296,7 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
       [u.model.body, u.mirrorBody].forEach((b) => { b.position.y = rise; b.rotation.z = pitch; });
 
       u.num.position.x = w * S - 1.05;
-      u.num.material.opacity = (.16 + near * .3 + u.hover * .42) * edge;
+      u.num.material.opacity = (.16 + near * .3 + u.hover * .42) * edge * (1 - .5 * away);
       const fast = Math.min(1, Math.abs(st.speed) * .7);
       const flicker = u.hover > .02 && u.hover < .6 ? (Math.sin(t * 70) > -.2 ? 1 : .35) : 1;
       const lampV = Math.max(u.hover, fast * near * .7) * flicker * edge;
@@ -294,7 +304,7 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
       u.lamps.forEach((sp) => { sp.material.opacity = lampV * .85; });
       u.beam.material.opacity = lampV * .3;
       u.light.position.x = x;
-      u.light.intensity = carLightIntensity(near, u.hover) * edge * intro * flicker * (st.portrait ? .6 : 1);
+      u.light.intensity = carLightIntensity(near, u.hover) * edge * intro * flicker * (st.portrait ? .6 : 1) * (1 - .85 * away);
     });
     init = false;
 
@@ -354,6 +364,8 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
     },
     dragBy(dx: number) { const d = dx / (st.portrait ? st.w * .72 : st.w * .36); const prev = st.pos; st.pos = clamp(st.pos - d, st.dragFrom - 1, st.dragFrom + 1); st.speed = (st.pos - prev) * 60; },
     open(v2: boolean) { st.open = v2 ? 1 : 0; },
+    /** Part de la scène couverte par la fiche : sa largeur en paysage, sa hauteur en portrait (0 à 1). */
+    inset(f: number) { st.inset = clamp(f, 0, .9); },
     pick,
     pause(p: boolean) { st.visible = !p; },
     start() { last = performance.now(); raf = requestAnimationFrame(frame); },

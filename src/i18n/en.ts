@@ -41,6 +41,10 @@ export const en = {
     photosOf: 'Photos of the {name}',
     prevPhoto: 'Previous photo',
     nextPhoto: 'Next photo',
+    prevCar: 'Previous car: {name}',
+    nextCar: 'Next car: {name}',
+    /** Label on the scene while the vehicle sheet is open. */
+    rendering: 'Graphic rendering',
   },
   /** Short values next to the “Availability” label. */
   availabilityShort: {

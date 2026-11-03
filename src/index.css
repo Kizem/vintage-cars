@@ -132,12 +132,14 @@ button, input, select, textarea { font-variant-numeric: lining-nums; }
 @media (max-width: 340px) { .em-lang__other { display: none; } .em-lang__globe { width: 1.35em; height: 1.35em; } }
 
 /* --- Parking --- */
-.em-parking { position: relative; width: 100%; container-type: inline-size; height: 100cqh; min-height: 30rem; background: #0c1511; color: var(--ivory); overflow: hidden; }
+.em-parking { --em-sheet-w: clamp(22rem, 36cqw, 34rem); --em-sheet-h: 58%; position: relative; width: 100%; container-type: size; height: 100cqh; min-height: 30rem; background: #0c1511; color: var(--ivory); overflow: hidden; }
 .em-parking__gl { position: absolute; inset: 0; touch-action: pan-y; cursor: grab; user-select: none; -webkit-user-select: none; }
 .em-parking__gl:active { cursor: grabbing; }
 .em-parking__gl canvas { display: block; width: 100%; height: 100%; opacity: 0; transition: opacity 1.2s; }
 .em-parking.is-ready canvas { opacity: 1; }
-.em-parking__flat { position: absolute; left: 0; right: 0; top: 26%; display: flex; justify-content: center; color: var(--ivory); cursor: pointer; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.em-parking__flat { position: absolute; left: 0; right: 0; top: 0; bottom: 0; padding-top: 26cqh; display: flex; align-items: flex-start; justify-content: center; color: var(--ivory); cursor: grab; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.em-parking__flat .em-profile { cursor: pointer; }
+.em-parking.is-open .em-parking__flat .em-profile { cursor: grab; }
 .em-profile { display: block; width: min(80%, 44rem); height: auto; }
 .em-parking__top { position: absolute; left: 16px; right: 16px; top: 3.1rem; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 1.5rem; text-align: center; pointer-events: none; transition: opacity .5s; }
 .em-parking__intro { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; color: var(--ivory); }
@@ -146,7 +148,6 @@ button, input, select, textarea { font-variant-numeric: lining-nums; }
 .em-parking::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 16%; background: linear-gradient(to bottom, rgba(8,14,11,.72), rgba(8,14,11,0)); pointer-events: none; z-index: 1; }
 .em-parking::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 32%; background: linear-gradient(to top, rgba(8,14,11,.82), rgba(8,14,11,0)); pointer-events: none; }
 .em-parking__bottom { z-index: 1; }
-.em-parking__panel { z-index: 2; }
 .em-parking__h1 { margin: 0; font-size: .72rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; }
 .em-parking__bottom { position: absolute; left: 0; right: 0; bottom: 0; display: flex; align-items: flex-end; justify-content: center; gap: clamp(1rem, 5cqw, 4rem); padding: 0 16px 1.4rem; pointer-events: none; transition: opacity .5s, transform .5s; }
 .em-parking__bottom button, .em-parking__bottom a { pointer-events: auto; }
@@ -159,27 +160,33 @@ button, input, select, textarea { font-variant-numeric: lining-nums; }
 .em-only-touch { display: none; }
 @media (hover: none) { .em-only-touch { display: inline; } .em-only-hover { display: none; } }
 
-/* Focus : la caméra se rapproche de la voiture, puis les photos et la fiche technique prennent l'écran */
-.em-parking__panel { position: absolute; inset: 0; z-index: 2; background: var(--forest-deep); color: var(--ivory); opacity: 0; visibility: hidden; transition: opacity .4s ease, visibility 0s .4s; }
-.em-parking.is-open .em-parking__panel { opacity: 1; visibility: visible; transition: opacity .55s ease .32s, visibility 0s; }
+/* Fiche d'une voiture : elle s'ouvre dans le garage, à côté de la voiture choisie. Paysage : colonne pleine hauteur
+   à droite. Portrait : elle monte depuis le bas. Le parking reste visible derrière ; pas d'ombre, pas d'arrondi. */
+.em-parking__panel { position: absolute; z-index: 2; top: 0; right: 0; bottom: 0; width: var(--em-sheet-w); display: flex; flex-direction: column; color: var(--ivory); background: color-mix(in srgb, var(--forest-deep) 82%, transparent); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border-left: 1px solid color-mix(in srgb, var(--ivory) 14%, transparent); opacity: 0; visibility: hidden; transform: translateX(2.5rem); transition: opacity .4s ease, transform .4s ease, visibility 0s .4s; }
+.em-parking.is-open .em-parking__panel { opacity: 1; visibility: visible; transform: none; transition: opacity .75s cubic-bezier(.22,.61,.36,1) .18s, transform .75s cubic-bezier(.22,.61,.36,1) .18s, visibility 0s; }
 .em-parking.is-open .em-parking__top, .em-parking.is-open .em-parking__bottom { opacity: 0; pointer-events: none; }
 .em-parking.is-open .em-parking__bottom button { pointer-events: none; }
-.em-focus { position: relative; height: 100%; display: grid; grid-template-columns: minmax(0, 1fr) min(28rem, 36%); }
-.em-focus__close { position: absolute; top: .35rem; right: 1.5rem; background: none; border: 0; color: inherit; cursor: pointer; font-family: inherit; font-size: .72rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; min-height: 44px; }
+/* barre du haut : voiture précédente / suivante, Fermer ; sous le menu du site */
+.em-panel__bar { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 3.1rem clamp(1rem, 2.2cqw, 2rem) 0; }
+.em-panel__cars { display: flex; gap: .25rem; }
+.em-panel__arrow { width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; background: none; border: 0; padding: 0; color: inherit; cursor: pointer; }
+.em-focus__close { background: none; border: 0; padding: 0 .2rem; color: inherit; cursor: pointer; font-family: inherit; font-size: .72rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; min-height: 44px; min-width: 44px; }
+/* étiquette de la scène, en bas à gauche de l'espace libre */
+.em-parking__label { position: absolute; z-index: 1; left: max(16px, 1.5rem); bottom: 1.4rem; margin: 0; padding: .1rem .45rem; font-size: .72rem; letter-spacing: .03em; color: var(--ivory); background: var(--forest-deep); opacity: 0; visibility: hidden; transition: opacity .4s, visibility 0s .4s; pointer-events: none; }
+.em-parking.is-open .em-parking__label { opacity: 1; visibility: visible; transition: opacity .6s ease .5s, visibility 0s; }
+/* sans WebGL : le profil se range dans l'espace libre */
+.em-parking__flat { transition: right .6s cubic-bezier(.22,.61,.36,1), padding-top .6s cubic-bezier(.22,.61,.36,1); }
+.em-parking.is-open .em-parking__flat { right: var(--em-sheet-w); }
 
-.em-carousel { display: flex; flex-direction: column; min-width: 0; min-height: 0; height: 100%; padding: 3.4rem clamp(1rem, 2.5cqw, 2.5rem) .6rem; }
-.em-carousel__track { flex: 1 1 0; min-height: 0; display: flex; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; touch-action: pan-x; }
-.em-carousel__track::-webkit-scrollbar { display: none; }
-.em-carousel__slide { flex: 0 0 100%; min-width: 0; height: 100%; margin: 0; scroll-snap-align: center; scroll-snap-stop: always; }
-.em-carousel__slide img { display: block; width: 100%; height: 100%; object-fit: contain; user-select: none; -webkit-user-select: none; }
-.em-carousel__bar { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 44px; font-size: .85rem; }
-.em-carousel__cap { margin: 0; line-height: 1.35; }
-.em-carousel__cap span { display: inline-block; margin-left: .7em; font-size: .72rem; letter-spacing: .03em; color: var(--forest-deep); background: var(--ivory); padding: .08rem .4rem; }
-.em-carousel__pager { flex: none; display: inline-flex; align-items: center; gap: .15rem; }
-.em-carousel__pager button { width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; background: none; border: 0; color: inherit; cursor: pointer; }
-
-.em-sheet { min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 3.4rem clamp(1.25rem, 2.6cqw, 2.5rem) 1.5rem; color: var(--ivory); text-align: center; border-left: 1px solid color-mix(in srgb, var(--ivory) 14%, transparent); }
-.em-sheet .em-no { margin-top: clamp(0rem, 2cqw, 1.4rem); }
+/* le contenu de la fiche défile seul et monte en cascade */
+.em-sheet { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: .4rem clamp(1.25rem, 2.6cqw, 2.5rem) 1.6rem; color: var(--ivory); text-align: center; }
+.em-sheet > * { animation: em-up .6s cubic-bezier(.22,.61,.36,1) both; }
+.em-sheet > :nth-child(2) { animation-delay: .32s; }
+.em-sheet > :nth-child(3) { animation-delay: .38s; }
+.em-sheet > :nth-child(4) { animation-delay: .44s; }
+.em-sheet > :nth-child(5), .em-sheet > :nth-child(6) { animation-delay: .5s; }
+.em-sheet > :nth-child(n + 7) { animation-delay: .56s; }
+.em-sheet > :first-child { animation-delay: .26s; }
 .em-sheet__name { margin: .3rem 0 .8rem; font-family: var(--font-display); font-weight: 300; text-transform: uppercase; font-size: clamp(2rem, 3.2cqw, 2.9rem); line-height: 1.02; outline: none; }
 .em-sheet__desc { margin: 0 auto 1.3rem; max-width: 24rem; font-size: .95rem; line-height: 1.55; }
 .em-specs { margin: 0 0 .6rem; font-size: .9rem; line-height: 1.4; text-align: left; }
@@ -187,12 +194,28 @@ button, input, select, textarea { font-variant-numeric: lining-nums; }
 .em-specs dt { font-weight: 500; flex: none; }
 .em-specs dd { margin: 0; text-align: right; }
 
-@container (max-width: 759px) {
-  .em-focus { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 47%) minmax(0, 1fr); }
-  .em-focus__close { top: 2.75rem; right: 16px; }
-  .em-carousel { padding: 5.1rem 16px 0; }
-  .em-sheet { padding: .8rem 16px 1.5rem; border-left: 0; border-top: 1px solid color-mix(in srgb, var(--ivory) 14%, transparent); }
+/* photos de la fiche : entières, sans recadrage */
+.em-carousel { display: flex; flex-direction: column; min-width: 0; margin: .2rem 0 1rem; }
+.em-carousel__track { flex: none; height: clamp(10rem, 30cqh, 19rem); display: flex; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; touch-action: pan-x; }
+.em-carousel__track::-webkit-scrollbar { display: none; }
+.em-carousel__slide { flex: 0 0 100%; min-width: 0; height: 100%; margin: 0; scroll-snap-align: center; scroll-snap-stop: always; }
+.em-carousel__slide img { display: block; width: 100%; height: 100%; object-fit: contain; user-select: none; -webkit-user-select: none; }
+.em-carousel__bar { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 44px; font-size: .85rem; text-align: left; }
+.em-carousel__cap { margin: 0; line-height: 1.35; }
+.em-carousel__cap span { display: inline-block; margin-left: .7em; font-size: .72rem; letter-spacing: .03em; color: var(--forest-deep); background: var(--ivory); padding: .08rem .4rem; }
+.em-carousel__pager { flex: none; display: inline-flex; align-items: center; gap: .15rem; }
+.em-carousel__pager button { width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; background: none; border: 0; color: inherit; cursor: pointer; }
+
+@container (orientation: portrait) {
+  .em-parking__panel { top: auto; left: 0; width: auto; height: var(--em-sheet-h); border-left: 0; border-top: 1px solid color-mix(in srgb, var(--ivory) 14%, transparent); transform: translateY(2.5rem); }
+  .em-panel__bar { padding: .2rem max(10px, env(safe-area-inset-right, 0px)) 0 max(10px, env(safe-area-inset-left, 0px)); }
+  .em-sheet { padding: 0 16px 1.5rem; }
   .em-sheet .em-no { margin-top: 0; }
+  .em-carousel__track { height: clamp(8.5rem, 22cqh, 14rem); }
+  .em-parking__label { left: 16px; bottom: calc(var(--em-sheet-h) + .7rem); }
+  .em-parking.is-open .em-parking__flat { right: 0; padding-top: 13cqh; }
+}
+@container (max-width: 759px) {
   .em-parking__arrow { margin-bottom: 1.6rem; }
 }
 
@@ -330,7 +353,7 @@ button, input, select, textarea { font-variant-numeric: lining-nums; }
 .em-foot p { margin: 0; }
 
 @media (prefers-reduced-motion: reduce) {
-  .em-odo__wheel, .em-parking__panel, .em-parking.is-open .em-parking__panel, .em-parking__name, .em-action, .em-faq summary::after, .em-lang__globe, .em-top, .em-top svg, .em-parking__gl canvas { transition: none !important; animation: none !important; }
+  .em-odo__wheel, .em-parking__panel, .em-parking.is-open .em-parking__panel, .em-parking__label, .em-parking.is-open .em-parking__label, .em-parking__flat, .em-sheet > *, .em-parking__name, .em-action, .em-faq summary::after, .em-lang__globe, .em-top, .em-top svg, .em-parking__gl canvas { transition: none !important; animation: none !important; }
   .em-parking__intro { display: none; }
 }
 

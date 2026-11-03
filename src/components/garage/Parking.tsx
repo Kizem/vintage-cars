@@ -7,7 +7,7 @@ import type { ParkingCar, ParkingEngine } from '../../scene/parking';
 import { hasWebGL } from '../../scene/webgl';
 import { Arrow, Brand, Monogram, Odometer } from '../ui';
 import { CarProfile } from './CarProfile';
-import { PhotoCarousel, type CarouselHandle } from './PhotoCarousel';
+import type { CarouselHandle } from './PhotoCarousel';
 import { VehicleSheet } from './VehicleSheet';
 
 const cars: ParkingCar[] = vehicles.map((v, i) => ({ n: i + 1, model: v.rendering.model, behaviour: v.rendering.behaviour }));
@@ -23,6 +23,8 @@ interface Drag { x: number; sx: number; moved: boolean; id: number }
  * Le parking en 3D : la scène three.js est chargée à part, à la demande.
  * En attendant : le fond sombre, le monogramme et le nom de la voiture.
  * Sans WebGL (ou contexte perdu) : le profil vectoriel, avec les mêmes commandes.
+ * Au clic sur la voiture, sa fiche (photos comprises) s'ouvre dans le garage, à côté d'elle :
+ * à droite en paysage, en bas en portrait ; le parking reste visible et animé derrière.
  */
 export function Parking({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const { t, l } = useI18n();
@@ -33,6 +35,9 @@ export function Parking({ open, onOpenChange }: { open: boolean; onOpenChange: (
   const heading = useRef<HTMLHeadingElement>(null);
   const nameBtn = useRef<HTMLButtonElement>(null);
   const carousel = useRef<CarouselHandle>(null);
+  const panel = useRef<HTMLElement>(null);
+  /* part de la scène prise par la fiche (largeur en paysage, hauteur en portrait), transmise à la caméra */
+  const inset = useRef(0);
   const [gl, setGl] = useState(hasWebGL);
   /* nouvel essai de la scène après une perte du contexte WebGL (fréquent au chargement sur mobile) */
   const [glTry, setGlTry] = useState(0);
@@ -97,6 +102,7 @@ export function Parking({ open, onOpenChange }: { open: boolean; onOpenChange: (
             },
           });
           engine.current = eng;
+          eng.inset(inset.current);
           eng.pause(paused.current);
           eng.open(latest.current.open);
           eng.start();
@@ -117,6 +123,26 @@ export function Parking({ open, onOpenChange }: { open: boolean; onOpenChange: (
   useEffect(() => {
     if (ready) lastTouch.current = performance.now();
   }, [ready]);
+
+  /* La place prise par la fiche, mesurée sur la racine et sur le panneau (le portrait : plus haut que large, comme la caméra) */
+  useEffect(() => {
+    const root = rootRef.current;
+    const box = panel.current;
+    if (!root || !box) return;
+    const measure = () => {
+      const w = root.clientWidth;
+      const h = root.clientHeight;
+      if (!w || !h) return;
+      inset.current = h > w ? box.offsetHeight / h : box.offsetWidth / w;
+      engine.current?.inset(inset.current);
+    };
+    measure();
+    if (!window.ResizeObserver) return;
+    const ro = new ResizeObserver(measure);
+    ro.observe(root);
+    ro.observe(box);
+    return () => ro.disconnect();
+  }, []);
 
   /* Pause hors écran */
   useEffect(() => {
@@ -186,9 +212,10 @@ export function Parking({ open, onOpenChange }: { open: boolean; onOpenChange: (
   const actions = useRef({ step, closeSheet });
   actions.current = { step, closeSheet };
 
+  /* À l'ouverture seulement, le focus va au nom de la voiture ; changer de voiture fiche ouverte le laisse sur la flèche */
   useEffect(() => {
     if (open) heading.current?.focus({ preventScroll: true });
-  }, [open, active]);
+  }, [open]);
 
   /* Pendant le focus, la page ne change plus de section */
   useEffect(() => {
@@ -260,8 +287,11 @@ export function Parking({ open, onOpenChange }: { open: boolean; onOpenChange: (
       return;
     }
     if (e.pointerType === 'mouse') {
-      en.setHover(open ? -1 : en.pick(e.clientX, e.clientY));
-      e.currentTarget.style.cursor = en.state.hover >= 0 ? 'pointer' : 'grab';
+      /* fiche ouverte, le survol peut aussi allumer une voisine */
+      const h = en.pick(e.clientX, e.clientY);
+      en.setHover(h);
+      /* main sur une voiture cliquable ; la voiture déjà ouverte et le vide se saisissent pour glisser */
+      e.currentTarget.style.cursor = h >= 0 && !(open && h === en.active()) ? 'pointer' : 'grab';
     }
   };
   const onUp = (e: PointerEvent<HTMLDivElement>) => {
@@ -279,8 +309,13 @@ export function Parking({ open, onOpenChange }: { open: boolean; onOpenChange: (
     }
     const hit = en.pick(e.clientX, e.clientY);
     if (e.pointerType !== 'mouse') window.setTimeout(() => en.setHover(-1), 700);
-    if (hit < 0) return;
-    /* une voisine passe d'abord au premier plan ; seule la voiture principale ouvre sa fiche */
+    /* fiche ouverte : un clic dans le vide du parking la referme */
+    if (hit < 0) {
+      if (open) closeSheet(false);
+      return;
+    }
+    /* Fiche fermée, une voisine passe d'abord au premier plan et seule la voiture principale ouvre sa fiche.
+       Fiche ouverte, une autre voiture visible prend la fiche. */
     if (hit !== en.active()) {
       en.go(hit);
       setActive(hit);
@@ -321,7 +356,12 @@ export function Parking({ open, onOpenChange }: { open: boolean; onOpenChange: (
     if (!d) return;
     const dx = e.clientX - d.sx;
     if (Math.abs(dx) > 40) step(dx < 0 ? 1 : -1);
-    else if (Math.abs(dx) < 8) openSheet();
+    else if (Math.abs(dx) < 8) {
+      /* toucher le profil ouvre la fiche ; fiche ouverte, toucher à côté la referme */
+      const onCar = !!(e.target as Element).closest?.('.em-profile');
+      if (!open && onCar) openSheet();
+      else if (open && !onCar) closeSheet(false);
+    }
   };
 
   const hover = (on: boolean) => {
@@ -399,20 +439,32 @@ export function Parking({ open, onOpenChange }: { open: boolean; onOpenChange: (
           <Arrow />
         </button>
       </div>
-      <aside className="em-parking__panel" aria-label={t.focus.label} inert={!open}>
-        {mounted && (
-          <div className="em-focus">
-            <PhotoCarousel
-              key={car.slug}
-              ref={carousel}
-              photos={[car.image, ...(car.gallery ?? [])]}
-              label={fill(t.focus.photosOf, { name })}
-            />
-            <VehicleSheet car={car} n={active + 1} headingRef={heading} onEnquire={() => startEnquiry({ vehicle: car.slug })} />
-            <button type="button" className="em-focus__close" onClick={() => closeSheet(true)} aria-label={t.focus.close}>
-              {t.focus.closeShort}
+      <p className="em-parking__label" aria-hidden={!open}>
+        {t.focus.rendering}
+      </p>
+      <aside className="em-parking__panel" aria-label={t.focus.label} inert={!open} ref={panel}>
+        <div className="em-panel__bar">
+          <div className="em-panel__cars">
+            <button type="button" className="em-panel__arrow" aria-label={fill(t.focus.prevCar, { name: l(vehicles[(active - 1 + total) % total].name) })} onClick={() => step(-1)}>
+              <Arrow flip />
+            </button>
+            <button type="button" className="em-panel__arrow" aria-label={fill(t.focus.nextCar, { name: l(vehicles[(active + 1) % total].name) })} onClick={() => step(1)}>
+              <Arrow />
             </button>
           </div>
+          <button type="button" className="em-focus__close" onClick={() => closeSheet(true)} aria-label={t.focus.close}>
+            {t.focus.closeShort}
+          </button>
+        </div>
+        {mounted && (
+          <VehicleSheet
+            key={car.slug}
+            car={car}
+            n={active + 1}
+            headingRef={heading}
+            carouselRef={carousel}
+            onEnquire={() => startEnquiry({ vehicle: car.slug })}
+          />
         )}
       </aside>
     </div>
