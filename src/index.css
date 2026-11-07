@@ -353,7 +353,7 @@ button, input, select, textarea { font-variant-numeric: lining-nums; }
 .em-foot p { margin: 0; }
 
 @media (prefers-reduced-motion: reduce) {
-  .em-odo__wheel, .em-parking__panel, .em-parking.is-open .em-parking__panel, .em-parking__label, .em-parking.is-open .em-parking__label, .em-parking__flat, .em-sheet > *, .em-parking__name, .em-action, .em-faq summary::after, .em-lang__globe, .em-top, .em-top svg, .em-parking__gl canvas { transition: none !important; animation: none !important; }
+  .em-odo__wheel, .em-parking__top, .em-parking__bottom, .em-parking__panel, .em-parking.is-open .em-parking__panel, .em-parking__label, .em-parking.is-open .em-parking__label, .em-parking__flat, .em-sheet > *, .em-parking__name, .em-action, .em-faq summary::after, .em-lang__globe, .em-top, .em-top svg, .em-parking__gl canvas { transition: none !important; animation: none !important; }
   .em-parking__intro { display: none; }
 }
 

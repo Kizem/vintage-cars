@@ -145,6 +145,16 @@ Parking behaviour (`parking.ts`, `components/garage/Parking.tsx`):
   - « Fermer », Escape or a click in the empty parking close it; dragging the
     scene still works. Focus goes to the car name on opening only.
   - Without WebGL the sheet opens the same way next to the vector profile.
+- Angled bays (`parking.ts`, constants at the top): every car stays in the
+  axis of its bay, turned `PARK_YAW` (three-quarter front), whether parked,
+  active or making way. A car is placed by one distance along that axis
+  (`place(d)`): the active car comes forward `OUT` (more when hovered or when
+  its sheet is open), its neighbours back off when the sheet is open. Floor
+  lines, back line, floor numbers, pillars and ceiling tubes follow the same
+  axis; the bays are offset (`BAY_OX`) so that the active car ends up just
+  left of the centre with both neighbours in view.
+- Car lights (the bay light under the ceiling and the headlamps) fade in and
+  out; they never flicker (a flicker read as a fault in the ceiling tubes).
 - `onReady` fires after the first rendered frame.
 - In portrait, the camera offset centres the projected box of the active car.
 - Rendering only stops off screen (the parking stays visible behind the sheet).

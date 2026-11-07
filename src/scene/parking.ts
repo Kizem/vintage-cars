@@ -28,6 +28,25 @@ export interface ParkingOptions {
 export type ParkingEngine = ReturnType<typeof createParking>;
 
 const S = 5.15;            /* écart entre deux places */
+/* Places en épi. Toutes les voitures restent dans l'axe de leur place, tournées de PARK_YAW (trois-quarts avant) :
+   garées au fond, la voiture active avance dans sa place sans en sortir de l'axe, les voisines reculent dans la leur.
+   Une voiture se place donc par une seule distance `d` le long de l'axe (place()). Les places sont décalées de BAY_OX
+   pour que la voiture active, avancée, se trouve face à la caméra (un peu à gauche, ses deux voisines restant visibles). Lignes au sol, numéros, piliers et néons suivent. */
+const PARK_YAW = .9;
+const PARK_Z = -3.1;                                /* profondeur du centre d'une voiture garée */
+const BAY_TILT = PARK_YAW - Math.PI / 2;            /* inclinaison de l'axe des places (radians) */
+const AX = [Math.sin(BAY_TILT), Math.cos(BAY_TILT)]; /* vers l'avant de la place (l'allée), en x et z */
+const OUT = 4;                                      /* la voiture active avance d'autant dans sa place */
+const OUT_OPEN = .5;                                /* … et d'un peu plus quand sa fiche est ouverte */
+const OUT_HOVER = .45;                              /* survolée, elle avance encore un peu */
+const BACK_OPEN = 1.2;                              /* fiche ouverte, les voisines reculent d'autant */
+const BAY_OX = -OUT * AX[0] * .75;                  /* la voiture active, avancée, un peu à gauche du centre, comme avant */
+const bayX = (z: number) => BAY_OX + (z - PARK_Z) * Math.tan(BAY_TILT); /* axe d'une place à la profondeur z */
+const place = (d: number) => [BAY_OX + d * AX[0], PARK_Z + d * AX[1]];  /* centre d'une voiture avancée de d */
+const BAY_BACK = -6.1;                              /* fond de la place, derrière les voitures même reculées */
+const BAY_FRONT = 4;                                /* entrée de la place, côté allée */
+const NUM_Z = 3.5;                                  /* numéro peint à l'entrée de la place */
+const WALL_Z = -7.65;
 const N = 3;
 const damp = (a: number, b: number, k: number, dt: number) => a + (b - a) * (1 - Math.exp(-k * dt));
 const wrap = (v: number) => { const h = N / 2; return ((((v + h) % N) + N) % N) - h; };
@@ -109,22 +128,24 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
     for (let k = -7; k <= 7; k++) {
       const g = new Group();
       const pillar = new Mesh(new BoxGeometry(.62, 3.7, .62), pillarMat);
-      pillar.position.set(S / 2, 1.85, -7.65); g.add(pillar);
+      pillar.position.set(S / 2 + bayX(WALL_Z), 1.85, WALL_Z); g.add(pillar);
       const beam = new Mesh(new BoxGeometry(.44, .36, 26), beamMat);
-      beam.position.set(S / 2, 3.52, 8); g.add(beam);
+      beam.position.set(S / 2 + bayX(WALL_Z), 3.52, 8); g.add(beam);
       if (!mirrored) {
         const neon = new Mesh(new BoxGeometry(2.6, .05, .12), neonOff);
-        neon.position.set(0, 3.42, -4.2); g.add(neon);
+        neon.position.set(bayX(-4.2), 3.42, -4.2); g.add(neon);
         const neon2 = new Mesh(new BoxGeometry(2.6, .05, .12), neonOff);
-        neon2.position.set(0, 3.42, -.9); g.add(neon2);
+        neon2.position.set(bayX(-.9), 3.42, -.9); g.add(neon2);
       }
       if (!mirrored) {
-        /* lignes au sol : places en épi */
-        const line = new Mesh(new PlaneGeometry(.075, 11), paintMat);
-        line.rotation.x = -Math.PI / 2; line.rotation.z = .28; line.position.set(S / 2 - .1, .012, -2); line.renderOrder = 2;
+        /* lignes au sol : places en épi, dans l'axe des voitures garées, du fond de la place jusqu'à l'allée */
+        const zc = (BAY_BACK + BAY_FRONT) / 2;
+        const line = new Mesh(new PlaneGeometry(.075, (BAY_FRONT - BAY_BACK) / Math.cos(BAY_TILT)), paintMat);
+        line.rotation.x = -Math.PI / 2; line.rotation.z = BAY_TILT; line.position.set(S / 2 + bayX(zc), .012, zc); line.renderOrder = 2;
         g.add(line);
+        /* fond de la place, parallèle au mur, entre les deux lignes */
         const stop = new Mesh(new PlaneGeometry(S - .7, .07), paintMat);
-        stop.rotation.x = -Math.PI / 2; stop.position.set(0, .012, -7.3); stop.renderOrder = 2;
+        stop.rotation.x = -Math.PI / 2; stop.position.set(bayX(BAY_BACK), .012, BAY_BACK); stop.renderOrder = 2;
         g.add(stop);
       }
       items.push({ g, k });
@@ -189,7 +210,7 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
       g.clearRect(0, 0, w, h); g.fillStyle = '#e4e1d6'; g.font = '700 430px "Stardos Stencil", Georgia, serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(String(car.n), w / 2, h / 2 + 16);
     }));
     const num = new Mesh(new PlaneGeometry(1.7, 1.7), new MeshBasicMaterial({ map: numTex, transparent: true, opacity: .22, depthWrite: false }));
-    num.rotation.x = -Math.PI / 2; num.rotation.z = -.28; num.position.set(0, .014, 3.5); num.renderOrder = 2;
+    num.rotation.x = -Math.PI / 2; num.rotation.z = BAY_TILT; num.position.set(bayX(NUM_Z), .014, NUM_Z); num.renderOrder = 2;
     scene.add(num);
 
     const light = createCarLight();
@@ -224,15 +245,14 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
     /* rien à dessiner hors écran ; la fiche ouverte laisse le parking visible, le rendu continue */
     if (!st.visible) { last = now; return; }
     const dt = Math.min(.05, (now - last) / 1000); last = now;
-    tick(dt, now / 1000);
+    tick(dt);
     renderer.render(scene, camera);
     /* prête quand la première image est dessinée : c'est de là que comptent les 9 s avant la première alternance */
     if (!shown) { shown = true; opts.onReady?.(); }
   }
 
   let init = true;
-  const lerp = (a: number, b: number, k: number) => a + (b - a) * k;
-  function tick(dt: number, t: number) {
+  function tick(dt: number) {
     if (!st.drag) {
       const prev = st.pos;
       st.pos = motion ? damp(st.pos, st.target, 3.1, dt) : st.target;
@@ -252,8 +272,7 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
        à gauche de la fiche en paysage, au-dessus en portrait. */
     const o = st.openT;
     const dist = st.dist * (1 + (st.portrait ? .06 : -.14) * o) * (1 + .1 * (1 - intro));
-    const carOut = 3.2 + .55 * o;
-    const carX = -carOut * .16 - .25; const carZ = -3.1 + carOut + .45;
+    const [carX, carZ] = place(OUT + OUT_OPEN * o + OUT_HOVER);
     const depth = dist - carZ; const tanH = Math.tan((camera.fov / 2) * Math.PI / 180);
     const openShift = o * (carX + (st.portrait ? 0 : st.inset * depth * tanH * camera.aspect));
     const lookY = st.portrait ? .75 - o * st.inset * depth * tanH : .85;
@@ -270,14 +289,14 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
       u.tgtHover = st.hover === u.i || (st.open && near > .5) ? 1 : 0;
       u.hover = damp(u.hover, u.tgtHover, 5, dt);
       const chosen = o * near; const away = o * (1 - near);
-      const out = near * 3.2 + chosen * .55;  /* la voiture sort de sa place, un peu plus quand sa fiche est ouverte */
-      /* Garée : presque de face, dans l'axe de sa place. Active : de trois-quarts. Survolée : elle pivote encore. */
-      const yawT = lerp(1.2, .62, near) - u.hover * .26 * (1 - chosen) + chosen * .2 + Math.max(-.5, Math.min(.5, st.speed * .22)) * (1 - near * .3);
+      /* Dans l'axe de sa place : la voiture active avance (un peu plus fiche ouverte, ou survolée) ;
+         fiche ouverte, les voisines reculent (leurs roues tournent en marche arrière). */
+      const d = near * OUT + chosen * OUT_OPEN + u.hover * OUT_HOVER - away * BACK_OPEN;
+      /* toujours dans l'axe de la place ; seul l'élan de l'allée qui défile la fait légèrement pivoter */
+      const yawT = PARK_YAW + Math.max(-.12, Math.min(.12, st.speed * .08)) * (1 - near * .3);
       u.yaw = init ? yawT : damp(u.yaw, yawT, 7, dt);
-      /* les voisines reculent dans leur place, dans l'axe de l'épi (leurs roues tournent en marche arrière) */
-      const back = away * 1.9;
-      const x = w * S - out * .16 - u.hover * .25 + back * .36;
-      const z = -3.1 + out + u.hover * .45 - back * .93;
+      const [px, z] = place(d);
+      const x = w * S + px;
       u.group.position.set(x, 0, z);
       u.group.rotation.y = u.yaw;
       u.group.visible = edge > .01;
@@ -295,16 +314,16 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
       const pitch = st.speed * -.012 * near + (u.car.behaviour === 'rise' ? 0 : u.hover * .008);
       [u.model.body, u.mirrorBody].forEach((b) => { b.position.y = rise; b.rotation.z = pitch; });
 
-      u.num.position.x = w * S - 1.05;
+      u.num.position.x = w * S + bayX(NUM_Z);
       u.num.material.opacity = (.16 + near * .3 + u.hover * .42) * edge * (1 - .5 * away);
       const fast = Math.min(1, Math.abs(st.speed) * .7);
-      const flicker = u.hover > .02 && u.hover < .6 ? (Math.sin(t * 70) > -.2 ? 1 : .35) : 1;
-      const lampV = Math.max(u.hover, fast * near * .7) * flicker * edge;
+      /* phares et lumière de la place s'allument en fondu, sans clignoter (le clignotement passait pour un défaut des néons) */
+      const lampV = Math.max(u.hover, fast * near * .7) * edge;
       u.model.lens.emissiveIntensity = lampV * 3.2;
       u.lamps.forEach((sp) => { sp.material.opacity = lampV * .85; });
       u.beam.material.opacity = lampV * .3;
-      u.light.position.x = x;
-      u.light.intensity = carLightIntensity(near, u.hover) * edge * intro * flicker * (st.portrait ? .6 : 1) * (1 - .85 * away);
+      u.light.position.x = x; u.light.position.z = z;
+      u.light.intensity = carLightIntensity(near, u.hover) * edge * intro * (st.portrait ? .6 : 1) * (1 - .85 * away);
     });
     init = false;
 
