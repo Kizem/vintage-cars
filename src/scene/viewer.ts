@@ -1,5 +1,5 @@
 /* Atelier de développement (ds.html, non publié) : une voiture seule, caméra orbitale et vues fixes,
-   pour travailler le modèle à partir des photos. ?car=ds | p504 | w114 & view=<nom> & bg=<couleur>
+   pour travailler le modèle à partir des photos. ?car=ds | p504 | w114 & view=<nom> & bg=<couleur> (& cam=x,y,z & at=x,y,z)
    Rendu, caméra et lumières viennent de presentation.ts, comme dans le parking : la voiture est éclairée
    comme sur la page quand elle est en face de la caméra. */
 import { Color, Mesh, MeshStandardMaterial, CircleGeometry, Scene, WebGLRenderer } from 'three';
@@ -35,6 +35,8 @@ const show = (name: string) => { camera.position.set(...VIEWS[name]); controls.u
 const nav = document.getElementById('views')!;
 Object.keys(VIEWS).forEach((name) => { const b = document.createElement('button'); b.textContent = name; b.onclick = () => show(name); nav.append(b); });
 show(q.get('view') && VIEWS[q.get('view')!] ? q.get('view')! : 'trois-quarts avant');
+/* ?cam=x,y,z&at=x,y,z : une caméra libre, pour les gros plans */
+if (q.get('cam')) { const c = q.get('cam')!.split(',').map(Number); camera.position.set(c[0], c[1], c[2]); if (q.get('at')) { const t = q.get('at')!.split(',').map(Number); controls.target.set(t[0], t[1], t[2]); } controls.update(); }
 
 function resize() { renderer.setSize(innerWidth, innerHeight, false); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); }
 addEventListener('resize', resize); resize();

@@ -67,7 +67,7 @@ export const SPECS: Record<CarModelKey, CarSpec> = {
     seams: [-.62, .42, 1.42],
     trim: [[-1.8, .34, 2.05, .34]],
     lamps: [[-2.4, .63, .66], [-2.42, .63, .47]], lampKind: 'ds',
-    cabin: { glass: 0x3f4f49, opacity: .5, seat: 0x93562c, trim: 0x151515 },
+    cabin: { glass: 0x2f3a37, opacity: .62, seat: 0x93562c, trim: 0x151515 },
     pillarChrome: true,
   },
   /* Peugeot 504 berline, d'après les photos de la voiture : tricorps, capot long et plat, face presque verticale,

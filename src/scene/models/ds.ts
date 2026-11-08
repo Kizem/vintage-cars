@@ -3,32 +3,33 @@
    poupe effilée : feux rouges rectangulaires, plaque, chevrons dorés et monogramme DS21 sur la malle,
    feux en trompette en haut des montants arrière. */
 import { BoxGeometry, CapsuleGeometry, CylinderGeometry, ExtrudeGeometry, Group, Mesh, MeshBasicMaterial, MeshPhysicalMaterial, PlaneGeometry, Shape, SphereGeometry, TorusGeometry } from 'three';
-import { lerp } from '../carspecs';
-import { badgeTexture, tube, type P3 } from '../geometry';
+import { lerp, type Pt } from '../carspecs';
+import { badgeTexture, loft, stations, tube, type P3 } from '../geometry';
 import type { CarKit } from '../kit';
 
 export function details(k: CarKit) {
   const { body, mats, curves: { be, hw }, gh, nx, tx, bumper, plate, surfX, topY, yawAt, lay, lampPoints } = k;
   const { chrome, dark, black, gold, crease, lens, amber, red } = mats;
-  const globe = new MeshPhysicalMaterial({ color: 0xe8eef0, roughness: .02, transparent: true, opacity: .32, clearcoat: 1, clearcoatRoughness: .02, envMap: mats.env, envMapIntensity: 1.6, depthWrite: false });
+  const globe = new MeshPhysicalMaterial({ color: 0xdfe8ec, roughness: .02, transparent: true, opacity: .4, clearcoat: 1, clearcoatRoughness: .02, envMap: mats.env, envMapIntensity: 1.6, depthWrite: false });
 
   [1, -1].forEach((sg) => {
-    /* Phares carénés : sous un grand globe en verre cerclé de chrome, qui prolonge la pointe de l'aile et sort
-       nettement de la carrosserie, deux optiques rondes au fond d'une cuvette sombre (la grande à l'extérieur,
-       jaune, la plus petite vers le capot). */
-    const zm = .575; const xm = surfX(zm, true) + .02; const ly = .64; const yaw = sg * yawAt(xm);
-    const unit = new Group(); unit.position.set(xm, ly, sg * zm); unit.rotation.y = yaw; body.add(unit);
-    const well = new Mesh(new SphereGeometry(1, 36, 18, 0, Math.PI), dark); well.scale.set(.205, .1, .07); well.rotation.y = Math.PI / 2; well.position.x = .03; unit.add(well);
-    ([[.095, .085], [-.085, .07]] as [number, number][]).forEach(([dz, r]) => {
+    /* Phares carénés, d'après les photos : un globe de verre allongé qui prolonge la pointe de l'aile vers l'avant,
+       cerclé de chrome ; au fond du globe (côté pare-brise), une cuvette sombre où les deux optiques rondes sont
+       côte à côte, la grande à l'extérieur, la jaune vers le capot. L'avant du globe, devant elles, est vide. */
+    const zm = .585; const x0 = surfX(zm, true); const ly = .655;
+    const unit = new Group(); unit.position.set(x0, ly, sg * zm); unit.rotation.y = sg * (yawAt(x0 + .15) - Math.PI / 2) * .5; body.add(unit);
+    const well = new Mesh(new SphereGeometry(1, 36, 18, 0, Math.PI), dark); well.scale.set(.09, .092, .145); well.rotation.y = Math.PI / 2; well.position.x = .1; unit.add(well);
+    ([[.062, .066], [-.07, .058]] as [number, number][]).forEach(([dz, r]) => {
       const zz = sg * dz;
-      const bowl = new Mesh(new SphereGeometry(r, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2), chrome); bowl.rotation.z = -Math.PI / 2; bowl.scale.y = .6; bowl.position.set(.02, 0, zz); unit.add(bowl);
-      const bulb = new Mesh(new SphereGeometry(r * .82, 24, 12), lens); bulb.scale.set(.3, 1, 1); bulb.position.set(.005, 0, zz); unit.add(bulb);
-      const rim = new Mesh(new TorusGeometry(r, r * .08, 8, 32), chrome); rim.rotation.y = Math.PI / 2; rim.position.set(.002, 0, zz); unit.add(rim);
-      lampPoints.push([xm - .04, ly, sg * (zm + dz)]);
+      const bowl = new Mesh(new SphereGeometry(r, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2), chrome); bowl.rotation.z = -Math.PI / 2; bowl.scale.y = .55; bowl.position.set(.1, .004, zz); unit.add(bowl);
+      const bulb = new Mesh(new SphereGeometry(r * .8, 24, 12), lens); bulb.scale.set(.32, 1, 1); bulb.position.set(.086, .004, zz); unit.add(bulb);
+      const rim = new Mesh(new TorusGeometry(r, r * .07, 8, 32), chrome); rim.rotation.y = Math.PI / 2; rim.position.set(.084, .004, zz); unit.add(rim);
+      lampPoints.push([x0 + .03, ly, sg * (zm + dz)]);
     });
-    /* le globe, bien visible : verre teinté et reflets, en saillie devant les optiques */
-    const fair = new Mesh(new SphereGeometry(1, 40, 20, 0, Math.PI), globe); fair.scale.set(.215, .108, .085); fair.rotation.y = -Math.PI / 2; fair.position.x = .02; fair.renderOrder = 6; unit.add(fair);
-    const ring = new Mesh(new TorusGeometry(1, .06, 8, 48), chrome); ring.scale.set(.215, .108, 1); ring.rotation.y = Math.PI / 2; ring.position.x = .02; unit.add(ring);
+    /* le globe : moitié avant d'un ellipsoïde allongé, en saillie devant les optiques */
+    const fair = new Mesh(new SphereGeometry(1, 40, 20, 0, Math.PI), globe); fair.scale.set(.15, .102, .27); fair.rotation.y = -Math.PI / 2; fair.position.x = .1; fair.renderOrder = 6; unit.add(fair);
+    /* son cerclage chromé, là où le globe rejoint l'aile */
+    const ring = new Mesh(new TorusGeometry(1, .045, 8, 48), chrome); ring.scale.set(.142, .102, 1); ring.rotation.y = Math.PI / 2; ring.position.x = .1; unit.add(ring);
     /* clignotant à l'angle, sous l'optique */
     const xa = surfX(.74, true) + .03;
     const blink = new Mesh(new SphereGeometry(.05, 16, 10), amber); blink.scale.set(.35, .45, 1); blink.position.set(xa, .5, sg * .74); blink.rotation.y = sg * yawAt(xa); body.add(blink);
@@ -71,11 +72,12 @@ export function details(k: CarKit) {
     const f = x < cx0 + .12 ? Math.sqrt(Math.max(0, 1 - ((cx0 + .12 - x) / .12) ** 2)) : x > cx1 - .05 ? Math.sqrt(Math.max(0, 1 - ((x - cx1 + .05) / .05) ** 2)) : 1;
     return Math.max(.001, w * f);
   };
-  const capShape = new Shape(); const steps = 40;
-  for (let i = 0; i <= steps; i++) { const x = lerp(cx0, cx1, i / steps); if (i) capShape.lineTo(x, capW(x)); else capShape.moveTo(x, capW(x)); }
-  for (let i = steps; i >= 0; i--) { const x = lerp(cx0, cx1, i / steps); capShape.lineTo(x, -capW(x)); }
-  const cap = new Mesh(new ExtrudeGeometry(capShape, { depth: .028, bevelEnabled: true, bevelThickness: .009, bevelSize: .012, bevelSegments: 3, curveSegments: 4 }), capMat);
-  cap.rotation.x = -Math.PI / 2; cap.position.y = capY; body.add(cap);
+  /* coupe du pavillon : dessus presque plat, bords qui s'arrondissent vers le bas et débordent du vitrage, sous-face mince */
+  const capSection = (x: number): Pt[] => {
+    const w = capW(x); const yt = capY + .03;
+    return [[0, yt - .026], [w * .7, yt - .034], [w * .93, yt - .06], [w - .008, yt - .082], [w, yt - .074], [w * .99, yt - .05], [w * .95, yt - .026], [w * .82, yt - .009], [w * .5, yt - .001], [0, yt]];
+  };
+  const cap = new Mesh(loft(stations(cx0, cx1, 40), capSection), capMat); body.add(cap);
   [1, -1].forEach((sg) => {
     const z = capW(cx1 - .08) - .02;
     const tr = new Mesh(new CylinderGeometry(.03, .014, .17, 14), red); tr.rotation.z = Math.PI / 2; tr.position.set(cx1 - .06, capY + .012, sg * z); body.add(tr);
