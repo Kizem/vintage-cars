@@ -45,7 +45,7 @@ export function buildBody(s: CarSpec, mats: CarMaterials, curves: CarCurves) {
   /** Coupe du vitrage à l'abscisse x : t = 0 à la ceinture, t = 1 au milieu du toit. */
   const gh = (x: number, t: number): Pt => {
     const yb = Math.min(be(x), de(x)) - .025; const yt = Math.max(roofY(x), yb + .001); const wb = hw(x) * .955; const wt = wb * gl.tumble;
-    const crown = .055 * Math.min(1, (yt - yb) / .3);
+    const crown = (gl.crown ?? .055) * Math.min(1, (yt - yb) / .3);
     const c = catmull([[wb, yb], [lerp(wb, wt, .55), lerp(yb, yt, .58)], [wt * 1.0, yt - crown], [wt * .62, yt - crown * .22], [0, yt]], 40);
     return c[Math.round(t * 40)];
   };

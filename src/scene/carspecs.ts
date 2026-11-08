@@ -12,7 +12,7 @@ export interface CarSpec {
   roof?: { color: number; metalness: number; roughness: number };
   axles: number[]; arch: Pt[]; trackZ: number[];
   floor: Pt[]; belt: Pt[]; deck: Pt[]; hw: Pt[];
-  glass: { xa: number; xb: number; xc: number; xd: number; roofY: number; baseY: number; tailY: number; tumble: number };
+  glass: { xa: number; xb: number; xc: number; xd: number; roofY: number; baseY: number; tailY: number; tumble: number; /** bombé du haut du vitrage (0,055 par défaut) */ crown?: number };
   lensColor?: number;
   pillars: [number, number, number, number][];
   cPillar: [number, number, number, number];
@@ -60,7 +60,7 @@ export const SPECS: Record<CarModelKey, CarSpec> = {
     belt: [[-2.42, .55], [-2.3, .62], [-1.9, .74], [-1.0, .87], [0, .93], [1.2, .98], [1.9, .93], [2.3, .79], [2.42, .68]],
     deck: [[-2.42, .58], [-2.3, .66], [-1.9, .77], [-1.3, .88], [-.86, .95], [1.4, 1.05], [1.95, .99], [2.3, .84], [2.42, .72]],
     hw: [[-2.42, .38], [-2.4, .6], [-2.35, .73], [-2.25, .81], [-2.1, .86], [-1.8, .885], [-.8, .895], [.5, .895], [1.5, .85], [2.05, .74], [2.3, .62], [2.42, .52]],
-    glass: { xa: -.86, xb: -.1, xc: 1.02, xd: 2.0, roofY: 1.47, baseY: .98, tailY: 1.04, tumble: .74 },
+    glass: { xa: -.86, xb: -.1, xc: 1.02, xd: 2.0, roofY: 1.43, baseY: .98, tailY: 1.03, tumble: .86, crown: .012 },
     lensColor: 0xf2cf5a,
     pillars: [[-.04, .02, -.06, -.02], [.98, 1.03, .85, .92]],
     cPillar: [1.62, 1.84, 1.0, 1.12],

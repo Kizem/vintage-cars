@@ -113,14 +113,15 @@ export const vehicles: Vehicle[] = [
     // Photos of the collection car, supplied by the owner (references/DS21/Illu), licence plates blurred.
     image: {
       src: 'images/collection/citroen-ds-1-trois-quarts-avant.webp',
-      width: 839,
-      height: 475,
+      srcSet: 'images/collection/citroen-ds-1-trois-quarts-avant-900.webp 675w, images/collection/citroen-ds-1-trois-quarts-avant.webp 1125w',
+      width: 1125,
+      height: 1500,
       alt: {
         en: 'The anthracite grey Citroën DS 21 of the collection, three-quarter front view',
         fr: 'La Citroën DS 21 gris anthracite de la collection, vue de trois-quarts avant',
       },
       caption: { en: 'Three-quarter front', fr: 'Trois-quarts avant' },
-      focalPoint: '12% 50%',
+      focalPoint: '50% 68%',
     },
     gallery: [
       {
@@ -148,9 +149,9 @@ export const vehicles: Vehicle[] = [
       },
       {
         src: 'images/collection/citroen-ds-4-habitacle.webp',
-        srcSet: 'images/collection/citroen-ds-4-habitacle-900.webp 675w, images/collection/citroen-ds-4-habitacle.webp 1500w',
-        width: 1500,
-        height: 2000,
+        srcSet: 'images/collection/citroen-ds-4-habitacle-900.webp 675w, images/collection/citroen-ds-4-habitacle.webp 1125w',
+        width: 1125,
+        height: 1500,
         alt: {
           en: 'Cabin of the Citroën DS 21: single-spoke steering wheel, dashboard and tan leather seats',
           fr: 'L’habitacle de la Citroën DS 21 : volant monobranche, planche de bord et sièges en cuir fauve',

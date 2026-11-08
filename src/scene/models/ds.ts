@@ -8,23 +8,27 @@ import { badgeTexture, tube, type P3 } from '../geometry';
 import type { CarKit } from '../kit';
 
 export function details(k: CarKit) {
-  const { body, mats, curves: { be, hw }, gh, railT, nx, tx, bumper, plate, surfX, topY, yawAt, lay, lampPoints } = k;
+  const { body, mats, curves: { be, hw }, gh, nx, tx, bumper, plate, surfX, topY, yawAt, lay, lampPoints } = k;
   const { chrome, dark, black, gold, crease, lens, amber, red } = mats;
-  const globe = new MeshPhysicalMaterial({ color: 0xffffff, roughness: .02, transparent: true, opacity: .2, clearcoat: 1, clearcoatRoughness: .02, envMap: mats.env, envMapIntensity: 1.6, depthWrite: false });
+  const globe = new MeshPhysicalMaterial({ color: 0xe8eef0, roughness: .02, transparent: true, opacity: .32, clearcoat: 1, clearcoatRoughness: .02, envMap: mats.env, envMapIntensity: 1.6, depthWrite: false });
 
   [1, -1].forEach((sg) => {
-    const pods: [number, number][] = [[.665, .095], [.47, .078]];
-    pods.forEach(([z, r]) => {
-      const x = surfX(z, true) + .06;
-      const g = new Group(); g.position.set(x, .635, sg * z); g.rotation.y = sg * yawAt(x); body.add(g);
-      const ring = new Mesh(new TorusGeometry(r, r * .1, 8, 32), chrome); ring.rotation.y = Math.PI / 2; g.add(ring);
-      const cup = new Mesh(new SphereGeometry(r * .96, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2), chrome); cup.rotation.z = -Math.PI / 2; cup.scale.y = .55; cup.position.x = .012; g.add(cup);
-      const bulb = new Mesh(new SphereGeometry(r * .9, 24, 12), lens); bulb.scale.set(.32, 1, 1); bulb.position.x = -.004; g.add(bulb);
-      lampPoints.push([x - .03, .635, sg * z]);
+    /* Phares carénés : sous un grand globe en verre cerclé de chrome, qui prolonge la pointe de l'aile et sort
+       nettement de la carrosserie, deux optiques rondes au fond d'une cuvette sombre (la grande à l'extérieur,
+       jaune, la plus petite vers le capot). */
+    const zm = .575; const xm = surfX(zm, true) + .02; const ly = .64; const yaw = sg * yawAt(xm);
+    const unit = new Group(); unit.position.set(xm, ly, sg * zm); unit.rotation.y = yaw; body.add(unit);
+    const well = new Mesh(new SphereGeometry(1, 36, 18, 0, Math.PI), dark); well.scale.set(.205, .1, .07); well.rotation.y = Math.PI / 2; well.position.x = .03; unit.add(well);
+    ([[.095, .085], [-.085, .07]] as [number, number][]).forEach(([dz, r]) => {
+      const zz = sg * dz;
+      const bowl = new Mesh(new SphereGeometry(r, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2), chrome); bowl.rotation.z = -Math.PI / 2; bowl.scale.y = .6; bowl.position.set(.02, 0, zz); unit.add(bowl);
+      const bulb = new Mesh(new SphereGeometry(r * .82, 24, 12), lens); bulb.scale.set(.3, 1, 1); bulb.position.set(.005, 0, zz); unit.add(bulb);
+      const rim = new Mesh(new TorusGeometry(r, r * .08, 8, 32), chrome); rim.rotation.y = Math.PI / 2; rim.position.set(.002, 0, zz); unit.add(rim);
+      lampPoints.push([xm - .04, ly, sg * (zm + dz)]);
     });
-    /* le globe couvre les deux optiques, dans le galbe de l'aile */
-    const zm = .565; const xm = surfX(zm, true) + .045;
-    const fair = new Mesh(new SphereGeometry(1, 36, 18), globe); fair.scale.set(.055, .11, .215); fair.position.set(xm, .635, sg * zm); fair.rotation.y = sg * yawAt(xm); fair.renderOrder = 6; body.add(fair);
+    /* le globe, bien visible : verre teinté et reflets, en saillie devant les optiques */
+    const fair = new Mesh(new SphereGeometry(1, 40, 20, 0, Math.PI), globe); fair.scale.set(.215, .108, .085); fair.rotation.y = -Math.PI / 2; fair.position.x = .02; fair.renderOrder = 6; unit.add(fair);
+    const ring = new Mesh(new TorusGeometry(1, .06, 8, 48), chrome); ring.scale.set(.215, .108, 1); ring.rotation.y = Math.PI / 2; ring.position.x = .02; unit.add(ring);
     /* clignotant à l'angle, sous l'optique */
     const xa = surfX(.74, true) + .03;
     const blink = new Mesh(new SphereGeometry(.05, 16, 10), amber); blink.scale.set(.35, .45, 1); blink.position.set(xa, .5, sg * .74); blink.rotation.y = sg * yawAt(xa); body.add(blink);
@@ -41,8 +45,6 @@ export function details(k: CarKit) {
     const tl = plate(xr + .016, .58, sg * .36, .2, .075, .01, red, .012); tl.rotation.y = Math.PI / 2;
     const xc = surfX(.5, false) - .01;
     const cat = new Mesh(new CylinderGeometry(.026, .026, .012, 18), red); cat.rotation.z = Math.PI / 2; cat.position.set(xc + .006, .5, sg * .5); body.add(cat);
-    /* feux en trompette en haut des montants arrière */
-    const tr = new Mesh(new CylinderGeometry(.036, .016, .2, 14), amber); tr.rotation.z = Math.PI / 2 - .05; const [z, y] = gh(1.04, railT - .03); tr.position.set(1.12, y - .004, sg * (z + .012)); body.add(tr);
   });
   /* pare-chocs : avant à creux central, arrière bas ; prise d'air noire sous l'avant */
   bumper(nx + .04, .41, .055, .04, .7, .7);
@@ -59,4 +61,23 @@ export function details(k: CarKit) {
   [0, .042].forEach((dx) => lay(new Mesh(chevG, gold), 2.06 + dx, 0));
   const ds21 = badgeTexture('DS21', '#d6b25c', 'italic 700 52px Georgia, serif');
   lay(new Mesh(new PlaneGeometry(.2, .05), new MeshBasicMaterial({ map: ds21, transparent: true, depthWrite: false })), 2.2, -.33, .006);
+
+  /* Le pavillon « casquette » : un toit plat et mince, posé sur le vitrage et qui le déborde tout autour,
+     prolongé au-dessus de la lunette ; les feux en trompette à ses coins arrière. */
+  const capMat = new MeshPhysicalMaterial({ color: 0x80858a, metalness: .45, roughness: .32, clearcoat: .8, clearcoatRoughness: .12, envMap: mats.env, envMapIntensity: 1 });
+  const gl = k.gl; const cx0 = gl.xb - .07; const cx1 = 1.2; const capY = gl.roofY - .006;
+  const capW = (x: number) => {
+    const [z] = gh(Math.min(x, gl.xc), .5); const w = z + .03;
+    const f = x < cx0 + .12 ? Math.sqrt(Math.max(0, 1 - ((cx0 + .12 - x) / .12) ** 2)) : x > cx1 - .05 ? Math.sqrt(Math.max(0, 1 - ((x - cx1 + .05) / .05) ** 2)) : 1;
+    return Math.max(.001, w * f);
+  };
+  const capShape = new Shape(); const steps = 40;
+  for (let i = 0; i <= steps; i++) { const x = lerp(cx0, cx1, i / steps); if (i) capShape.lineTo(x, capW(x)); else capShape.moveTo(x, capW(x)); }
+  for (let i = steps; i >= 0; i--) { const x = lerp(cx0, cx1, i / steps); capShape.lineTo(x, -capW(x)); }
+  const cap = new Mesh(new ExtrudeGeometry(capShape, { depth: .028, bevelEnabled: true, bevelThickness: .009, bevelSize: .012, bevelSegments: 3, curveSegments: 4 }), capMat);
+  cap.rotation.x = -Math.PI / 2; cap.position.y = capY; body.add(cap);
+  [1, -1].forEach((sg) => {
+    const z = capW(cx1 - .08) - .02;
+    const tr = new Mesh(new CylinderGeometry(.03, .014, .17, 14), red); tr.rotation.z = Math.PI / 2; tr.position.set(cx1 - .06, capY + .012, sg * z); body.add(tr);
+  });
 }
