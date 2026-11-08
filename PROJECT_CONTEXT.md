@@ -14,13 +14,14 @@ Branches:
 
 - This version (« Le Garage ») is the accepted concept of the landing page.
   The owner had it merged into `main` (fast-forward from `le-garage`).
-- `le-garage` stays the working branch; `main` only receives what the owner
-  asks to merge. `3d-design` is never touched. Never force-push.
+- Work happens directly on `main`, unless the owner explicitly asks for a
+  branch for a given piece of work. `le-garage` and `le-garage-v1` are kept as
+  they are. `3d-design` is never touched. Never force-push.
 - Repository settings are never changed from a session.
 
 Deployment: `.github/workflows/deploy.yml` builds and publishes `dist/` to
 GitHub Pages on every push to `main` or `le-garage`. The last deployment wins,
-so a push to `le-garage` is a production release.
+so every push is a production release; the owner tests on the live site.
 
 ## 2. Stack and technical decisions
 
