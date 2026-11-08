@@ -4,7 +4,7 @@ import type { Experience } from './types';
  * The three chapters under the parking (sections sortie-1 to sortie-3), in this order:
  * events, private tours, chauffeured.
  * All experiences are enquiry-based. Self-drive is only offered for some
- * cars (see `service` in vehicles.ts: Peugeot 504 and Mercedes-Benz /8),
+ * cars (see `service` in vehicles.ts: Peugeot 504 and Mercedes W115 220D),
  * on enquiry and subject to conditions; the Citroën DS is chauffeur-only.
  * Do not add a dedicated self-drive experience here without a confirmed offer.
  */

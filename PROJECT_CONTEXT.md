@@ -8,7 +8,7 @@ and day-to-day use; this file explains how the project is built and why.
 
 A single-page, bilingual (EN / FR) landing page for **Époque Motors**, private
 vintage car experiences in Paris, by enquiry only. Three cars: Peugeot 504,
-Citroën DS, Mercedes-Benz /8. There is no booking engine and no online payment.
+Citroën DS, Mercedes W115 220D (1973, manual). There is no booking engine and no online payment.
 
 Branches:
 
@@ -171,7 +171,7 @@ Data lives in `src/data/*.ts` (`{ en, fr }` fields) and `src/i18n/{en,fr}.ts`.
 - No long dashes, no superlatives, no unverified car facts. Car facts in
   `vehicles.ts` and `carspecs.ts` are not changed without a source.
 - A car is never presented as available: every car is `on-request`.
-- Service per car: Peugeot 504 and Mercedes /8 offer chauffeur or self-drive
+- Service per car: Peugeot 504 and Mercedes W115 220D offer chauffeur or self-drive
   on enquiry; the DS is chauffeur only. Do not add a self-drive offer that is
   not confirmed.
 - Chapter texts (editorial update supplied by the owner): each experience has

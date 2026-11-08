@@ -4,7 +4,7 @@ import type { Vehicle } from './types';
  * THE COLLECTION, single source of truth.
  *
  * The order is the order of the bays in the parking: N°1 Peugeot 504,
- * N°2 Citroën DS 21, N°3 Mercedes-Benz /8. The parking, the vehicle sheet
+ * N°2 Citroën DS 21, N°3 Mercedes W115 220D. The parking, the vehicle sheet
  * and the enquiry form's car list follow it.
  *
  * Only publish verified information: no model years, specifications, trims
@@ -168,12 +168,9 @@ export const vehicles: Vehicle[] = [
   },
   {
     slug: 'mercedes-benz-classic',
-    // Provisional identification from the photos (tall grille, high headlamps and
-    // double front bumper = first series, before the August 1973 facelift).
-    // TODO: replace with the exact model (e.g. 220, 230, 250…) once confirmed by the owner.
-    name: { en: 'Mercedes-Benz /8', fr: 'Mercedes-Benz /8' },
+    name: { en: 'Mercedes W115 220D', fr: 'Mercedes W115 220D' },
     marque: 'Mercedes-Benz',
-    mark: '/8',
+    mark: '220D',
     category: { en: 'German Heritage', fr: 'Tradition allemande' },
     description: {
       en: 'A timeless expression of German engineering, refinement and automotive heritage.',
@@ -181,76 +178,89 @@ export const vehicles: Vehicle[] = [
     },
     story: {
       en: [
-        'Launched in 1968, the Mercedes-Benz /8 owes its nickname, “Strich-Acht”, to the “/8” on its identification plates. Its lines are the work of Paul Bracq, and it remained in production until 1976.',
-        'Nearly 1.9 million were built, most of them saloons. The car in our collection belongs to the first series, recognisable by its tall grille and double front bumper.',
+        'Launched in 1968, the Mercedes-Benz W114/W115 owes its nickname, “Strich-Acht” (/8), to the “/8” on its identification plates. Its lines are the work of Paul Bracq, and it remained in production until 1976.',
+        'Nearly 1.9 million were built, most of them saloons. The 220 D, with its four-cylinder diesel engine, belongs to the W115 range. The car in our collection dates from 1973 and has a manual gearbox.',
       ],
       fr: [
-        'Lancée en 1968, la Mercedes-Benz /8 doit son surnom, « Strich-Acht », au « /8 » inscrit sur ses plaques d’identification. Ses lignes sont signées Paul Bracq, et elle a été produite jusqu’en 1976.',
-        'Près de 1,9 million d’exemplaires ont été construits, en grande majorité des berlines. Celle de la collection appartient à la première série, reconnaissable à sa calandre haute et à son double pare-chocs avant.',
+        'Lancée en 1968, la Mercedes-Benz W114/W115 doit son surnom, « Strich-Acht » (/8), au « /8 » inscrit sur ses plaques d’identification. Ses lignes sont signées Paul Bracq, et elle a été produite jusqu’en 1976.',
+        'Près de 1,9 million d’exemplaires ont été construits, en grande majorité des berlines. La 220 D, à moteur diesel quatre cylindres, appartient à la gamme W115. Celle de la collection date de 1973 et dispose d’une boîte manuelle.',
       ],
     },
-    // Facts common to the whole first series. Engine, power and gearbox depend on
-    // the exact version and are left out until confirmed.
+    // Year and gearbox confirmed by the owner; the model is on the boot badge (220 D).
     details: [
-      { label: { en: 'Series', fr: 'Série' }, value: { en: 'W114/W115', fr: 'W114/W115' } },
-      { label: { en: 'Period', fr: 'Période' }, value: { en: '1968 to 1973', fr: '1968 à 1973' } },
+      { label: { en: 'Year', fr: 'Année' }, value: { en: '1973', fr: '1973' } },
+      { label: { en: 'Series', fr: 'Série' }, value: { en: 'W115', fr: 'W115' } },
       { label: { en: 'Body', fr: 'Carrosserie' }, value: { en: 'Saloon', fr: 'Berline' } },
       { label: { en: 'Seats', fr: 'Places' }, value: { en: '5', fr: '5' } },
+      { label: { en: 'Engine', fr: 'Moteur' }, value: { en: 'Diesel, 4 cylinders', fr: 'Diesel, 4 cylindres' } },
+      { label: { en: 'Gearbox', fr: 'Boîte de vitesses' }, value: { en: 'Manual', fr: 'Manuelle' } },
       { label: { en: 'Drive', fr: 'Transmission' }, value: { en: 'Rear-wheel drive', fr: 'Propulsion' } },
       { label: { en: 'Design', fr: 'Design' }, value: { en: 'Paul Bracq', fr: 'Paul Bracq' } },
     ],
     availability: 'on-request',
     service: 'chauffeur-or-self-drive',
+    // Photos of the collection car, supplied by the owner.
     image: {
-      src: 'images/collection/mercedes-1-trois-quarts.webp',
-      srcSet: 'images/collection/mercedes-1-trois-quarts-800.webp 800w, images/collection/mercedes-1-trois-quarts.webp 1500w',
-      width: 1500,
-      height: 1000,
+      src: 'images/collection/mercedes-w115-1-avant.webp',
+      srcSet: 'images/collection/mercedes-w115-1-avant-800.webp 600w, images/collection/mercedes-w115-1-avant.webp 1125w',
+      width: 1125,
+      height: 1500,
       alt: {
-        en: 'The Mercedes-Benz /8 saloon of the collection, three-quarter front view',
-        fr: 'La Mercedes-Benz /8 berline de la collection, vue de trois-quarts avant',
+        en: 'The ivory Mercedes W115 220D of the collection, front view',
+        fr: 'La Mercedes W115 220D ivoire de la collection, vue de face',
       },
-      caption: { en: 'Three-quarter front', fr: 'Trois-quarts avant' },
+      caption: { en: 'Front view', fr: 'De face' },
     },
     gallery: [
       {
-        src: 'images/collection/mercedes-2-phares.webp',
-        srcSet: 'images/collection/mercedes-2-phares-800.webp 800w, images/collection/mercedes-2-phares.webp 1500w',
-        width: 1500,
-        height: 1000,
+        src: 'images/collection/mercedes-w115-2-trois-quarts-arriere.webp',
+        srcSet: 'images/collection/mercedes-w115-2-trois-quarts-arriere-800.webp 600w, images/collection/mercedes-w115-2-trois-quarts-arriere.webp 1125w',
+        width: 1125,
+        height: 1500,
         alt: {
-          en: 'The Mercedes-Benz /8 with its headlights on, leaving its garage',
-          fr: 'La Mercedes-Benz /8 phares allumés, à la sortie de son garage',
+          en: 'The Mercedes W115 220D, three-quarter rear view',
+          fr: 'La Mercedes W115 220D, vue de trois-quarts arrière',
         },
-        caption: { en: 'Headlights on', fr: 'Phares allumés' },
+        caption: { en: 'Three-quarter rear', fr: 'Trois-quarts arrière' },
       },
       {
-        src: 'images/collection/mercedes-3-profil.webp',
-        srcSet: 'images/collection/mercedes-3-profil-800.webp 800w, images/collection/mercedes-3-profil.webp 1500w',
+        src: 'images/collection/mercedes-w115-3-arriere.webp',
+        srcSet: 'images/collection/mercedes-w115-3-arriere-800.webp 800w, images/collection/mercedes-w115-3-arriere.webp 1500w',
         width: 1500,
-        height: 1000,
+        height: 1125,
         alt: {
-          en: 'The Mercedes-Benz /8 saloon in side view',
-          fr: 'La Mercedes-Benz /8 berline vue de profil',
+          en: 'Rear of the Mercedes W115 220D, with its 220 D badge',
+          fr: 'L’arrière de la Mercedes W115 220D, avec son monogramme 220 D',
         },
-        caption: { en: 'Side view', fr: 'De profil' },
+        caption: { en: 'Rear view', fr: 'De l’arrière' },
       },
       {
-        src: 'images/collection/mercedes-4-calandre.webp',
-        srcSet: 'images/collection/mercedes-4-calandre-800.webp 800w, images/collection/mercedes-4-calandre.webp 1449w',
-        width: 1449,
-        height: 966,
+        src: 'images/collection/mercedes-w115-4-jante.webp',
+        srcSet: 'images/collection/mercedes-w115-4-jante-800.webp 600w, images/collection/mercedes-w115-4-jante.webp 1125w',
+        width: 1125,
+        height: 1500,
         alt: {
-          en: 'Front grille and headlights of the Mercedes-Benz /8',
-          fr: 'Calandre et phares de la Mercedes-Benz /8',
+          en: 'Front wheel of the Mercedes W115 220D',
+          fr: 'Roue avant de la Mercedes W115 220D',
         },
-        caption: { en: 'Grille and headlights', fr: 'Calandre et phares' },
+        caption: { en: 'Wheel', fr: 'La jante' },
+      },
+      {
+        src: 'images/collection/mercedes-w115-5-interieur.webp',
+        srcSet: 'images/collection/mercedes-w115-5-interieur-800.webp 600w, images/collection/mercedes-w115-5-interieur.webp 1125w',
+        width: 1125,
+        height: 1500,
+        alt: {
+          en: 'Interior of the Mercedes W115 220D: ivory steering wheel, wood trim and beige upholstery',
+          fr: 'L’habitacle de la Mercedes W115 220D : volant ivoire, boiseries et sellerie beige',
+        },
+        caption: { en: 'Interior', fr: 'L’habitacle' },
       },
     ],
     rendering: {
       model: 'w114',
       behaviour: 'roll',
-      alt: { en: 'Graphic rendering of a white Mercedes-Benz /8', fr: 'Représentation graphique d’une Mercedes-Benz /8 blanche' },
+      alt: { en: 'Graphic rendering of an ivory Mercedes W115 220D', fr: 'Représentation graphique d’une Mercedes W115 220D ivoire' },
     },
   },
 ];

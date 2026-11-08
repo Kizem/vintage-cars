@@ -79,7 +79,7 @@ export const fr: Dictionary = {
       },
       {
         q: 'Puis-je conduire la voiture ?',
-        a: 'Oui pour la Peugeot 504 et la Mercedes-Benz /8, qui peuvent être conduites sans chauffeur, sur demande et sous conditions. La Citroën DS 21 est proposée uniquement avec chauffeur.',
+        a: 'Oui pour la Peugeot 504 et la Mercedes W115 220D, qui peuvent être conduites sans chauffeur, sur demande et sous conditions. La Citroën DS 21 est proposée uniquement avec chauffeur.',
       },
     ],
   },

@@ -79,7 +79,7 @@ export const en = {
       },
       {
         q: 'Can I drive the car myself?',
-        a: 'The Peugeot 504 and the Mercedes-Benz /8 can be driven without a chauffeur, on enquiry and subject to conditions. The Citroën DS 21 is offered with a chauffeur only.',
+        a: 'The Peugeot 504 and the Mercedes W115 220D can be driven without a chauffeur, on enquiry and subject to conditions. The Citroën DS 21 is offered with a chauffeur only.',
       },
     ],
   },

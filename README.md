@@ -125,6 +125,6 @@ field filters basic bots.
 - Photos of the Peugeot 504 in higher definition (current ones are 730 and 456 px wide).
 - Citroën DS: `ds-garage.webp` shows the collection car; the three other
   photos are third-party illustrations, to replace or clear for rights.
-- Exact versions of the DS and the Mercedes (provisional names and partial specs in `src/data/vehicles.ts`).
+- Exact version of the DS (provisional name and partial specs in `src/data/vehicles.ts`).
 - Section visuals are generated images, labelled “Illustrative image”; replace
   them with real photography when available.
