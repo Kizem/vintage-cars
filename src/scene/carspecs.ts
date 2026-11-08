@@ -23,6 +23,8 @@ export interface CarSpec {
   cabin?: { glass: number; opacity: number; seat: number; trim: number; steering?: number };
   /** Montants de pare-brise et de portes en inox plutôt que couleur caisse. */
   pillarChrome?: boolean;
+  /** Ailes avant plus hautes que le capot, qui plonge entre elles (la ceinture peut passer au-dessus du dessus de caisse). */
+  wingRise?: boolean;
   /** Pneus à flancs blancs. */
   whitewall?: boolean;
   /** Trappe ronde dessinée sur l'aile arrière : [x, y, rayon]. */
@@ -48,26 +50,29 @@ export const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
 /* --- Les trois voitures --- */
 export const SPECS: Record<CarModelKey, CarSpec> = {
-  /* Citroën DS 21 berline, d'après les photos de la voiture (references/DS21/modele) : gris anthracite métallisé,
-     nez large et arrondi en plan, capot long et plongeant, double optique jaune sous globe aux angles, gros
-     pare-chocs chromé, poupe effilée aux feux rectangulaires, roues arrière à demi couvertes, pneus à flancs blancs
-     et grands enjoliveurs chromés, habitacle en cuir fauve. */
+  /* Citroën DS 21 berline (1965-1972), d'après les photos de la voiture (references/DS21/modele) et ses cotes :
+     longueur 4,87 m, largeur 1,79 m, hauteur 1,47 m, empattement 3,125 m, voie arrière plus étroite que l'avant.
+     Gris anthracite métallisé, toit du même gris. Nez bas et large, capot qui plonge entre les ailes (wingRise) ;
+     phares carénés à la pointe des ailes ; habitacle aux montants fins et chromés, lunette enveloppante sous le
+     pavillon qui la déborde ; poupe qui se rétrécit en plan ; roues arrière à demi couvertes par les ailes ;
+     pneus à flancs blancs et grands enjoliveurs chromés ; habitacle en cuir fauve, planche de bord noire. */
   ds: {
-    L: 4.84, H: 1.47, W: 1.79, wheelR: .315, wheelW: .17, hub: 'ds', hubTint: '#9fa3a4',
+    L: 4.87, H: 1.47, W: 1.79, wheelR: .33, wheelW: .17, hub: 'ds', hubTint: '#c9ccce',
     paint: { color: 0x6b7074, metalness: .55, roughness: .3 }, whitewall: true,
-    axles: [-1.49, 1.635], arch: [[.385, 2], [.385, .47]], trackZ: [.74, .62],
-    floor: [[-2.42, .4], [-2.3, .32], [-2.0, .27], [1.8, .27], [2.2, .34], [2.42, .46]],
-    belt: [[-2.42, .55], [-2.3, .62], [-1.9, .74], [-1.0, .87], [0, .93], [1.2, .98], [1.9, .93], [2.3, .79], [2.42, .68]],
-    deck: [[-2.42, .58], [-2.3, .66], [-1.9, .77], [-1.3, .88], [-.86, .95], [1.4, 1.05], [1.95, .99], [2.3, .84], [2.42, .72]],
-    hw: [[-2.42, .38], [-2.4, .6], [-2.35, .73], [-2.25, .81], [-2.1, .86], [-1.8, .885], [-.8, .895], [.5, .895], [1.5, .85], [2.05, .74], [2.3, .62], [2.42, .52]],
-    glass: { xa: -.86, xb: -.1, xc: 1.02, xd: 2.0, roofY: 1.43, baseY: .98, tailY: 1.03, tumble: .86, crown: .012 },
+    axles: [-1.5, 1.625], arch: [[.375, 2], [.385, .48]], trackZ: [.75, .65],
+    floor: [[-2.435, .36], [-2.3, .3], [-2.0, .265], [1.9, .265], [2.25, .33], [2.435, .45]],
+    belt: [[-2.435, .56], [-2.39, .655], [-2.2, .72], [-1.8, .77], [-1.3, .83], [-.85, .895], [0, .925], [1.0, .955], [1.6, .97], [2.0, .945], [2.3, .84], [2.435, .7]],
+    deck: [[-2.435, .52], [-2.38, .57], [-2.2, .62], [-1.8, .69], [-1.3, .77], [-.95, .85], [-.8, .9], [0, .95], [1.6, 1.0], [1.95, .99], [2.2, .935], [2.36, .83], [2.435, .7]],
+    hw: [[-2.435, .6], [-2.42, .7], [-2.37, .78], [-2.2, .845], [-1.8, .885], [-.6, .895], [.6, .89], [1.4, .86], [1.9, .8], [2.2, .72], [2.38, .64], [2.435, .57]],
+    wingRise: true,
+    glass: { xa: -.84, xb: -.14, xc: 1.0, xd: 1.98, roofY: 1.445, baseY: .93, tailY: .99, tumble: .78, crown: .045 },
     lensColor: 0xf2cf5a,
-    pillars: [[-.04, .02, -.06, -.02], [.98, 1.03, .85, .92]],
-    cPillar: [1.62, 1.84, 1.0, 1.12],
-    seams: [-.62, .42, 1.42],
-    trim: [[-1.8, .34, 2.05, .34]],
-    lamps: [[-2.4, .63, .66], [-2.42, .63, .47]], lampKind: 'ds',
-    cabin: { glass: 0x2f3a37, opacity: .62, seat: 0x93562c, trim: 0x151515 },
+    pillars: [[.33, .37, .31, .35]],
+    cPillar: [1.04, 1.1, .98, 1.03],
+    seams: [-.86, .35, 1.2],
+    trim: [[-1.08, .3, 1.22, .3]],
+    lamps: [[-2.39, .64, .62]], lampKind: 'ds',
+    cabin: { glass: 0x2f3a37, opacity: .6, seat: 0x93562c, trim: 0x151515 },
     pillarChrome: true,
   },
   /* Peugeot 504 berline, d'après les photos de la voiture : tricorps, capot long et plat, face presque verticale,

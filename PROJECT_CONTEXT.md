@@ -269,31 +269,30 @@ Data lives in `src/data/*.ts` (`{ en, fr }` fields) and `src/i18n/{en,fr}.ts`.
 ## 8. Tests and checks before pushing
 
 1. `npm run typecheck` and `npm run build`.
-2. The fast Playwright suite (session scratchpad, `tests/fast/run.sh`, not in
-   the repository), against `vite preview`. Five files run in parallel, about
-   35 s in all:
-   - `layout`: seven sections, one h1, nothing overflows (5 sizes × FR/EN),
-     menu on one line, long or short chapter texts, language switch;
-   - `sheet`: the vehicle sheet on desktop and phone (place, focus, arrows,
-     photos, captions, closing, wheel and finger scrolling, enquiry);
-   - `nav-form`: wheel (including small notches), keys, menu, back to top,
-     form errors and the `not-configured` state;
-   - `scene`: the real WebGL scene, with reduced motion: ready, sheet, empty
-     click, context loss;
-   - `timing`: the 504 stays 9 s, then one car every 5 s.
+2. The test battery, in the repository (`tests/`, plain Playwright scripts using
+   the machine's global Playwright and Chromium; no dependency added):
+   `npm run build && npm test` (or `node tests/run.cjs [layout|sheet|nav-form|timing|scene]`).
+   It serves `dist/` with `vite preview` on port 4321 and runs, in parallel:
+   - `layout`: seven sections in order, one h1, nothing overflows, menu on one
+     line, every section fills the screen (5 sizes × FR/EN); language switch;
+   - `sheet`: the vehicle sheet of each car on desktop and phone (opening, focus,
+     every photo and srcset file loads, photo frame as wide as the sheet, no
+     availability row, no sentence, photo arrows, full-screen view with ← → and
+     Escape, next car, closing, « Demander cette voiture » preselects the car);
+   - `nav-form`: wheel (including a small notch), keys, menu, back to top,
+     form errors and the `not-configured` state (never a false « sent »);
+   - `timing`: the 504 stays at least 9 s, then one car about every 5 s;
+   then `scene`: the real WebGL scene (SwiftShader, slow), reduced motion: ready,
+   sheet, click in the empty parking, context loss; and each car built alone in
+   the workshop without errors.
    Everything but `scene` runs without WebGL (vector profile, fast) and waits
-   on conditions rather than fixed delays. Headless WebGL is software
-   (SwiftShader, 1 to 5 fps): keep it to the one `scene` file.
-3. Which suite to run:
-   - light changes (copy, styles, a single component, a fix): the fast suite;
-   - structural changes (the 3D scene or parking behaviour, page navigation,
-     the vehicle sheet, layout of several sections, the form, dependencies or
-     build): the full suites as well, one after the other, about an hour:
-     `t1-layout`, `t4-variants`, `t7-carousel`, `t2-desktop` (FR, then EN at
-     1280x640), `t3-mobile`. The finger swipe between sections is not
-     simulated (a CDP touch does not trigger native snap scrolling): the suites
-     check the snap settings instead, and the real gesture is checked by hand
-     on a phone.
+   on conditions rather than fixed delays. About 2 min in all.
+3. The earlier long suites (`t1-layout`, `t4-variants`, `t7-carousel`,
+   `t2-desktop`, `t3-mobile`) lived in a session scratchpad and are lost; the
+   battery above replaces them. The finger swipe between sections is not
+   simulated (a CDP touch does not trigger native snap scrolling): check the
+   real gesture by hand on a phone.
 4. For 3D model changes, capture the workshop views of each car before and
-   after, and compare them.
+   after, and compare them (`ds.html?car=…&view=…`, or a free camera with
+   `&cam=x,y,z&at=x,y,z` for close-ups).
 5. Commit messages: short, in English, with the session attribution lines.

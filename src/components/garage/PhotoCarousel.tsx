@@ -112,7 +112,11 @@ export function PhotoCarousel({ photos, label, ref }: { photos: MediaAsset[]; la
         ref={box}
         className="em-lightbox"
         aria-label={label}
-        onClose={() => setBig(false)}
+        onClose={() => {
+          /* verrou levé tout de suite : un Échap juste après doit fermer la fiche */
+          setLock('dialog', false);
+          setBig(false);
+        }}
         onClick={(e) => e.target === e.currentTarget && setBig(false)}
         onKeyDown={(e) => {
           if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {

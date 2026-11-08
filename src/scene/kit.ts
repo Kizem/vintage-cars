@@ -27,7 +27,7 @@ export function buildBody(s: CarSpec, mats: CarMaterials, curves: CarCurves) {
 
   /* La caisse : une coupe arrondie par station, lissée le long de X. Elle doit rester le premier enfant de body. */
   const halfSection = (x: number) => {
-    const f = fl(x); const d = de(x); const b = Math.min(be(x), d - .004); const w = hw(x);
+    const f = fl(x); const d = de(x); const b = s.wingRise ? be(x) : Math.min(be(x), d - .004); const w = hw(x);
     const r = Math.min(.13, (b - f) * .3);
     return catmull([[0, f], [w * .55, f], [w * .9, f + .012], [w * .985, f + r], [w, lerp(f, b, .55)], [w * .992, b], [w * .9, lerp(b, d, .78)], [w * .55, d - .012 * (w / .9)], [0, d]], 26);
   };
@@ -35,7 +35,7 @@ export function buildBody(s: CarSpec, mats: CarMaterials, curves: CarCurves) {
 
   /* Dessous sombre, visible à travers les passages de roues */
   body.add(new Mesh(loft(stations(-s.L / 2 + .2, s.L / 2 - .2, 30), (x) => {
-    const f = fl(x) + .01; const w = hw(x) * .78; const t = Math.min(be(x), de(x)) - .03;
+    const f = fl(x) + .01; const w = hw(x) * .78; const t = Math.min(be(x), de(x)) - (s.wingRise ? .09 : .03);
     return [[0, f], [w, f], [w, t], [0, t]];
   }), mats.black));
 
