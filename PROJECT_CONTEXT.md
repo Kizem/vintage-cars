@@ -180,7 +180,7 @@ Parking behaviour (`parking.ts`, `components/garage/Parking.tsx`):
 
 ### Reference photos (`references/`)
 
-One folder per car (e.g. `references/MercedesW115/`), supplied by the owner in full resolution and kept in
+One folder per car (`references/MercedesW115/`, `references/DS21/`), supplied by the owner in full resolution and kept in
 the repository (including on `main`) for future work. They are not published with the site.
 
 - `illu/`: the 5 photos of the vehicle sheet carousel, in order. Converted to WebP (EXIF stripped, 2000 px and

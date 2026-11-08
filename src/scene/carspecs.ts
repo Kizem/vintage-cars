@@ -23,6 +23,8 @@ export interface CarSpec {
   cabin?: { glass: number; opacity: number; seat: number; trim: number; steering?: number };
   /** Montants de pare-brise et de portes en inox plutôt que couleur caisse. */
   pillarChrome?: boolean;
+  /** Pneus à flancs blancs. */
+  whitewall?: boolean;
   /** Trappe ronde dessinée sur l'aile arrière : [x, y, rayon]. */
   flap?: [number, number, number];
 }
@@ -46,11 +48,13 @@ export const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
 /* --- Les trois voitures --- */
 export const SPECS: Record<CarModelKey, CarSpec> = {
-  /* Citroën DS 21 berline, d'après les photos de la voiture : nez large et arrondi en plan, capot long et plongeant,
-     double optique sous globe aux angles, pavillon gris, poupe effilée aux feux rectangulaires. */
+  /* Citroën DS 21 berline, d'après les photos de la voiture (references/DS21/modele) : gris anthracite métallisé,
+     nez large et arrondi en plan, capot long et plongeant, double optique jaune sous globe aux angles, gros
+     pare-chocs chromé, poupe effilée aux feux rectangulaires, roues arrière à demi couvertes, pneus à flancs blancs
+     et grands enjoliveurs chromés, habitacle en cuir fauve. */
   ds: {
     L: 4.84, H: 1.47, W: 1.79, wheelR: .315, wheelW: .17, hub: 'ds', hubTint: '#9fa3a4',
-    paint: { color: 0xa7abad, metalness: .55, roughness: .3 },
+    paint: { color: 0x6b7074, metalness: .55, roughness: .3 }, whitewall: true,
     axles: [-1.49, 1.635], arch: [[.385, 2], [.385, .47]], trackZ: [.74, .62],
     floor: [[-2.42, .4], [-2.3, .32], [-2.0, .27], [1.8, .27], [2.2, .34], [2.42, .46]],
     belt: [[-2.42, .55], [-2.3, .62], [-1.9, .74], [-1.0, .87], [0, .93], [1.2, .98], [1.9, .93], [2.3, .79], [2.42, .68]],
@@ -63,9 +67,8 @@ export const SPECS: Record<CarModelKey, CarSpec> = {
     seams: [-.62, .42, 1.42],
     trim: [[-1.8, .34, 2.05, .34]],
     lamps: [[-2.4, .63, .66], [-2.42, .63, .47]], lampKind: 'ds',
-    cabin: { glass: 0x3f4f49, opacity: .55, seat: 0x5c1513, trim: 0xd8ceb6 },
+    cabin: { glass: 0x3f4f49, opacity: .5, seat: 0x93562c, trim: 0x151515 },
     pillarChrome: true,
-    flap: [1.98, .74, .085],
   },
   /* Peugeot 504 berline, d'après les photos de la voiture : tricorps, capot long et plat, face presque verticale,
      grand vitrage aux montants fins, ligne de caisse horizontale, malle longue, ailes arrière légèrement galbées. */

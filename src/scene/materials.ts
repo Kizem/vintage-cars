@@ -89,6 +89,7 @@ export function createMaterials(s: CarSpec, env: Texture, be: (x: number) => num
       ? new MeshPhysicalMaterial({ side: DoubleSide, color: s.cabin.glass, roughness: .04, clearcoat: 1, clearcoatRoughness: .03, transparent: true, opacity: s.cabin.opacity, depthWrite: false, envMap: env, envMapIntensity: 1.1 })
       : new MeshPhysicalMaterial({ side: DoubleSide, color: 0x0d1513, metalness: .2, roughness: .08, clearcoat: 1, clearcoatRoughness: .05, envMap: env, envMapIntensity: .8 }),
     tire: new MeshStandardMaterial({ color: 0x0c0c0c, roughness: .82 }),
+    whitewall: new MeshStandardMaterial({ color: 0xe9e6dc, roughness: .7 }),
     /** enjoliveur ou jante dessinés, en métal poli */
     hub: new MeshStandardMaterial({ map: hubTexture(s.hub, s.hubTint), metalness: s.hub === 'mercedes' ? .55 : .85, roughness: .3, envMap: env, envMapIntensity: 1.1 }),
     env,

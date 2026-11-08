@@ -1,7 +1,7 @@
 /* Roues communes : même pneu tourné, même jante chromée, même enjoliveur dessiné ; seul le style d'enjoliveur
    (s.hub) et la teinte changent d'une voiture à l'autre.
    Structure attendue par parking.ts (reflet) : root > roue (Group) > spin (Group, premier enfant) > pièces. */
-import { CircleGeometry, Group, LatheGeometry, Mesh, SphereGeometry, TorusGeometry, Vector2 } from 'three';
+import { CircleGeometry, Group, LatheGeometry, Mesh, RingGeometry, SphereGeometry, TorusGeometry, Vector2 } from 'three';
 import type { CarSpec, Pt } from './carspecs';
 import type { CarMaterials } from './materials';
 
@@ -20,6 +20,8 @@ export function buildWheels(s: CarSpec, mats: CarMaterials, root: Group) {
       const hub = new Mesh(new CircleGeometry(s.wheelR * rr, 36), mats.hub); hub.position.z = sg * s.wheelW * .505; if (sg < 0) hub.rotation.y = Math.PI; spin.add(hub);
       /* enjoliveur bombé chromé (DS, 504) ; la Mercedes a des jantes modernes au voile plat, dessiné dans la texture */
       { const dome = new Mesh(new SphereGeometry(s.wheelR * (s.hub === 'mercedes' ? .14 : .45), 28, 12, 0, Math.PI * 2, 0, Math.PI / 2), mats.chrome); dome.rotation.x = sg * Math.PI / 2; dome.scale.y = s.hub === 'mercedes' ? .45 : .32; dome.position.z = sg * s.wheelW * .5; spin.add(dome); }
+      /* flanc blanc : un large anneau sur le flanc extérieur du pneu */
+      if (s.whitewall) { const ww = new Mesh(new RingGeometry(s.wheelR * .7, s.wheelR * .89, 48), mats.whitewall); ww.position.z = sg * s.wheelW * .495; if (sg < 0) ww.rotation.y = Math.PI; spin.add(ww); }
       root.add(w); wheels.push(spin);
     });
   });
