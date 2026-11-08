@@ -141,7 +141,9 @@ Parking behaviour (`parking.ts`, `components/garage/Parking.tsx`):
     « Demander cette voiture ». The sheet scrolls on its own. `VehicleSheet`
     shows the photos by default; `withPhotos={false}` removes them.
   - Photos: large, edge to edge across the sheet, all in the same square frame
-    (cropped with `object-fit: cover` around the photo's `focalPoint`), so
+    (cropped with `object-fit: cover` around the photo's `focalPoint`; square,
+    lower on phones; explicit height, no `aspect-ratio`, which made Safari
+    shrink the frame's width), so
     portrait and landscape photos look alike; pager under the photo. A click
     opens the whole photo, uncropped, full screen (`.em-lightbox`, a modal
     `<dialog>` holding the `dialog` lock): arrows, ← →, swipe, Escape.
@@ -162,7 +164,9 @@ Parking behaviour (`parking.ts`, `components/garage/Parking.tsx`):
   hovered or when its sheet is open); sheet open, the neighbours back off to
   the back of their bays. Coming forward in an angled bay also moves a car to
   the left, so the neighbours stay almost as far forward as the active car:
-  the three cars keep the same gap between them (`S`). Floor lines, back line,
+  the three cars keep the same gap between them (`S`). Past its neighbour's place
+  (|w| > 1), the car changing sides speeds up towards the edge (`EXIT`) and
+  leaves the screen before reappearing, off screen as well, on the other side. Floor lines, back line,
   floor numbers, pillars and ceiling tubes follow the same axis; the bays are
   offset (`BAY_OX`) so that the row is centred on screen. Sheet open (and in
   portrait), the camera centres the projected outline of the chosen car in the
@@ -180,7 +184,7 @@ One folder per car (e.g. `references/MercedesW115/`), supplied by the owner in f
 the repository (including on `main`) for future work. They are not published with the site.
 
 - `illu/`: the 5 photos of the vehicle sheet carousel, in order. Converted to WebP (EXIF stripped, 2000 px and
-  900 px versions) into `public/images/collection/`.
+  900 px versions, licence plates blurred) into `public/images/collection/`.
 - `modele/`: the photos used to build the 3D model (`src/scene/carspecs.ts` and `src/scene/models/`).
 
 ## 5. Content and business rules
@@ -212,6 +216,10 @@ Data lives in `src/data/*.ts` (`{ en, fr }` fields) and `src/i18n/{en,fr}.ts`.
   owner provides real ones. Nothing is invented.
 - Generated images keep « Illustrative image », third-party photos keep
   « Illustrative photo ». Collection photos must show the actual cars.
+- Every licence plate shown on the site must be blurred (owner's rule): collection
+  photos, illustrative and third-party photos, section images, any new image. Blur
+  it in the published WebP files (both sizes), never in `references/`, which keeps
+  the owner's originals. Check every new photo for plates, even partly visible ones.
   Exception chosen by the owner: the DS sheet opens on an illustrative photo
   (Paris street), the collection car comes second.
 - Experience images show no visible caption: the caption stays in the

@@ -200,9 +200,10 @@ button, input, select, textarea { font-variant-numeric: lining-nums; }
 .em-specs dd { margin: 0; text-align: right; }
 
 /* photos de la fiche : entières, sans recadrage */
-/* Photos de la fiche : en grand, d'un bord à l'autre de la fiche, toutes dans le même cadre carré */
+/* Photos de la fiche : en grand, d'un bord à l'autre de la fiche, toutes dans le même cadre (carré, moins haut sur
+   téléphone). Hauteur explicite, pas d'aspect-ratio : avec une hauteur maximale, Safari rétrécissait le cadre en largeur. */
 .em-carousel { display: flex; flex-direction: column; min-width: 0; margin: .2rem calc(-1 * var(--sheet-px, 0px)) 1.2rem; }
-.em-carousel__track { flex: none; aspect-ratio: 1; max-height: 64cqh; display: flex; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; touch-action: pan-x pan-y; background: #0a120e; }
+.em-carousel__track { flex: none; width: 100%; height: min(var(--em-sheet-w), 64cqh); display: flex; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; touch-action: pan-x pan-y; background: #0a120e; }
 .em-carousel__track::-webkit-scrollbar { display: none; }
 .em-carousel__slide { position: relative; flex: 0 0 100%; min-width: 0; height: 100%; margin: 0; scroll-snap-align: center; scroll-snap-stop: always; }
 .em-carousel__open { display: block; width: 100%; height: 100%; padding: 0; border: 0; background: none; cursor: zoom-in; }
@@ -225,7 +226,7 @@ button, input, select, textarea { font-variant-numeric: lining-nums; }
   .em-parking__panel { top: auto; left: 0; width: auto; height: var(--em-sheet-h); border-left: 0; border-top: 1px solid color-mix(in srgb, var(--ivory) 14%, transparent); transform: translateY(2.5rem); }
   .em-panel__bar { padding: .2rem max(10px, env(safe-area-inset-right, 0px)) 0 max(10px, env(safe-area-inset-left, 0px)); }
   .em-sheet { --sheet-px: 16px; padding: 0 var(--sheet-px) 1.5rem; }
-  .em-carousel__track { max-height: 40cqh; }
+  .em-carousel__track { height: min(100cqw, 40cqh); }
   .em-parking__label { left: 16px; bottom: calc(var(--em-sheet-h) + .7rem); }
   .em-parking.is-open .em-parking__flat { right: 0; padding-top: 13cqh; }
 }

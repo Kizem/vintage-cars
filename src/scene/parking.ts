@@ -49,6 +49,7 @@ const bayX = (z: number) => BAY_OX + (z - PARK_Z) * Math.tan(BAY_TILT); /* axe d
 const place = (d: number) => [BAY_OX + d * AX[0], PARK_Z + d * AX[1]];  /* centre d'une voiture avancée de d */
 const BAY_BACK = -6.1;                              /* fond de la place, derrière les voitures même reculées */
 const BAY_FRONT = 4;                                /* entrée de la place, côté allée */
+const EXIT = 3.9;                                   /* élan supplémentaire de la voiture qui sort de l'écran pour changer de côté */
 const NUM_Z = 3.5;                                  /* numéro peint à l'entrée de la place */
 const WALL_Z = -7.65;
 const N = 3;
@@ -301,7 +302,10 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
       const yawT = PARK_YAW + Math.max(-.12, Math.min(.12, st.speed * .08)) * (1 - near * .3);
       u.yaw = init ? yawT : damp(u.yaw, yawT, 7, dt);
       const [px, z] = place(d);
-      const x = w * S + px;
+      /* Au-delà de la voisine (|w| > 1), la voiture qui va changer de côté accélère vers le bord et sort de l'écran
+         avant de réapparaître de l'autre côté, hors champ elle aussi : elle ne disparaît plus d'un coup. */
+      const out = Math.min(1, Math.max(0, (Math.abs(w) - 1) / .5));
+      const x = w * S + Math.sign(w) * EXIT * out * out + px;
       u.group.position.set(x, 0, z);
       u.group.rotation.y = u.yaw;
       u.group.visible = edge > .01;
