@@ -12,7 +12,7 @@ export const en = {
   nav: {
     label: 'Primary',
     items: {
-      garage: 'The garage',
+      garage: 'The collection',
       experiences: 'Experiences',
       about: 'About',
       write: 'Enquire',

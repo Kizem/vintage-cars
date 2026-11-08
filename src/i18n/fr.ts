@@ -14,7 +14,7 @@ export const fr: Dictionary = {
   nav: {
     label: 'Navigation principale',
     items: {
-      garage: 'Le garage',
+      garage: 'La collection',
       experiences: 'Expériences',
       about: 'À propos',
       write: 'Écrire',

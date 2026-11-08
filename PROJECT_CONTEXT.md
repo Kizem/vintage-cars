@@ -12,8 +12,10 @@ Citroën DS, Mercedes-Benz /8. There is no booking engine and no online payment.
 
 Branches:
 
-- `le-garage` is the working branch for this version.
-- `main` and `3d-design` are never pushed to, merged into or force-pushed.
+- This version (« Le Garage ») is the accepted concept of the landing page.
+  The owner had it merged into `main` (fast-forward from `le-garage`).
+- `le-garage` stays the working branch; `main` only receives what the owner
+  asks to merge. `3d-design` is never touched. Never force-push.
 - Repository settings are never changed from a session.
 
 Deployment: `.github/workflows/deploy.yml` builds and publishes `dist/` to
@@ -50,7 +52,8 @@ Seven full-screen sections, in this order (`sectionIds` in `src/data/site.ts`):
   notch still change section. ↑ ↓ and Page Up / Down move one section; F toggles fullscreen.
 - `animateTo` dispatches a synthetic `scroll` event on arrival.
 - Navigation is locked while the vehicle sheet or the legal dialog is open.
-- Top menu: exactly four entries (Garage, Experiences, About, Write), then the
+- Top menu: exactly four entries (« La collection » / « The collection », the
+  parking section, whose id stays `garage`; Experiences, About, Write), then the
   language switch: a thin-line globe and « FR / EN » (current language in
   full, the other dimmed) on desktop; the globe and the other language on
   phones; the globe alone below 341 px. Its accessible name is the other

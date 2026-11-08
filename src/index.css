@@ -91,6 +91,13 @@ button, input, select, textarea { font-variant-numeric: lining-nums; }
   .em-nav--fixed ul { gap: 0 .4rem; }
   .em-nav__lang { margin-left: 0; }
 }
+/* très petits écrans : « La collection » doit tenir à côté du monogramme */
+@media (max-width: 359px) {
+  .em-nav { font-size: .56rem; letter-spacing: .04em; }
+  .em-nav--fixed ul { gap: 0 .3rem; }
+  .em-nav .em-brand--nav { min-width: 28px; }
+  .em-nav .em-brand--nav .em-mono--sm { font-size: 1.15rem; }
+}
 .em-nav a { display: inline-block; white-space: nowrap; padding: .9rem 0 .5rem; color: inherit; text-decoration: none; background-image: linear-gradient(currentColor, currentColor); background-size: 0 1px; background-repeat: no-repeat; background-position: 0 calc(100% - .3rem); transition: background-size .35s; }
 .em-nav a:hover, .em-nav a[aria-current] { background-size: 100% 1px; }
 .em-nav--fixed { position: absolute; left: 0; right: 0; top: env(safe-area-inset-top, 0px); z-index: 20; padding: .35rem max(16px, env(safe-area-inset-right, 0px)) .35rem max(16px, env(safe-area-inset-left, 0px)); transition: color .4s, background-color .4s; }
