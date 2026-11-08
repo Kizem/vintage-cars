@@ -56,6 +56,7 @@ export function buildBody(s: CarSpec, mats: CarMaterials, curves: CarCurves) {
     const c = s.cabin;
     const seat = new MeshStandardMaterial({ color: c.seat, roughness: .55 });
     const trim = new MeshStandardMaterial({ color: c.trim, roughness: .45 });
+    const steering = c.steering !== undefined ? new MeshStandardMaterial({ color: c.steering, roughness: .35 }) : trim;
     const floorMat = new MeshStandardMaterial({ color: 0x1d1514, roughness: .9, side: DoubleSide });
     body.add(new Mesh(loft(stations(gl.xa, gl.xd, 24), (x): Pt[] => { const y = Math.min(be(x), de(x)) - .02; const w = hw(x) * .9; return [[w, y], [0, y]]; }, { caps: false }), floorMat));
     const y0 = (x: number) => Math.min(be(x), de(x)) - .02;
@@ -64,8 +65,8 @@ export function buildBody(s: CarSpec, mats: CarMaterials, curves: CarCurves) {
     /* planche de bord sous le pare-brise */
     box(at(.15), y0(at(.15)) + .05, 0, .22, .08, hw(at(.15)) * 1.5, trim);
     /* volant, à gauche */
-    const wheel = new Mesh(new TorusGeometry(.18, .013, 8, 36), trim); wheel.position.set(at(.24), y0(at(.24)) + .17, .38); wheel.rotation.set(0, Math.PI / 2, -.55); body.add(wheel);
-    const spoke = new Mesh(new CylinderGeometry(.009, .009, .18, 8), trim); spoke.position.set(at(.245), y0(at(.245)) + .1, .38); spoke.rotation.x = .15; body.add(spoke);
+    const wheel = new Mesh(new TorusGeometry(.18, .013, 8, 36), steering); wheel.position.set(at(.24), y0(at(.24)) + .17, .38); wheel.rotation.set(0, Math.PI / 2, -.55); body.add(wheel);
+    const spoke = new Mesh(new CylinderGeometry(.009, .009, .18, 8), steering); spoke.position.set(at(.245), y0(at(.245)) + .1, .38); spoke.rotation.x = .15; body.add(spoke);
     /* dossiers avant et banquette arrière */
     [.36, -.36].forEach((z) => box(at(.41), y0(at(.41)) + .17, z, .12, .36, .46, seat, -.2));
     box(at(.76), y0(at(.76)) + .16, 0, .13, .34, 1.24, seat, -.24);

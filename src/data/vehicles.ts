@@ -202,9 +202,9 @@ export const vehicles: Vehicle[] = [
     // Photos of the collection car, supplied by the owner.
     image: {
       src: 'images/collection/mercedes-w115-1-avant.webp',
-      srcSet: 'images/collection/mercedes-w115-1-avant-800.webp 600w, images/collection/mercedes-w115-1-avant.webp 1125w',
-      width: 1125,
-      height: 1500,
+      srcSet: 'images/collection/mercedes-w115-1-avant-900.webp 675w, images/collection/mercedes-w115-1-avant.webp 1500w',
+      width: 1500,
+      height: 2000,
       alt: {
         en: 'The ivory Mercedes W115 220D of the collection, front view',
         fr: 'La Mercedes W115 220D ivoire de la collection, vue de face',
@@ -214,9 +214,9 @@ export const vehicles: Vehicle[] = [
     gallery: [
       {
         src: 'images/collection/mercedes-w115-2-trois-quarts-arriere.webp',
-        srcSet: 'images/collection/mercedes-w115-2-trois-quarts-arriere-800.webp 600w, images/collection/mercedes-w115-2-trois-quarts-arriere.webp 1125w',
-        width: 1125,
-        height: 1500,
+        srcSet: 'images/collection/mercedes-w115-2-trois-quarts-arriere-900.webp 675w, images/collection/mercedes-w115-2-trois-quarts-arriere.webp 1500w',
+        width: 1500,
+        height: 2000,
         alt: {
           en: 'The Mercedes W115 220D, three-quarter rear view',
           fr: 'La Mercedes W115 220D, vue de trois-quarts arrière',
@@ -225,9 +225,9 @@ export const vehicles: Vehicle[] = [
       },
       {
         src: 'images/collection/mercedes-w115-3-arriere.webp',
-        srcSet: 'images/collection/mercedes-w115-3-arriere-800.webp 800w, images/collection/mercedes-w115-3-arriere.webp 1500w',
-        width: 1500,
-        height: 1125,
+        srcSet: 'images/collection/mercedes-w115-3-arriere-900.webp 900w, images/collection/mercedes-w115-3-arriere.webp 2000w',
+        width: 2000,
+        height: 1500,
         alt: {
           en: 'Rear of the Mercedes W115 220D, with its 220 D badge',
           fr: 'L’arrière de la Mercedes W115 220D, avec son monogramme 220 D',
@@ -236,9 +236,9 @@ export const vehicles: Vehicle[] = [
       },
       {
         src: 'images/collection/mercedes-w115-4-jante.webp',
-        srcSet: 'images/collection/mercedes-w115-4-jante-800.webp 600w, images/collection/mercedes-w115-4-jante.webp 1125w',
-        width: 1125,
-        height: 1500,
+        srcSet: 'images/collection/mercedes-w115-4-jante-900.webp 675w, images/collection/mercedes-w115-4-jante.webp 1500w',
+        width: 1500,
+        height: 2000,
         alt: {
           en: 'Front wheel of the Mercedes W115 220D',
           fr: 'Roue avant de la Mercedes W115 220D',
@@ -247,9 +247,9 @@ export const vehicles: Vehicle[] = [
       },
       {
         src: 'images/collection/mercedes-w115-5-interieur.webp',
-        srcSet: 'images/collection/mercedes-w115-5-interieur-800.webp 600w, images/collection/mercedes-w115-5-interieur.webp 1125w',
-        width: 1125,
-        height: 1500,
+        srcSet: 'images/collection/mercedes-w115-5-interieur-900.webp 675w, images/collection/mercedes-w115-5-interieur.webp 1500w',
+        width: 1500,
+        height: 2000,
         alt: {
           en: 'Interior of the Mercedes W115 220D: ivory steering wheel, wood trim and beige upholstery',
           fr: 'L’habitacle de la Mercedes W115 220D : volant ivoire, boiseries et sellerie beige',

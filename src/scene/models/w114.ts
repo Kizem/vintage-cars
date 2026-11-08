@@ -1,10 +1,13 @@
-/* Mercedes-Benz /8 berline, d'après les photos de la voiture : calandre chromée en saillie, grille à mailles
-   et barre centrale, étoile debout sur le capot ; optiques verticales cerclées de chrome (clignotant orange en haut,
-   phare rond au centre, antibrouillard jaune en bas) ; pare-chocs chromés à bande noire et butoirs ;
-   poupe aux feux horizontaux (orange, rouge, blanc), jonc de malle, plaque ; poignées et lignes de capot. */
-import { BoxGeometry, CapsuleGeometry, CircleGeometry, CylinderGeometry, ExtrudeGeometry, Group, Mesh, TorusGeometry, type Material } from 'three';
+/* Mercedes W115 220D berline (1973), d'après les photos de la voiture (references/MercedesW115/modele) :
+   calandre haute et large à cadre chromé, mailles fines, barre centrale et chapeau chromé qui prolonge le capot,
+   étoile debout ; optiques verticales aux angles, cerclées de chrome (clignotant orange en haut, phare au centre,
+   antibrouillard jaune en bas) ; double pare-chocs avant (lame chromée à bande noire, puis deux butoirs bas de part et
+   d'autre de la plaque) ; poupe : jonc chromé sous la malle sur toute la largeur, feux horizontaux aux angles
+   (orange à l'extérieur, rouge, puis rouge et blanc), étoile et monogramme « 220 D » sur la malle, pare-chocs à bande
+   noire ; poignées de portes et lignes de capot. */
+import { BoxGeometry, CapsuleGeometry, CylinderGeometry, ExtrudeGeometry, Group, Mesh, MeshBasicMaterial, PlaneGeometry, TorusGeometry, type Material } from 'three';
 import { lerp } from '../carspecs';
-import { rrect, tube, type P3 } from '../geometry';
+import { badgeTexture, rrect, tube, type P3 } from '../geometry';
 import type { CarKit } from '../kit';
 
 export function details(k: CarKit) {
@@ -18,54 +21,71 @@ export function details(k: CarKit) {
     m.position.set(x, y, z); m.rotation.y = back ? Math.PI / 2 : -Math.PI / 2; body.add(m); return m;
   };
   const bar = (x: number, y: number, z: number, sx: number, sy: number, sz: number, mat: Material = chrome) => { const b = new Mesh(new BoxGeometry(sx, sy, sz), mat); b.position.set(x, y, z); body.add(b); return b; };
+  /** Étoile à trois branches dans un anneau, tournée vers l'avant (dir = -1) ou vers l'arrière (dir = 1). */
+  const starRing = (r: number, t: number) => {
+    const g = new Group(); const ring = new Mesh(new TorusGeometry(r, t, 6, 28), chrome); ring.rotation.y = Math.PI / 2; g.add(ring);
+    for (let i = 0; i < 3; i++) { const a = new Mesh(new BoxGeometry(t * 1.1, r, t * 1.1), chrome); const an = i / 3 * 6.283; a.position.set(0, Math.cos(an) * r / 2, Math.sin(an) * r / 2); a.rotation.x = -an; g.add(a); }
+    return g;
+  };
 
-  /* Calandre : cadre chromé en saillie, fond noir, mailles fines, barre centrale verticale et barre horizontale */
-  const gy = .665; const gw = .5; const gh = .36;
-  frame(nx + .012, gy, 0, gw, gh, .035, .03, .055);
-  plate(nx - .01, gy, 0, gw - .05, gh - .05, .01, dark, .01);
-  for (let i = 1; i < 8; i++) bar(nx - .03, gy - gh / 2 + .025 + i * (gh - .05) / 8, 0, .008, .006, gw - .06);
-  for (let i = -5; i <= 5; i++) bar(nx - .034, gy, i * .038, .006, gh - .06, .005);
-  bar(nx - .042, gy, 0, .012, gh - .055, .016);
-  bar(nx - .042, gy + .015, 0, .012, .014, gw - .06);
-  /* étoile debout au-dessus de la calandre */
-  const star = new Group(); const ring = new Mesh(new TorusGeometry(.034, .0045, 6, 24), chrome); ring.rotation.y = Math.PI / 2; ring.position.y = .045; star.add(ring);
-  for (let i = 0; i < 3; i++) { const a = new Mesh(new BoxGeometry(.005, .032, .005), chrome); const an = i / 3 * 6.283; a.position.set(0, .045 + Math.cos(an) * .016, Math.sin(an) * .016); a.rotation.x = -an; star.add(a); }
-  star.add(new Mesh(new CylinderGeometry(.008, .016, .03, 8), chrome));
-  star.position.set(nx + .04, topY(nx + .04, 0) + .01, 0); body.add(star);
+  /* Calandre : haute et large, en saillie sur la face ; cadre chromé, fond noir, mailles fines, barre centrale,
+     chapeau chromé sur le dessus qui se fond dans le capot, petite étoile en haut de la grille */
+  const gy = .68; const gw = .56; const gh = .4; const gx = nx - .035;
+  frame(gx + .03, gy, 0, gw, gh, .03, .028, .06);
+  plate(gx + .01, gy, 0, gw - .05, gh - .05, .01, dark, .01);
+  for (let i = 1; i < 12; i++) bar(gx - .012, gy - gh / 2 + .025 + i * (gh - .05) / 12, 0, .008, .006, gw - .06);
+  for (let i = -8; i <= 8; i++) bar(gx - .016, gy, i * .03, .006, gh - .06, .004);
+  bar(gx - .024, gy, 0, .014, gh - .05, .018);
+  const cap = bar(gx + .045, gy + gh / 2 + .006, 0, .11, .022, gw + .01); cap.rotation.z = -.12;
+  const badge = starRing(.022, .003); badge.position.set(gx - .03, gy + gh / 2 - .045, 0); body.add(badge);
+  /* étoile debout sur le capot, juste derrière le chapeau */
+  const star = starRing(.034, .0045); star.position.y = .045;
+  const stand = new Group(); stand.add(star); stand.add(new Mesh(new CylinderGeometry(.009, .018, .03, 10), chrome));
+  stand.position.set(gx + .12, topY(gx + .12, 0) + .012, 0); body.add(stand);
 
   [1, -1].forEach((sg) => {
-    /* optique verticale : cadre chromé, clignotant orange, phare rond, antibrouillard jaune, verre */
-    const z = .6; const x = surfX(z, true) + .01; const ly = .665;
-    frame(x + .006, ly, sg * z, .22, .35, .03, .018, .03);
-    plate(x - .004, ly, sg * z, .19, .32, .02, dark, .008);
-    plate(x - .014, ly + .125, sg * z, .18, .055, .012, amber, .006);
-    plate(x - .014, ly - .125, sg * z, .18, .055, .012, mats.gold, .006);
-    const lamp = new Mesh(new CircleGeometry(.075, 32), lens); lamp.position.set(x - .016, ly, sg * z); lamp.rotation.y = -Math.PI / 2; body.add(lamp);
-    const lr = new Mesh(new TorusGeometry(.078, .006, 8, 32), chrome); lr.position.set(x - .016, ly, sg * z); lr.rotation.y = Math.PI / 2; body.add(lr);
-    plate(x - .024, ly, sg * z, .19, .32, .02, lampGlass, .004);
+    /* optique verticale aux angles : cadre chromé, clignotant orange, phare, antibrouillard jaune, verre */
+    const z = .74; const x = surfX(z, true) - .004; const ly = .69;
+    frame(x + .004, ly, sg * z, .21, .37, .035, .016, .03);
+    plate(x - .004, ly, sg * z, .18, .34, .025, dark, .008);
+    plate(x - .012, ly + .13, sg * z, .17, .06, .015, amber, .006);
+    plate(x - .012, ly - .125, sg * z, .17, .075, .015, mats.gold, .006);
+    plate(x - .014, ly + .005, sg * z, .17, .17, .04, lens, .006);
+    plate(x - .024, ly, sg * z, .18, .34, .025, lampGlass, .004);
     lampPoints.push([x - .03, ly, sg * z]);
-    /* butoirs chromés, avant et arrière */
-    [[nx - .11, .46], [tx + .11, .48]].forEach(([bx, by]) => { const o = new Mesh(new CapsuleGeometry(.024, .05, 4, 10), chrome); o.position.set(bx, by - .01, sg * .36); body.add(o); });
+    /* butoirs bas du double pare-chocs avant : chrome sur bande noire, de part et d'autre de la plaque,
+       recourbés aux angles */
+    const lo: P3[] = []; for (let i = 0; i <= 14; i++) { const t = i / 14; const zz = lerp(.3, .86, t); lo.push([nx - .075 + Math.pow(t, 5) * .2, .365, sg * zz]); }
+    body.add(tube(lo, .024, chrome, .55));
+    body.add(tube(lo.map(([a, b, c]) => [a - .012, b, c] as P3), .012, rubber, .9));
     /* lignes du capot, le long des ailes */
-    const cl: P3[] = []; for (let i = 0; i <= 18; i++) { const xx = lerp(-2.24, -1.08, i / 18); const zz = hw(xx) * .84; cl.push([xx, topY(xx, zz) + .002, sg * zz]); }
+    const cl: P3[] = []; for (let i = 0; i <= 18; i++) { const xx = lerp(-2.27, -.85, i / 18); const zz = hw(xx) * .86; cl.push([xx, topY(xx, zz) + .002, sg * zz]); }
     body.add(tube(cl, .003, crease));
-    /* poignées de portes chromées */
-    [.18, 1.16].forEach((hx) => { const h = new Mesh(new CapsuleGeometry(.011, .1, 4, 8), chrome); h.rotation.z = Math.PI / 2; h.position.set(hx, be(hx) - .06, sg * (hw(hx) + .008)); body.add(h); });
-    /* feux arrière horizontaux : orange à l'extérieur, rouge, blanc vers le centre, cerclés de chrome */
-    const zr = .6; const xr = surfX(zr, false) - .008; const ry = .7;
-    frame(xr - .004, ry, sg * zr, .42, .15, .02, .014, .014, true);
-    ([[.74, amber, .13], [.58, red, .17], [.445, mats.lens, .09]] as [number, Material, number][]).forEach(([zz, mat, w]) => {
-      const m = plate(surfX(zz, false) - .002, ry, sg * zz, w, .12, .008, mat, .008); m.rotation.y = Math.PI / 2;
+    /* jonc de flanc : bande noire posée sur le jonc chromé, sur toute la longueur */
+    const st: P3[] = []; for (let i = 0; i <= 30; i++) { const xx = lerp(-2.29, 2.31, i / 30); st.push([xx, lerp(.775, .75, i / 30) + .002, sg * (hw(xx) + .012)]); }
+    body.add(tube(st, .007, rubber));
+    /* poignées de portes chromées, à l'arrière de chaque porte */
+    [-.16, .88].forEach((hx) => { const h = new Mesh(new CapsuleGeometry(.011, .1, 4, 8), chrome); h.rotation.z = Math.PI / 2; h.position.set(hx, be(hx) - .1, sg * (hw(hx) + .008)); body.add(h); });
+    /* feux arrière horizontaux aux angles : orange à l'extérieur, rouge, puis rouge en haut et blanc en bas */
+    const zr = .66; const xr = tx + .004; const ry = .665;
+    frame(xr - .004, ry, sg * zr, .36, .145, .015, .012, .014, true);
+    ([[.79, amber, .085, ry, .12], [.665, red, .15, ry, .12], [.535, red, .095, ry + .03, .058], [.535, mats.lens, .095, ry - .03, .055]] as [number, Material, number, number, number][]).forEach(([zz, mat, w, yy, h]) => {
+      const m = plate(xr - .002, yy, sg * zz, w, h, .006, mat, .008); m.rotation.y = Math.PI / 2;
     });
   });
   /* pare-chocs chromés à bande noire, avant et arrière */
-  bumper(nx + .02, .46, .09, .046, .62, .5);
-  bumper(nx + .02, .46, .124, .012, 1, .5, rubber);
-  bumper(tx - .02, .48, .09, .044, .62, .5);
-  bumper(tx - .02, .48, .122, .012, 1, .5, rubber);
-  /* plaques sans inscription : sous le pare-chocs avant, sur le panneau arrière ; jonc de malle */
-  bar(nx - .06, .35, 0, .012, .11, .52, black);
-  const xp = surfX(.26, false);
-  bar(xp + .006, .62, 0, .012, .11, .52, black);
-  bar(surfX(.2, false) + .002, .76, 0, .012, .016, .62);
+  bumper(nx + .02, .475, .085, .046, .62, .5);
+  bumper(nx + .02, .475, .12, .012, 1, .5, rubber);
+  bumper(tx - .02, .465, .085, .044, .62, .5);
+  bumper(tx - .02, .465, .118, .012, 1, .5, rubber);
+  /* plaques sans inscription : entre les butoirs avant, au centre du panneau arrière */
+  bar(nx - .085, .365, 0, .012, .11, .52, black);
+  bar(tx + .008, .645, 0, .012, .11, .52, black);
+  /* jonc chromé sous la malle, sur toute la largeur, et poignée de malle */
+  bar(tx + .004, .772, 0, .016, .018, hw(tx) * 2 - .02);
+  bar(tx + .002, .8, 0, .012, .014, .18);
+  /* étoile et monogramme « 220 D » sur la face arrière de la malle */
+  const rs = starRing(.045, .004); rs.rotation.y = Math.PI; rs.position.set(tx + .006, .858, 0); body.add(rs);
+  const badgeMat = new MeshBasicMaterial({ map: badgeTexture('220 D', '#dfe2e2', 'italic 600 46px Arial, sans-serif'), transparent: true, depthWrite: false });
+  const b = new Mesh(new PlaneGeometry(.16, .04), badgeMat); b.rotation.y = Math.PI / 2; b.position.set(tx + .006, .825, .5); body.add(b);
 }

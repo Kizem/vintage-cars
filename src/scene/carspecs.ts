@@ -20,7 +20,7 @@ export interface CarSpec {
   trim: [number, number, number, number][];
   lamps: [number, number, number][]; lampKind: 'ds' | 'peugeot' | 'mercedes';
   /** Vitrage teinté transparent et habitacle visible (sellerie, finitions). */
-  cabin?: { glass: number; opacity: number; seat: number; trim: number };
+  cabin?: { glass: number; opacity: number; seat: number; trim: number; steering?: number };
   /** Montants de pare-brise et de portes en inox plutôt que couleur caisse. */
   pillarChrome?: boolean;
   /** Trappe ronde dessinée sur l'aile arrière : [x, y, rayon]. */
@@ -87,24 +87,27 @@ export const SPECS: Record<CarModelKey, CarSpec> = {
     cabin: { glass: 0x3f4f49, opacity: .5, seat: 0x6f7276, trim: 0x1b1b1b },
     flap: [1.85, .8, .055],
   },
-  /* Mercedes-Benz /8 berline, d'après les photos de la voiture : ivoire, capot long et plat, grand vitrage droit aux
-     montants fins, calandre chromée à grille et étoile, optiques verticales, jonc à mi-flanc, enjoliveurs ivoire. */
+  /* Mercedes W115 220D berline (1973), d'après les photos de la voiture (references/MercedesW115/modele) : ivoire,
+     face presque plate en plan, optiques hautes aux angles, capot long et plat, grand vitrage aux montants fins avec
+     déflecteur avant et custode fixe dans la porte arrière, large montant arrière, malle plate, jonc noir et chrome
+     à mi-flanc sur toute la longueur, jantes modernes polies de 17 pouces en pneus taille basse. */
   w114: {
-    L: 4.68, H: 1.44, W: 1.77, wheelR: .32, wheelW: .18, hub: 'mercedes', hubTint: '#e6e0cb',
-    paint: { color: 0xe9e3cf, metalness: 0, roughness: .3 },
-    axles: [-1.40, 1.35], arch: [[.39, 2], [.39, 2]], trackZ: [.74, .74],
-    floor: [[-2.34, .42], [-2.1, .29], [-1.7, .27], [1.8, .27], [2.2, .33], [2.34, .46]],
-    belt: [[-2.34, .8], [-2.24, .85], [-1.6, .885], [-1.0, .9], [0, .915], [1.25, .935], [2.0, .93], [2.34, .88]],
-    deck: [[-2.34, .83], [-2.26, .87], [-1.6, .905], [-1.0, .93], [0, .95], [1.5, .965], [2.1, .95], [2.3, .92], [2.34, .89]],
-    hw: [[-2.34, .72], [-2.31, .82], [-2.22, .865], [-1.6, .88], [1.5, .88], [2.1, .865], [2.28, .82], [2.34, .74]],
-    glass: { xa: -1.0, xb: -.3, xc: 1.0, xd: 1.5, roofY: 1.44, baseY: .95, tailY: 1.0, tumble: .8 },
+    L: 4.68, H: 1.44, W: 1.77, wheelR: .317, wheelW: .2, hub: 'mercedes', hubTint: '#d4d7d9',
+    paint: { color: 0xebe3c9, metalness: 0, roughness: .28 },
+    axles: [-1.45, 1.3], arch: [[.37, 2], [.37, 2]], trackZ: [.765, .765],
+    floor: [[-2.34, .38], [-2.24, .31], [-1.95, .28], [1.85, .28], [2.2, .33], [2.34, .42]],
+    belt: [[-2.34, .84], [-2.27, .875], [-1.6, .9], [-.8, .94], [0, .955], [1.3, .965], [2.1, .955], [2.3, .92], [2.34, .86]],
+    deck: [[-2.34, .865], [-2.28, .895], [-1.6, .915], [-.95, .94], [-.75, .96], [0, .97], [1.45, .99], [2.15, .975], [2.29, .945], [2.33, .88], [2.34, .78]],
+    hw: [[-2.34, .835], [-2.31, .865], [-2.2, .882], [-1.6, .885], [1.5, .885], [2.2, .878], [2.31, .862], [2.34, .83]],
+    glass: { xa: -.8, xb: -.25, xc: .95, xd: 1.47, roofY: 1.44, baseY: .955, tailY: .995, tumble: .8 },
     lensColor: 0xeef0ec,
-    pillars: [[.3, .36, .27, .32]],
-    cPillar: [1.16, 1.5, .98, 1.12],
-    seams: [-.98, .33, 1.3],
-    trim: [[-2.26, .76, 2.3, .77], [-.95, .345, 1.0, .345]],
-    lamps: [[-2.31, .66, .62]], lampKind: 'mercedes',
-    cabin: { glass: 0x3f4f49, opacity: .5, seat: 0x2b211b, trim: 0x1b1b1b },
+    /* montant central, barre du déflecteur avant, barre de la custode fixe de la porte arrière */
+    pillars: [[.1, .17, .08, .15], [-.53, -.515, -.41, -.395], [.8, .815, .82, .835]],
+    cPillar: [1.04, 1.47, .9, 1.06],
+    seams: [-.98, .12, 1.02],
+    trim: [[-2.3, .775, 2.32, .75], [-1.0, .305, .88, .305]],
+    lamps: [[-2.33, .69, .74]], lampKind: 'mercedes',
+    cabin: { glass: 0x3f4f49, opacity: .45, seat: 0xc6a47a, trim: 0x161616, steering: 0xe9e4d4 },
     pillarChrome: true,
   },
 };

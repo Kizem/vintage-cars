@@ -164,6 +164,15 @@ Parking behaviour (`parking.ts`, `components/garage/Parking.tsx`):
 - Rendering only stops off screen (the parking stays visible behind the sheet).
 - With `prefers-reduced-motion`: no alternation, no animated scroll, no intro.
 
+### Reference photos (`references/`)
+
+One folder per car (e.g. `references/MercedesW115/`), supplied by the owner in full resolution and kept in
+the repository (including on `main`) for future work. They are not published with the site.
+
+- `illu/`: the 5 photos of the vehicle sheet carousel, in order. Converted to WebP (EXIF stripped, 2000 px and
+  900 px versions) into `public/images/collection/`.
+- `modele/`: the photos used to build the 3D model (`src/scene/carspecs.ts` and `src/scene/models/`).
+
 ## 5. Content and business rules
 
 Data lives in `src/data/*.ts` (`{ en, fr }` fields) and `src/i18n/{en,fr}.ts`.

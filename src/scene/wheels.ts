@@ -14,10 +14,12 @@ export function buildWheels(s: CarSpec, mats: CarMaterials, root: Group) {
       const w = new Group(); w.position.set(ax, s.wheelR, sg * s.trackZ[a]);
       const spin = new Group(); w.add(spin);
       const tire = new Mesh(tireG, mats.tire); tire.rotation.x = Math.PI / 2; spin.add(tire);
-      const rim = new Mesh(new TorusGeometry(s.wheelR * .66, .012, 8, 36), mats.chrome); rim.position.z = sg * s.wheelW * .49; spin.add(rim);
-      const hub = new Mesh(new CircleGeometry(s.wheelR * .64, 36), mats.hub); hub.position.z = sg * s.wheelW * .505; if (sg < 0) hub.rotation.y = Math.PI; spin.add(hub);
-      /* enjoliveur bombé chromé (DS, 504) ; celui de la Mercedes reste plat et peint, avec son étoile */
-      if (s.hub !== 'mercedes') { const dome = new Mesh(new SphereGeometry(s.wheelR * .45, 28, 12, 0, Math.PI * 2, 0, Math.PI / 2), mats.chrome); dome.rotation.x = sg * Math.PI / 2; dome.scale.y = .32; dome.position.z = sg * s.wheelW * .5; spin.add(dome); }
+      /* jante : 14 pouces d'origine sur la DS et la 504, 17 pouces en pneus taille basse sur la Mercedes */
+      const rr = s.hub === 'mercedes' ? .7 : .64;
+      const rim = new Mesh(new TorusGeometry(s.wheelR * (rr + .02), .012, 8, 36), mats.chrome); rim.position.z = sg * s.wheelW * .49; spin.add(rim);
+      const hub = new Mesh(new CircleGeometry(s.wheelR * rr, 36), mats.hub); hub.position.z = sg * s.wheelW * .505; if (sg < 0) hub.rotation.y = Math.PI; spin.add(hub);
+      /* enjoliveur bombé chromé (DS, 504) ; la Mercedes a des jantes modernes au voile plat, dessiné dans la texture */
+      { const dome = new Mesh(new SphereGeometry(s.wheelR * (s.hub === 'mercedes' ? .14 : .45), 28, 12, 0, Math.PI * 2, 0, Math.PI / 2), mats.chrome); dome.rotation.x = sg * Math.PI / 2; dome.scale.y = s.hub === 'mercedes' ? .45 : .32; dome.position.z = sg * s.wheelW * .5; spin.add(dome); }
       root.add(w); wheels.push(spin);
     });
   });
