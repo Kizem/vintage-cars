@@ -5,8 +5,8 @@ import { ActionLink } from '../ui';
 import { PhotoCarousel, type CarouselHandle } from './PhotoCarousel';
 
 /**
- * La fiche d'une voiture, dans le garage à côté de la voiture : N°, nom, photos, phrase,
- * fiche technique (service et disponibilité en tête), action. `withPhotos={false}` retire les photos.
+ * La fiche d'une voiture, dans le garage à côté de la voiture : N°, nom, photos en grand,
+ * fiche technique (service en tête), action. `withPhotos={false}` retire les photos.
  */
 export function VehicleSheet({
   car,
@@ -32,16 +32,11 @@ export function VehicleSheet({
         {name}
       </h2>
       {withPhotos && <PhotoCarousel ref={carouselRef} photos={[car.image, ...(car.gallery ?? [])]} label={fill(t.focus.photosOf, { name })} />}
-      <p className="em-sheet__desc">{l(car.summary ?? car.description)}</p>
       <h3 className="em-sr">{t.focus.specs}</h3>
       <dl className="em-specs">
         <div>
           <dt>{t.focus.service}</dt>
           <dd>{t.service[car.service]}</dd>
-        </div>
-        <div>
-          <dt>{t.focus.availability}</dt>
-          <dd>{t.availabilityShort[car.availability]}</dd>
         </div>
         {car.details?.map((d) => (
           <div key={d.label.en}>

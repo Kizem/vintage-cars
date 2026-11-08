@@ -210,6 +210,7 @@ export const vehicles: Vehicle[] = [
         fr: 'La Mercedes W115 220D ivoire de la collection, vue de face',
       },
       caption: { en: 'Front view', fr: 'De face' },
+      focalPoint: '50% 72%',
     },
     gallery: [
       {
@@ -222,6 +223,7 @@ export const vehicles: Vehicle[] = [
           fr: 'La Mercedes W115 220D, vue de trois-quarts arrière',
         },
         caption: { en: 'Three-quarter rear', fr: 'Trois-quarts arrière' },
+        focalPoint: '50% 70%',
       },
       {
         src: 'images/collection/mercedes-w115-3-arriere.webp',
@@ -244,6 +246,7 @@ export const vehicles: Vehicle[] = [
           fr: 'Roue avant de la Mercedes W115 220D',
         },
         caption: { en: 'Wheel', fr: 'La jante' },
+        focalPoint: '50% 55%',
       },
       {
         src: 'images/collection/mercedes-w115-5-interieur.webp',
@@ -255,6 +258,7 @@ export const vehicles: Vehicle[] = [
           fr: 'L’habitacle de la Mercedes W115 220D : volant ivoire, boiseries et sellerie beige',
         },
         caption: { en: 'Interior', fr: 'L’habitacle' },
+        focalPoint: '50% 62%',
       },
     ],
     rendering: {

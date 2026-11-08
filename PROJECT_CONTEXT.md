@@ -136,10 +136,15 @@ Parking behaviour (`parking.ts`, `components/garage/Parking.tsx`):
   ivory rule on the edge that meets the scene; no shadow, no radius.
   - Top bar (under the site menu): previous / next car (« Voiture précédente :
     {nom} »), « Fermer ». The arrows change car without closing the sheet.
-  - Content: N°, name (`.em-sheet__name`, unchanged), photos (whole, never
-    cropped), sentence, specifications (service and availability first),
+  - Content: N°, name (`.em-sheet__name`, `clamp(1.45rem, 2.1cqw, 1.9rem)`),
+    photos, specifications (service first; no availability row, no sentence),
     « Demander cette voiture ». The sheet scrolls on its own. `VehicleSheet`
     shows the photos by default; `withPhotos={false}` removes them.
+  - Photos: large, edge to edge across the sheet, all in the same square frame
+    (cropped with `object-fit: cover` around the photo's `focalPoint`), so
+    portrait and landscape photos look alike; pager under the photo. A click
+    opens the whole photo, uncropped, full screen (`.em-lightbox`, a modal
+    `<dialog>` holding the `dialog` lock): arrows, ← →, swipe, Escape.
   - The chosen car comes further out, three-quarter front, headlamps on; its
     neighbours back into their bays (wheels turning in reverse), their light
     and floor number dimmed; the camera centres the chosen car in the free space
@@ -152,11 +157,16 @@ Parking behaviour (`parking.ts`, `components/garage/Parking.tsx`):
 - Angled bays (`parking.ts`, constants at the top): every car stays in the
   axis of its bay, turned `PARK_YAW` (three-quarter front), whether parked,
   active or making way. A car is placed by one distance along that axis
-  (`place(d)`): the active car comes forward `OUT` (more when hovered or when
-  its sheet is open), its neighbours back off when the sheet is open. Floor
-  lines, back line, floor numbers, pillars and ceiling tubes follow the same
-  axis; the bays are offset (`BAY_OX`) so that the active car ends up just
-  left of the centre with both neighbours in view.
+  (`place(d)`): the three visible cars stand in a row at the front of their
+  bays, the active car `REST` further forward than its neighbours (more when
+  hovered or when its sheet is open); sheet open, the neighbours back off to
+  the back of their bays. Coming forward in an angled bay also moves a car to
+  the left, so the neighbours stay almost as far forward as the active car:
+  the three cars keep the same gap between them (`S`). Floor lines, back line,
+  floor numbers, pillars and ceiling tubes follow the same axis; the bays are
+  offset (`BAY_OX`) so that the row is centred on screen. Sheet open (and in
+  portrait), the camera centres the projected outline of the chosen car in the
+  free space.
 - Car lights (the bay light under the ceiling and the headlamps) fade in and
   out; they never flicker (a flicker read as a fault in the ceiling tubes).
 - `onReady` fires after the first rendered frame.
@@ -218,7 +228,9 @@ Data lives in `src/data/*.ts` (`{ en, fr }` fields) and `src/i18n/{en,fr}.ts`.
   button keeps that outline in `--forest`, since its own text is ivory.
 - Photos in the vehicle sheet show no visible caption (« Trois-quarts avant »…):
   the caption stays for screen readers; the « Photo d'illustration » credit
-  stays visible on third-party photos.
+  stays visible on third-party photos, on the photo itself.
+- The garage bottom block (N°, name, hint, arrows) sits
+  `clamp(1.4rem, 9cqh, 5.5rem)` above the bottom of the screen.
 - The garage subtitle (the h1 under the menu) is `clamp(.8rem, 1.1cqw, .95rem)`.
 - Colours come only from the design-system tokens in `index.css`:
   `--ink`, `--ink-soft`, `--forest`, `--forest-deep`, `--ivory`, `--champagne`,

@@ -27,20 +27,24 @@ export interface ParkingOptions {
 
 export type ParkingEngine = ReturnType<typeof createParking>;
 
-const S = 5.15;            /* écart entre deux places */
+const S = 4.7;             /* écart entre deux places */
 /* Places en épi. Toutes les voitures restent dans l'axe de leur place, tournées de PARK_YAW (trois-quarts avant) :
-   garées au fond, la voiture active avance dans sa place sans en sortir de l'axe, les voisines reculent dans la leur.
-   Une voiture se place donc par une seule distance `d` le long de l'axe (place()). Les places sont décalées de BAY_OX
-   pour que la voiture active, avancée, se trouve face à la caméra (un peu à gauche, ses deux voisines restant visibles). Lignes au sol, numéros, piliers et néons suivent. */
+   les trois voitures visibles sont avancées en rang à l'entrée de leur place, la voiture active un peu plus (REST de plus
+   que ses voisines) ; fiche ouverte, les voisines reculent dans leur place. Une voiture se place donc par une seule
+   distance `d` le long de l'axe (place()). Avancer dans une place en épi décale aussi la voiture vers la gauche : les
+   voisines restent donc presque aussi avancées que la voiture active, pour que les trois voitures gardent le même écart
+   entre elles, et les places sont décalées de BAY_OX pour centrer le rang face à la caméra. Lignes au sol, numéros,
+   piliers et néons suivent. */
 const PARK_YAW = .9;
 const PARK_Z = -3.1;                                /* profondeur du centre d'une voiture garée */
 const BAY_TILT = PARK_YAW - Math.PI / 2;            /* inclinaison de l'axe des places (radians) */
 const AX = [Math.sin(BAY_TILT), Math.cos(BAY_TILT)]; /* vers l'avant de la place (l'allée), en x et z */
 const OUT = 4;                                      /* la voiture active avance d'autant dans sa place */
+const REST = .7;                                    /* ses voisines un peu moins */
 const OUT_OPEN = .5;                                /* … et d'un peu plus quand sa fiche est ouverte */
 const OUT_HOVER = .45;                              /* survolée, elle avance encore un peu */
 const BACK_OPEN = 1.2;                              /* fiche ouverte, les voisines reculent d'autant */
-const BAY_OX = -OUT * AX[0] * .75;                  /* la voiture active, avancée, un peu à gauche du centre, comme avant */
+const BAY_OX = -(OUT - REST / 2) * AX[0] + .35;     /* le rang (voiture active et voisines) centré face à la caméra */
 const bayX = (z: number) => BAY_OX + (z - PARK_Z) * Math.tan(BAY_TILT); /* axe d'une place à la profondeur z */
 const place = (d: number) => [BAY_OX + d * AX[0], PARK_Z + d * AX[1]];  /* centre d'une voiture avancée de d */
 const BAY_BACK = -6.1;                              /* fond de la place, derrière les voitures même reculées */
@@ -51,6 +55,7 @@ const N = 3;
 const damp = (a: number, b: number, k: number, dt: number) => a + (b - a) * (1 - Math.exp(-k * dt));
 const wrap = (v: number) => { const h = N / 2; return ((((v + h) % N) + N) % N) - h; };
 const smooth = (a: number, b: number, x: number) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v));
 
 function canvas(w: number, h: number, draw: (g: CanvasRenderingContext2D, w: number, h: number) => void) { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d')!, w, h); return c; }
@@ -232,7 +237,7 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
     renderer.setSize(st.w, st.h, false);
     camera.aspect = st.w / st.h;
     st.portrait = camera.aspect < 1;
-    const halfW = st.portrait ? 2.75 : 6.3;
+    const halfW = st.portrait ? 2.75 : 7.05;
     st.dist = Math.max(11, halfW / (Math.tan((camera.fov / 2) * Math.PI / 180) * camera.aspect));
     camera.updateProjectionMatrix();
   }
@@ -289,9 +294,9 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
       u.tgtHover = st.hover === u.i || (st.open && near > .5) ? 1 : 0;
       u.hover = damp(u.hover, u.tgtHover, 5, dt);
       const chosen = o * near; const away = o * (1 - near);
-      /* Dans l'axe de sa place : la voiture active avance (un peu plus fiche ouverte, ou survolée) ;
+      /* Dans l'axe de sa place : la voiture active avance un peu plus que ses voisines (encore plus fiche ouverte, ou survolée) ;
          fiche ouverte, les voisines reculent (leurs roues tournent en marche arrière). */
-      const d = near * OUT + chosen * OUT_OPEN + u.hover * OUT_HOVER - away * BACK_OPEN;
+      const d = OUT - (1 - near) * lerp(REST, OUT, o) + chosen * OUT_OPEN + u.hover * OUT_HOVER - away * BACK_OPEN;
       /* toujours dans l'axe de la place ; seul l'élan de l'allée qui défile la fait légèrement pivoter */
       const yawT = PARK_YAW + Math.max(-.12, Math.min(.12, st.speed * .08)) * (1 - near * .3);
       u.yaw = init ? yawT : damp(u.yaw, yawT, 7, dt);
@@ -327,10 +332,10 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
     });
     init = false;
 
-    /* En portrait, la voiture de trois-quarts (nez vers la caméra) paraît décalée :
-       la caméra glisse pour centrer à l'écran son encombrement projeté. */
+    /* La voiture de trois-quarts (nez vers la caméra) paraît décalée : en portrait, et en paysage fiche ouverte,
+       la caméra glisse pour centrer son encombrement projeté (à gauche de la fiche en paysage). */
     let target = 0;
-    if (st.portrait) {
+    if (st.portrait || o > .001) {
       const a = units.reduce((b, u) => (Math.abs(wrap(u.i - st.pos)) < Math.abs(wrap(b.i - st.pos)) ? u : b));
       camera.updateMatrixWorld(); a.group.updateMatrixWorld(true);
       const L = a.model.L / 2; const W = a.model.W / 2; const H = a.model.H;
@@ -339,7 +344,8 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
         v.set(x, y, z); a.group.localToWorld(v); v.project(camera); lo = Math.min(lo, v.x); hi = Math.max(hi, v.x);
       }
       const halfW = Math.tan((camera.fov / 2) * Math.PI / 180) * camera.aspect * (camera.position.z - a.group.position.z);
-      target = st.cx + ((lo + hi) / 2) * halfW;
+      const want = st.portrait ? 0 : -st.inset;
+      target = (st.cx + ((lo + hi) / 2 - want) * halfW) * (st.portrait ? 1 : o);
     }
     st.cx = motion ? damp(st.cx, target, 4, dt) : target;
   }

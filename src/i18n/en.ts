@@ -39,6 +39,7 @@ export const en = {
     close: 'Close vehicle details',
     closeShort: 'Close',
     photosOf: 'Photos of the {name}',
+    enlarge: 'Enlarge the photo',
     prevPhoto: 'Previous photo',
     nextPhoto: 'Next photo',
     prevCar: 'Previous car: {name}',

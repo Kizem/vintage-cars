@@ -40,6 +40,7 @@ export const fr: Dictionary = {
     close: 'Fermer la fiche',
     closeShort: 'Fermer',
     photosOf: 'Photos de la {name}',
+    enlarge: 'Agrandir la photo',
     prevPhoto: 'Photo précédente',
     nextPhoto: 'Photo suivante',
     prevCar: 'Voiture précédente\u00a0: {name}',
