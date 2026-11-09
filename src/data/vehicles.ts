@@ -9,20 +9,11 @@ import type { Vehicle } from './types';
  *
  * Only publish verified information: no model years, specifications, trims
  * or prices until they are confirmed for the actual car in the collection.
- * Never mark a car as 'available' without confirmation.
  */
 export const vehicles: Vehicle[] = [
   {
     slug: 'peugeot-504',
     name: { en: 'Peugeot 504 GL', fr: 'Peugeot 504 GL' },
-    marque: 'Peugeot',
-    mark: '504',
-    category: { en: 'French Classic', fr: 'Classique français' },
-    description: {
-      en: 'A symbol of French automotive craftsmanship, combining understated elegance with unmistakable character.',
-      fr: 'Un symbole du savoir-faire automobile français : une élégance sobre et un caractère bien à elle.',
-    },
-    availability: 'on-request',
     service: 'chauffeur-or-self-drive',
     // Photos of the collection car, supplied by the owner (references/504/Illu), licence plates blurred.
     image: {
@@ -109,29 +100,7 @@ export const vehicles: Vehicle[] = [
   },
   {
     slug: 'citroen-ds',
-    // Name and year confirmed by the owner.
     name: { en: 'Citroën DS 21 Henri Chapron', fr: 'Citroën DS 21 Henri Chapron' },
-    marque: 'Citroën',
-    mark: 'DS',
-    category: { en: 'French Icon', fr: 'Icône française' },
-    description: {
-      en: 'An icon of French design and engineering. A timeless silhouette that embodies the elegance and innovation of another era.',
-      fr: 'Le design et l’audace technique à la française. Une silhouette reconnaissable au premier regard, qui incarne l’élégance et l’esprit d’innovation d’une autre époque.',
-    },
-    summary: {
-      en: 'An icon of French design and engineering, with a silhouette you recognise at first glance.',
-      fr: 'Le design et l’audace technique à la française. Une silhouette reconnaissable au premier regard.',
-    },
-    story: {
-      en: [
-        'Unveiled at the 1955 Paris Motor Show, the DS was styled by Flaminio Bertoni and engineered under André Lefèbvre. Its hydropneumatic suspension brought a ride comfort that was new at the time.',
-        'The DS 21 arrived in 1965 with a 2.2-litre engine and was produced until 1972. The car in our collection dates from 1971.',
-      ],
-      fr: [
-        'Présentée au Salon de Paris en 1955, la DS a été dessinée par Flaminio Bertoni sous la direction technique d’André Lefèbvre. Sa suspension hydropneumatique lui apportait un confort de roulement inédit pour l’époque.',
-        'La DS 21 apparaît en 1965 avec un moteur de 2,2 litres et sera produite jusqu’en 1972. Celle de la collection date de 1971.',
-      ],
-    },
     // Year confirmed by the owner; the other facts are common to every DS 21 saloon. Power and gearbox
     // depend on the version (carburettor or injection, manual, hydraulic or automatic) and are left out.
     details: [
@@ -146,7 +115,6 @@ export const vehicles: Vehicle[] = [
       { label: { en: 'Suspension', fr: 'Suspension' }, value: { en: 'Hydropneumatic', fr: 'Hydropneumatique' } },
       { label: { en: 'Design', fr: 'Design' }, value: { en: 'Flaminio Bertoni', fr: 'Flaminio Bertoni' } },
     ],
-    availability: 'on-request',
     service: 'chauffeur',
     // Photos of the collection car, supplied by the owner (references/DS21/Illu), licence plates blurred.
     image: {
@@ -219,23 +187,6 @@ export const vehicles: Vehicle[] = [
   {
     slug: 'mercedes-benz-classic',
     name: { en: 'Mercedes W115 220D', fr: 'Mercedes W115 220D' },
-    marque: 'Mercedes-Benz',
-    mark: '220D',
-    category: { en: 'German Heritage', fr: 'Tradition allemande' },
-    description: {
-      en: 'A timeless expression of German engineering, refinement and automotive heritage.',
-      fr: 'La rigueur de l’ingénierie allemande, servie par un raffinement qui n’a pas pris une ride.',
-    },
-    story: {
-      en: [
-        'Launched in 1968, the Mercedes-Benz W114/W115 owes its nickname, “Strich-Acht” (/8), to the “/8” on its identification plates. Its lines are the work of Paul Bracq, and it remained in production until 1976.',
-        'Nearly 1.9 million were built, most of them saloons. The 220 D, with its four-cylinder diesel engine, belongs to the W115 range. The car in our collection dates from 1973 and has a manual gearbox.',
-      ],
-      fr: [
-        'Lancée en 1968, la Mercedes-Benz W114/W115 doit son surnom, « Strich-Acht » (/8), au « /8 » inscrit sur ses plaques d’identification. Ses lignes sont signées Paul Bracq, et elle a été produite jusqu’en 1976.',
-        'Près de 1,9 million d’exemplaires ont été construits, en grande majorité des berlines. La 220 D, à moteur diesel quatre cylindres, appartient à la gamme W115. Celle de la collection date de 1973 et dispose d’une boîte manuelle.',
-      ],
-    },
     // Year and gearbox confirmed by the owner; the model is on the boot badge (220 D).
     details: [
       { label: { en: 'Year', fr: 'Année' }, value: { en: '1973', fr: '1973' } },
@@ -247,7 +198,6 @@ export const vehicles: Vehicle[] = [
       { label: { en: 'Drive', fr: 'Transmission' }, value: { en: 'Rear-wheel drive', fr: 'Propulsion' } },
       { label: { en: 'Design', fr: 'Design' }, value: { en: 'Paul Bracq', fr: 'Paul Bracq' } },
     ],
-    availability: 'on-request',
     service: 'chauffeur-or-self-drive',
     // Photos of the collection car, supplied by the owner.
     image: {

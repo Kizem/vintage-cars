@@ -37,7 +37,6 @@ export const fr: Dictionary = {
     label: 'Photos et fiche technique',
     specs: 'Fiche technique',
     service: 'Service',
-    availability: 'Disponibilité',
     enquire: 'Demander cette voiture',
     close: 'Fermer la fiche',
     closeShort: 'Fermer',
@@ -49,13 +48,6 @@ export const fr: Dictionary = {
     nextCar: 'Voiture suivante\u00a0: {name}',
     /** Étiquette posée sur la scène pendant que la fiche est ouverte. */
     rendering: 'Représentation graphique',
-  },
-  availabilityShort: {
-    'on-request': 'Sur demande',
-    available: 'Disponible',
-    limited: 'Limitée',
-    unavailable: 'Actuellement indisponible',
-    'coming-soon': 'Prochainement',
   },
   service: {
     chauffeur: 'Avec chauffeur',
@@ -117,6 +109,10 @@ export const fr: Dictionary = {
     submitting: 'Envoi en cours…',
     noPayment: 'Aucun paiement à ce stade. Nous répondons personnellement à chaque demande.',
     errors: {
+      nameTooLong: 'Merci d’indiquer un nom de moins de 100 caractères.',
+      vehicleInvalid: 'Merci de choisir une voiture de la liste.',
+      dateInvalid: 'Merci d’indiquer une date valide.',
+      dateTooFar: 'Merci de choisir une date dans les deux ans à venir.',
       nameRequired: 'Merci d’indiquer vos nom et prénom.',
       emailRequired: 'Merci d’indiquer votre adresse e-mail.',
       emailInvalid: 'Cette adresse e-mail ne semble pas valide.',
@@ -135,6 +131,7 @@ export const fr: Dictionary = {
     errorText: 'Vos informations sont conservées. Réessayez, ou envoyez-les-nous par e-mail.',
     errorServer: 'Un problème technique est survenu.',
     errorNetwork: 'La connexion a échoué. Vérifiez votre accès à Internet.',
+    errorTooSoon: 'Une demande vient d’être envoyée. Merci de patienter un instant avant d’en envoyer une autre.',
     sendByEmail: 'Envoyer par e-mail',
     tryAgain: 'Réessayer',
     edit: 'Modifier ma demande',

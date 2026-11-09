@@ -221,7 +221,7 @@ Data lives in `src/data/*.ts` (`{ en, fr }` fields) and `src/i18n/{en,fr}.ts`.
 
 - No long dashes, no superlatives, no unverified car facts. Car facts in
   `vehicles.ts` and `carspecs.ts` are not changed without a source.
-- A car is never presented as available: every car is `on-request`.
+- No availability is shown: every car is by enquiry only.
 - Service per car: Peugeot 504 and Mercedes W115 220D offer chauffeur or self-drive
   on enquiry; the DS is chauffeur only. Do not add a self-drive offer that is
   not confirmed.
@@ -286,6 +286,21 @@ Data lives in `src/data/*.ts` (`{ en, fr }` fields) and `src/i18n/{en,fr}.ts`.
   submit button), so it stands apart from the title and the footer. On phones
   the panel runs edge to edge to keep the sentence's full width.
 
+- Security (`src/lib/enquiry.ts`; the site is static, so the receiving service
+  must still validate, rate-limit and filter on its side):
+  - bounded fields (name 100, email 254, message 2 000, also as `maxLength`),
+    control and invisible characters removed, no line breaks outside the
+    message (no header injection), closed lists for experience and car, real
+    date, not past, at most two years ahead;
+  - honeypot and a minimum fill time (2.5 s): a bot is told « sent » and nothing
+    leaves; one submission at a time, none within 20 s of the previous one;
+  - endpoint HTTPS only (HTTP on localhost only), no credentials in the URL;
+    request without cookies or referrer, no redirects, 15 s timeout; only known,
+    cleaned fields are sent; the mailto fallback is encoded and cleaned too;
+  - a Content-Security-Policy `<meta>` is added at build time (`vite.config.ts`):
+    the page loads only its own files and connects only to itself and to the
+    endpoint's origin.
+
 ## 7. Frozen versions
 
 - `le-garage-v1` (branch, commit `9f47e67`): the validated version, with the
@@ -296,10 +311,20 @@ Data lives in `src/data/*.ts` (`{ en, fr }` fields) and `src/i18n/{en,fr}.ts`.
 
 ## 8. Tests and checks before pushing
 
-1. `npm run typecheck` and `npm run build`.
-2. The test battery, in the repository (`tests/`, plain Playwright scripts using
-   the machine's global Playwright and Chromium; no dependency added):
-   `npm run build && npm test` (or `node tests/run.cjs [layout|sheet|nav-form|timing|scene]`).
+1. `npm test` runs everything, in order: the unit tests with coverage
+   (`npm run test:unit`), the build, then the end-to-end battery
+   (`npm run test:e2e`). `npm run typecheck` checks the types.
+   Unit tests (Vitest + jsdom + Testing Library, `src/**/*.test.ts(x)`): the form
+   logic and its protections, page navigation, data and images (every file exists
+   at its declared size), translations (same keys and variables in FR and EN), the
+   construction of the three cars, the parking engine and the 3D workshop on a fake
+   renderer (`src/test/fakeGL.ts`), and the whole interface (parking, sheet,
+   photos, full screen, form, menu, legal pages, language). Coverage thresholds
+   (95 % lines and statements) make the run fail if coverage drops. The deploy
+   workflow runs the unit tests before building: a failing test stops the release.
+2. The end-to-end battery (`tests/`, plain Playwright scripts using the
+   machine's global Playwright and Chromium): `npm run build && npm run test:e2e`
+   (or `node tests/run.cjs [layout|sheet|nav-form|timing|scene]`).
    It serves `dist/` with `vite preview` on port 4321 and runs, in parallel:
    - `layout`: seven sections in order, one h1, nothing overflows, menu on one
      line, every section fills the screen (5 sizes × FR/EN); language switch;

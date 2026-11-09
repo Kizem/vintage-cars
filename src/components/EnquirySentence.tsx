@@ -5,6 +5,7 @@ import { site } from '../data/site';
 import { getVehicle, vehicles } from '../data/vehicles';
 import { fill, useI18n } from '../i18n/I18nContext';
 import {
+  LIMITS,
   buildMailto,
   emptyEnquiry,
   submitEnquiry,
@@ -16,6 +17,10 @@ import {
 } from '../lib/enquiry';
 
 type Status = 'idle' | 'submitting' | SubmitResult['status'];
+type Reason = Extract<SubmitResult, { status: 'error' }>['reason'];
+
+/** Seules valeurs admises pour les listes. */
+const choices = { experiences: experiences.map((x) => x.id), vehicles: vehicles.map((v) => v.slug) };
 type Field = keyof EnquiryPayload;
 
 /** Les champs s'élargissent avec leur contenu, comme des blancs dans une phrase. */
@@ -34,8 +39,10 @@ export function EnquirySentence() {
   const [errors, setErrors] = useState<EnquiryErrors>({});
   const [touched, setTouched] = useState(false);
   const [status, setStatus] = useState<Status>('idle');
-  const [reason, setReason] = useState<'server' | 'network'>('network');
+  const [reason, setReason] = useState<Reason>('network');
   const statusRef = useRef<HTMLDivElement>(null);
+  /* instant d'affichage : un envoi plus rapide qu'une personne ne saurait remplir la phrase est un robot */
+  const shownAt = useRef(performance.now());
   const message = useRef<HTMLTextAreaElement>(null);
 
   /* « Demander cette voiture » et les actions de chapitre préremplissent la phrase */
@@ -57,12 +64,13 @@ export function EnquirySentence() {
     const { name, value, type } = e.target;
     const next = { ...values, [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value };
     setValues(next);
-    if (touched) setErrors(validateEnquiry(next));
+    if (touched) setErrors(validateEnquiry(next, choices));
   };
 
   const send = async () => {
+    if (status === 'submitting') return;
     setStatus('submitting');
-    const result = await submitEnquiry(values, locale);
+    const result = await submitEnquiry(values, locale, { shownAt: shownAt.current });
     setStatus(result.status);
     if (result.status === 'error') setReason(result.reason);
     requestAnimationFrame(() => statusRef.current?.focus());
@@ -71,7 +79,7 @@ export function EnquirySentence() {
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setTouched(true);
-    const found = validateEnquiry(values);
+    const found = validateEnquiry(values, choices);
     setErrors(found);
     const first = Object.keys(found)[0];
     if (first) {
@@ -86,6 +94,7 @@ export function EnquirySentence() {
     setErrors({});
     setTouched(false);
     setStatus('idle');
+    shownAt.current = performance.now();
   };
 
   const experienceName = (id: string) => {
@@ -127,7 +136,7 @@ export function EnquirySentence() {
       <div className="em-done" role="alert" tabIndex={-1} ref={statusRef}>
         <p className="em-form__s">{status === 'error' ? f.errorTitle : f.notSentTitle}</p>
         <p className="em-text">
-          {status === 'error' ? `${reason === 'server' ? f.errorServer : f.errorNetwork} ${f.errorText}` : f.notSentText}
+          {status === 'error' ? `${{ server: f.errorServer, network: f.errorNetwork, tooSoon: f.errorTooSoon }[reason]} ${f.errorText}` : f.notSentText}
         </p>
         {status === 'error' && (
           <button type="button" className="em-action" onClick={() => void send()}>
@@ -160,6 +169,7 @@ export function EnquirySentence() {
             id="em-fullName"
             name="fullName"
             autoComplete="name"
+            maxLength={LIMITS.fullName}
             placeholder={f.namePlaceholder}
             value={values.fullName}
             onChange={update}
@@ -187,7 +197,7 @@ export function EnquirySentence() {
           <label className="em-sr" htmlFor="em-vehicle">
             {f.vehicle}
           </label>
-          <select id="em-vehicle" name="vehicle" value={values.vehicle} onChange={update}>
+          <select id="em-vehicle" name="vehicle" value={values.vehicle} onChange={update} {...invalid('vehicle')}>
             <option value="">{f.noPreference}</option>
             {vehicles.map((v) => (
               <option key={v.slug} value={v.slug}>
@@ -214,6 +224,7 @@ export function EnquirySentence() {
             type="email"
             inputMode="email"
             autoComplete="email"
+            maxLength={LIMITS.email}
             placeholder={f.emailPlaceholder}
             value={values.email}
             onChange={update}
@@ -234,7 +245,7 @@ export function EnquirySentence() {
             id="em-message"
             name="message"
             rows={1}
-            maxLength={2000}
+            maxLength={LIMITS.message}
             placeholder={f.messagePlaceholder}
             value={values.message}
             onChange={update}
@@ -255,7 +266,7 @@ export function EnquirySentence() {
       <div className="em-hp" aria-hidden="true">
         <label>
           Company
-          <input name="company" tabIndex={-1} autoComplete="off" value={values.company} onChange={update} />
+          <input name="company" tabIndex={-1} autoComplete="off" maxLength={100} value={values.company} onChange={update} />
         </label>
       </div>
       <label className="em-form__consent">

@@ -23,8 +23,6 @@ export interface MediaAsset {
 /** How the car can be booked. */
 export type ServiceMode = 'chauffeur' | 'chauffeur-or-self-drive';
 
-export type AvailabilityStatus = 'on-request' | 'available' | 'limited' | 'unavailable' | 'coming-soon';
-
 /** How the car is drawn in the 3D parking (a graphic rendering, never presented as a photo). */
 export interface VehicleRendering {
   /** Model in src/scene/carspecs.ts. */
@@ -39,18 +37,8 @@ export interface Vehicle {
   /** URL-safe identifier, also the value of the enquiry form's car field. */
   slug: string;
   name: Localized;
-  marque: string;
-  /** Short mark of the model, e.g. 'DS'. */
-  mark: string;
-  category: Localized;
-  description: Localized;
-  /** One line for the vehicle sheet in the parking focus. Falls back to `description`. */
-  summary?: Localized;
-  /** Optional longer history of the model. */
-  story?: Localized<string[]>;
   /** Optional verified facts (year, colour, seats…). Only add confirmed information. */
   details?: { label: Localized; value: Localized }[];
-  availability: AvailabilityStatus;
   service: ServiceMode;
   /** First photo of the carousel in the vehicle focus. */
   image: MediaAsset;

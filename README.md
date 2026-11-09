@@ -106,11 +106,11 @@ Append an object to `vehicles` in `src/data/vehicles.ts`. The vehicle sheet
 and the form's car list update automatically. The parking is laid out for
 three bays: a fourth car also needs a 3D model in `src/scene/carspecs.ts` and
 the bay count in `src/scene/parking.ts`. Only add verified facts in `details`.
-Availability: `on-request` | `available` | `limited` | `unavailable` | `coming-soon`.
 
 ## Enquiry form
 
-The form is a sentence to complete. Frontend validation is complete.
+The form is a sentence to complete. Frontend validation and protections are
+described in PROJECT_CONTEXT (§ 6); the receiving service must validate again.
 Submissions are sent as JSON (POST) to `VITE_ENQUIRY_ENDPOINT` (see
 `.env.example`). **While no endpoint is set, the form never claims success**: it
 states that nothing was sent and offers a pre-filled email instead. A honeypot

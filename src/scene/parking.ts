@@ -383,12 +383,8 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
 
   const api = {
     get state() { return st; },
-    go(i: number) {
-      /* chemin le plus court sur la boucle */
-      const cur = st.target; const base = Math.round(cur);
-      const d = wrap(i - base);
-      st.target = base + d;
-    },
+    /** Va à la voiture i par le chemin le plus court sur la boucle. */
+    go(i: number) { const base = Math.round(st.target); st.target = base + wrap(i - base); },
     step(d: number) { st.target = Math.round(st.target) + d; },
     active() { return ((Math.round(st.target) % N) + N) % N; },
     setHover(i: number) { st.hover = i; },

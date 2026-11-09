@@ -36,7 +36,6 @@ export const en = {
     label: 'Photos and specifications',
     specs: 'Specifications',
     service: 'Service',
-    availability: 'Availability',
     enquire: 'Enquire about this car',
     close: 'Close vehicle details',
     closeShort: 'Close',
@@ -48,14 +47,6 @@ export const en = {
     nextCar: 'Next car: {name}',
     /** Label on the scene while the vehicle sheet is open. */
     rendering: 'Graphic rendering',
-  },
-  /** Short values next to the “Availability” label. */
-  availabilityShort: {
-    'on-request': 'On request',
-    available: 'Available',
-    limited: 'Limited',
-    unavailable: 'Currently unavailable',
-    'coming-soon': 'Coming soon',
   },
   service: {
     chauffeur: 'With chauffeur',
@@ -118,6 +109,10 @@ export const en = {
     submitting: 'Sending…',
     noPayment: 'No payment is taken. Every request receives a personal reply.',
     errors: {
+      nameTooLong: 'Please keep your name under 100 characters.',
+      vehicleInvalid: 'Please choose a car from the list.',
+      dateInvalid: 'Please enter a valid date.',
+      dateTooFar: 'Please choose a date within the next two years.',
       nameRequired: 'Please tell us your full name.',
       emailRequired: 'Please enter your email address.',
       emailInvalid: 'Please enter a valid email address.',
@@ -136,6 +131,7 @@ export const en = {
     errorText: 'Your details are still here. Please try again, or send them by email.',
     errorServer: 'The server responded with an error.',
     errorNetwork: 'We could not reach our server. Please check your connection.',
+    errorTooSoon: 'An enquiry has just been sent. Please wait a moment before sending another.',
     sendByEmail: 'Send by email',
     tryAgain: 'Try again',
     edit: 'Edit my enquiry',
