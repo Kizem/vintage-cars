@@ -171,12 +171,17 @@ Parking behaviour (`parking.ts`, `components/garage/Parking.tsx`):
   offset (`BAY_OX`) so that the row is centred on screen. Sheet open (and in
   portrait), the camera centres the projected outline of the chosen car in the
   free space.
-- DS headlamps: the nose corners are rounded off in plan (`hw`) and each
-  headlamp glass rebuilds the original wing tip: it starts inside the wing and
-  tapers forward, its outer face following the former outline, so nothing sticks
-  out. The paint is not drawn inside the glass volume (`mats.glassCut`, same
-  tapering profile); the chrome lip follows the line where the glass leaves the
-  body; both lamps sit at the back on a light housing; mirrored.
+- DS headlamps (`headlamps()` in `models/ds.ts`, from the owner's front and
+  three-quarter photos): the wing ends in a block (`wingWidth`: the wing keeps its
+  height over that share of the half-width before dropping to the bonnet). Its
+  face carries a large rounded-trapezoid glass, flush with the skin and ringed in
+  chrome, that stretches into an almond over the wing corner; behind it a silver
+  housing and two large round lamps (fluted clear glass, yellow bulb), the outer
+  one a little larger; a long amber indicator below. The outline is defined in the
+  glass plane, projected onto the skin along the lamp axis, and the paint is not
+  drawn inside it (`mats.lampCut`). Its parameters were checked offline against
+  the body section: the whole outline lies on the wing face, one skin crossing
+  only, the housing entirely inside the body. Built on the left, mirrored.
   `wingRise` (DS, 504): the wings stand higher than the bonnet, which dips between
   the headlamps.
 - Long car names (over 20 characters) get `.em-parking__name--long`, a smaller

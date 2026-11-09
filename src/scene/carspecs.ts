@@ -25,6 +25,8 @@ export interface CarSpec {
   pillarChrome?: boolean;
   /** Ailes avant plus hautes que le capot, qui plonge entre elles (la ceinture peut passer au-dessus du dessus de caisse). */
   wingRise?: boolean;
+  /** Avec wingRise : largeur de l'aile restée à sa hauteur, en part de la demi-largeur (le bloc qui porte les phares de la DS). */
+  wingWidth?: number;
   /** Pneus à flancs blancs. */
   whitewall?: boolean;
   /** Trappe ronde dessinée sur l'aile arrière : [x, y, rayon]. */
@@ -61,10 +63,10 @@ export const SPECS: Record<CarModelKey, CarSpec> = {
     paint: { color: 0x6b7074, metalness: .55, roughness: .3 }, whitewall: true,
     axles: [-1.5, 1.625], arch: [[.375, 2], [.385, .48]], trackZ: [.75, .65],
     floor: [[-2.435, .36], [-2.3, .3], [-2.0, .265], [1.9, .265], [2.25, .33], [2.435, .45]],
-    belt: [[-2.435, .6], [-2.4, .7], [-2.3, .74], [-2.1, .765], [-1.8, .785], [-1.3, .83], [-.85, .895], [0, .925], [1.0, .955], [1.6, .97], [2.0, .945], [2.3, .84], [2.435, .7]],
+    belt: [[-2.435, .7], [-2.41, .75], [-2.33, .775], [-2.2, .785], [-2.0, .79], [-1.8, .8], [-1.3, .83], [-.85, .895], [0, .925], [1.0, .955], [1.6, .97], [2.0, .945], [2.3, .84], [2.435, .7]],
     deck: [[-2.435, .52], [-2.38, .57], [-2.2, .62], [-1.8, .69], [-1.3, .77], [-.95, .85], [-.8, .9], [0, .95], [1.6, 1.0], [1.95, .99], [2.2, .935], [2.36, .83], [2.435, .7]],
-    hw: [[-2.435, .44], [-2.41, .55], [-2.34, .66], [-2.27, .765], [-2.2, .825], [-2.1, .862], [-1.8, .885], [-.6, .895], [.6, .89], [1.4, .86], [1.9, .8], [2.2, .72], [2.38, .64], [2.435, .57]],
-    wingRise: true,
+    hw: [[-2.435, .5], [-2.43, .58], [-2.37, .72], [-2.3, .83], [-2.2, .865], [-1.8, .885], [-.6, .895], [.6, .89], [1.4, .86], [1.9, .8], [2.2, .72], [2.38, .64], [2.435, .57]],
+    wingRise: true, wingWidth: .4,
     glass: { xa: -.84, xb: -.14, xc: 1.0, xd: 1.98, roofY: 1.445, baseY: .93, tailY: .99, tumble: .78, crown: .045 },
     lensColor: 0xf2cf5a,
     pillars: [[.33, .37, .31, .35]],

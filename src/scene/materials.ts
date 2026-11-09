@@ -1,6 +1,6 @@
 /* Bibliothèque de matériaux commune : la même peinture vernie, les mêmes chromes, verres, caoutchoucs et feux
    pour les trois voitures ; seules les teintes viennent de la fiche de chaque modèle (carspecs.ts). */
-import { DoubleSide, Matrix3, MeshBasicMaterial, MeshPhysicalMaterial, MeshStandardMaterial, Vector3, type Texture } from 'three';
+import { DoubleSide, Matrix3, MeshBasicMaterial, MeshPhysicalMaterial, MeshStandardMaterial, Vector3, Vector4, type Texture } from 'three';
 import type { CarSpec } from './carspecs';
 import { canvasTex } from './geometry';
 
@@ -59,30 +59,34 @@ export function createMaterials(s: CarSpec, env: Texture, be: (x: number) => num
   const paint = new MeshPhysicalMaterial({ ...s.paint, map: seamTex, clearcoat: 1, clearcoatRoughness: .07, envMap: env, envMapIntensity: .95, side: DoubleSide });
   const archU = { value: s.axles.map((x, i) => new Vector3(x, s.wheelR, s.arch[i][0])) };
   const archC = { value: s.arch.map((a) => a[1]) };
-  /* Volume d'une glace de phare (DS) : la tôle n'est pas dessinée à l'intérieur, la glace la remplace.
-     Repère : centre c (plan arrière de la glace), axes e1, e2, n ; demi-axes a, b à l'arrière, longueur l vers n,
-     section qui s'effile comme la glace (models/ds.ts). Côté z > 0, reporté en miroir. */
-  const glassC = { value: new Vector3(0, -9, 0) };
-  const glassM = { value: new Matrix3() };
-  const glassD = { value: new Vector3(1, 1, 1) };
-  const glassCut = (c: Vector3, e1: Vector3, e2: Vector3, n: Vector3, a: number, b: number, l: number) => {
-    glassC.value.copy(c); glassM.value.set(e1.x, e1.y, e1.z, e2.x, e2.y, e2.z, n.x, n.y, n.z); glassD.value.set(a, b, l);
+  /* Fenêtre de phare (DS) : la tôle n'est pas dessinée dans un prisme dont la section est le contour de la glace
+     (models/ds.ts), pris le long de l'axe d du phare et limité à l'épaisseur de la tôle (tMin..tMax) : la glace,
+     posée sur la tôle, la remplace. Côté z > 0, reporté en miroir. Par défaut, rien n'est découpé. */
+  const lampC = { value: new Vector3(0, -9, 0) };
+  const lampM = { value: new Matrix3() };
+  const lampS = { value: new Vector4(1, 1, 0, 1) };
+  const lampP = { value: new Vector4(2, 2, 1, -1) };
+  const lampCut = (c: Vector3, e1: Vector3, e2: Vector3, d: Vector3, w: { A: number; B: number; pF: number; pR: number; tF: number; k: number }, tMin: number, tMax: number) => {
+    lampC.value.copy(c); lampM.value.set(e1.x, e1.y, e1.z, e2.x, e2.y, e2.z, d.x, d.y, d.z);
+    lampS.value.set(w.A, w.B, w.k, w.tF); lampP.value.set(w.pF, w.pR, tMin, tMax);
   };
   paint.onBeforeCompile = (sh) => {
-    sh.uniforms.uArch = archU; sh.uniforms.uClip = archC; sh.uniforms.uGlassC = glassC; sh.uniforms.uGlassM = glassM; sh.uniforms.uGlassD = glassD;
+    sh.uniforms.uArch = archU; sh.uniforms.uClip = archC; sh.uniforms.uLampC = lampC; sh.uniforms.uLampM = lampM; sh.uniforms.uLampS = lampS; sh.uniforms.uLampP = lampP;
     sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vL;').replace('#include <begin_vertex>', '#include <begin_vertex>\nvL = position;');
-    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vL; uniform vec3 uArch[2]; uniform float uClip[2]; uniform vec3 uGlassC; uniform mat3 uGlassM; uniform vec3 uGlassD;')
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vL; uniform vec3 uArch[2]; uniform float uClip[2]; uniform vec3 uLampC; uniform mat3 uLampM; uniform vec4 uLampS; uniform vec4 uLampP;')
       .replace('#include <map_fragment>', `
         if (abs(vL.z) > .25) { for (int i = 0; i < 2; i++) { if (length(vL.xy - uArch[i].xy) < uArch[i].z && vL.y < uClip[i]) discard; } }
-        { vec3 q = uGlassM * (vec3(vL.x, vL.y, abs(vL.z)) - uGlassC); float t = q.z / uGlassD.z;
-          if (t > -.02 && t < 1.) { float tt = clamp(t, 0., 1.); float kx = max(.04, pow(1. - tt, .6) * (1. - .2 * tt)); float ky = max(.03, pow(1. - tt, .9) * (1. - .3 * tt));
-            vec2 e = q.xy / (uGlassD.xy * vec2(kx, ky)); if (dot(e, e) < 1.) discard; } }
+        { vec3 q = uLampM * (vec3(vL.x, vL.y, abs(vL.z)) - uLampC);
+          if (q.z > uLampP.z && q.z < uLampP.w && abs(q.x) < uLampS.x) {
+            float m = clamp((q.x / uLampS.x + 1.) * .5, 0., 1.); float p = mix(uLampP.x, uLampP.y, m);
+            float h = uLampS.y * mix(uLampS.w, 1., m) * pow(max(0., 1. - pow(abs(q.x) / uLampS.x, p)), 1. / p);
+            if (abs(q.y - uLampS.z * q.x) < h) discard; } }
         #include <map_fragment>`);
   };
   const roof = s.roof ? new MeshPhysicalMaterial({ ...s.roof, clearcoat: .6, clearcoatRoughness: .2, envMap: env, envMapIntensity: .9, side: DoubleSide }) : new MeshPhysicalMaterial({ ...s.paint, clearcoat: 1, clearcoatRoughness: .07, envMap: env, envMapIntensity: .95, side: DoubleSide }); /* toit du même ton que la caisse */
   const chrome = new MeshStandardMaterial({ color: 0xf2f3f4, metalness: 1, roughness: .18, envMap: env, envMapIntensity: 1.5 });
   return {
-    paint, roof, chrome, glassCut,
+    paint, roof, chrome, lampCut,
     /** montants inox, ou couleur caisse */
     pillar: s.roof || s.pillarChrome ? new MeshStandardMaterial({ color: 0xcfd2d2, metalness: .95, roughness: .2, envMap: env }) : roof,
     dark: new MeshStandardMaterial({ color: 0x0b0d0c, roughness: .7, envMap: env, envMapIntensity: .3 }),

@@ -29,13 +29,21 @@ export function buildBody(s: CarSpec, mats: CarMaterials, curves: CarCurves) {
   const halfSection = (x: number) => {
     const f = fl(x); const d = de(x); const b = s.wingRise ? be(x) : Math.min(be(x), d - .004); const w = hw(x);
     const r = Math.min(.13, (b - f) * .3);
+    /* aile en bloc (DS) : là où l'aile domine le capot, elle garde sa hauteur sur wingWidth de la demi-largeur avant de
+       descendre vers le capot ; ailleurs la coupe habituelle. Même nombre de points dans les deux cas (loft). */
+    if (s.wingWidth) {
+      const m = Math.min(1, Math.max(0, (b - d) / .05)); const ww = s.wingWidth;
+      return catmull([[0, f], [w * .55, f], [w * .9, f + .012], [w * .985, f + r], [w, lerp(f, b, .55)], [w * .992, b],
+        [w * lerp(.9, 1 - ww * .5, m), lerp(lerp(b, d, .78), b + .002, m)], [w * lerp(.55, 1 - ww, m), lerp(d - .012 * (w / .9), lerp(b, d, .85), m)],
+        [w * lerp(.3, (1 - ww) * .6, m), d - .005], [0, d]], 26);
+    }
     return catmull([[0, f], [w * .55, f], [w * .9, f + .012], [w * .985, f + r], [w, lerp(f, b, .55)], [w * .992, b], [w * .9, lerp(b, d, .78)], [w * .55, d - .012 * (w / .9)], [0, d]], 26);
   };
   body.add(new Mesh(loft(stations(-s.L / 2, s.L / 2, 92), halfSection), mats.paint));
 
   /* Dessous sombre, visible à travers les passages de roues */
   body.add(new Mesh(loft(stations(-s.L / 2 + .2, s.L / 2 - .2, 30), (x) => {
-    const f = fl(x) + .01; const w = hw(x) * .78; const t = Math.min(be(x), de(x)) - (s.wingRise ? .09 : .03);
+    const f = fl(x) + .01; const w = hw(x) * .78; const t = Math.min(be(x), de(x)) - (s.wingRise ? .17 : .03); /* plus bas sous les ailes hautes : il n'entre pas dans les phares */
     return [[0, f], [w, f], [w, t], [0, t]];
   }), mats.black));
 
