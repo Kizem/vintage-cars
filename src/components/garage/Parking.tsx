@@ -77,8 +77,10 @@ export function Parking({ open, onOpenChange }: { open: boolean; onOpenChange: (
     };
     /* Contexte perdu ou scène impossible à créer : on garde le fond sombre et on réessaie deux fois,
        avec un canvas neuf ; le profil vectoriel ne remplace la scène qu'en dernier recours. */
-    function fallBack(e?: Event) {
-      e?.preventDefault();
+    function fallBack(e?: unknown) {
+      if (e instanceof Event) e.preventDefault();
+      /* la raison reste lisible dans la console (Safari : Développement > iPad) pour le prochain diagnostic */
+      console.warn('Scène 3D indisponible, essai', glTry + 1, e instanceof Event ? e.type : e);
       if (dead) return;
       dead = true;
       stop();
@@ -107,11 +109,11 @@ export function Parking({ open, onOpenChange }: { open: boolean; onOpenChange: (
           eng.pause(paused.current);
           eng.open(latest.current.open);
           eng.start();
-        } catch {
-          fallBack();
+        } catch (err) {
+          fallBack(err);
         }
       })
-      .catch(() => fallBack());
+      .catch((err) => fallBack(err));
     return () => {
       dead = true;
       clearTimeout(retry);

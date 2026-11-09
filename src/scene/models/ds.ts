@@ -19,22 +19,24 @@ export function details(k: CarKit) {
   const globe = new MeshPhysicalMaterial({ color: 0xdfe8ec, roughness: .02, transparent: true, opacity: .32, clearcoat: 1, clearcoatRoughness: .02, envMap: mats.env, envMapIntensity: 1.6, depthWrite: false });
   const cavity = new MeshStandardMaterial({ color: 0xc9c7bd, metalness: .55, roughness: .38, envMap: mats.env, envMapIntensity: .9, side: BackSide });
   const bucket = new MeshStandardMaterial({ color: 0xe7e8e8, metalness: 1, roughness: .2, envMap: mats.env, envMapIntensity: 1.4, side: DoubleSide });
-  const clear = new MeshStandardMaterial({ color: 0xf4f2ea, metalness: .7, roughness: .1, envMap: mats.env, envMapIntensity: 1.5 });
+  /* l'optique blanche s'allume avec la jaune : même matériau, teinte claire, intensité recopiée à chaque image */
+  const clear = mats.lens.clone(); clear.color.set(0xf4f2ea); clear.emissive.set(0xfff1c8);
   const shell = (mats.roof as MeshPhysicalMaterial).clone(); shell.side = FrontSide; shell.envMapIntensity = .55; shell.clearcoat = .4;
   /* Phare, dans son repère (x, y dans le plan arrière de la glace, z vers l'avant) : section en amande (demi-axes
      LA, LB). Vers l'arrière, un fourreau couleur caisse qui s'enfonce de LD dans l'aile ; vers l'avant, la glace,
      longue de LL, qui s'affine jusqu'à une pointe (photos : la glace prolonge l'aile et s'effile vers l'avant). */
-  const LA = .175; const LB = .085; const LD = .16; const LL = .19;
+  const LA = .175; const LB = .085; const LD = .16; const LL = .15;
   /** Anneaux d'amande le long de z ; `out` : normales vers l'extérieur pour un tube qui avance vers +z. */
-  const tube3 = (zs: number[], k: (t: number) => number, forward: boolean) => {
+  const tube3 = (zs: number[], k: (t: number) => number, forward: boolean, ky: (t: number) => number = k) => {
     const pos: number[] = []; const idx: number[] = []; const R = 48;
-    zs.forEach((z, i) => { const f = k(i / (zs.length - 1)); for (let j = 0; j < R; j++) { const a = j / R * Math.PI * 2; pos.push(Math.cos(a) * LA * f, Math.sin(a) * LB * f, z); } });
+    zs.forEach((z, i) => { const t = i / (zs.length - 1); const f = k(t); const fy = ky(t); for (let j = 0; j < R; j++) { const a = j / R * Math.PI * 2; pos.push(Math.cos(a) * LA * f, Math.sin(a) * LB * fy, z); } });
     for (let i = 0; i < zs.length - 1; i++) for (let j = 0; j < R; j++) { const a = i * R + j; const b = i * R + (j + 1) % R; const c = a + R; const d = b + R; if (forward) idx.push(a, b, c, b, d, c); else idx.push(a, c, b, b, c, d); }
     const g = new BufferGeometry(); g.setAttribute('position', new Float32BufferAttribute(pos, 3)); g.setIndex(idx); g.computeVertexNormals(); return g;
   };
   const sleeve = tube3(Array.from({ length: 7 }, (_, i) => -i / 6 * LD), (t) => 1 - .25 * t, false);
   /* la glace : pleine largeur à l'arrière, puis de plus en plus fine, jusqu'à la pointe */
-  const lens3 = tube3(Array.from({ length: 17 }, (_, i) => i / 16 * LL), (t) => Math.max(.05, Math.pow(1 - t * t, .5) * (1 - .35 * t)), true);
+  /* glace fine : elle s'effile en largeur et s'aplatit plus vite en hauteur, pour rester tendue vue de trois-quarts */
+  const lens3 = tube3(Array.from({ length: 17 }, (_, i) => i / 16 * LL), (t) => Math.max(.04, Math.pow(1 - t, .6) * (1 - .2 * t)), true, (t) => Math.max(.03, Math.pow(1 - t, .9) * (1 - .3 * t)));
 
   [1, -1].forEach((sg) => {
     /* --- phare, à la pointe de l'aile (photos de face et de trois-quarts) : de face, une large amande ; de côté,
@@ -54,6 +56,7 @@ export function details(k: CarKit) {
       const ox = dx * sg; /* le repère du côté droit est le miroir du gauche, axe e1 inversé */
       const cup = new Mesh(new CylinderGeometry(r * 1.08, r * .6, .04, 32, 1, true), bucket); cup.rotation.x = Math.PI / 2; cup.position.set(ox, 0, .02); unit.add(cup);
       const glass = new Mesh(new CircleGeometry(r, 32), mat); glass.position.set(ox, 0, .03); unit.add(glass);
+      if (mat === clear) glass.onBeforeRender = () => { clear.emissiveIntensity = lens.emissiveIntensity; };
       const rim = new Mesh(new TorusGeometry(r, .005, 8, 32), chrome); rim.position.set(ox, 0, .04); unit.add(rim);
       const w = new Vector3(ox, 0, .05).applyQuaternion(unit.quaternion).add(c);
       lampPoints.push([w.x, w.y, w.z]);

@@ -183,6 +183,12 @@ Parking behaviour (`parking.ts`, `components/garage/Parking.tsx`):
   wall, fixed, in the middle of the door panel between the two pillars nearest
   the centre (`LOGO_X`). The door texture is offset (`DOOR_OFF`) so that every
   door post sits behind a pillar: no post crosses the logo at rest.
+- Pixel budget: the parking canvas renders at most ~2.4 million pixels
+  (`PIXEL_BUDGET`, density capped at 2). A full-density antialiased buffer on an
+  iPad made Safari drop the WebGL context, and the page fell back on the vector
+  profile. A failure is logged in the console (« Scène 3D indisponible »).
+- Headlamp halos are the size of the lamp and sit on it (they never spill out of
+  the headlamp); on the DS both lamps of each headlamp light up.
 - Car lights (the bay light under the ceiling and the headlamps) fade in and
   out; they never flicker (a flicker read as a fault in the ceiling tubes).
 - `onReady` fires after the first rendered frame.

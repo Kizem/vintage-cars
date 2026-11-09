@@ -50,6 +50,7 @@ const place = (d: number) => [BAY_OX + d * AX[0], PARK_Z + d * AX[1]];  /* centr
 const BAY_BACK = -6.1;                              /* fond de la place, derrière les voitures même reculées */
 const BAY_FRONT = 4;                                /* entrée de la place, côté allée */
 const EXIT = 3.9;                                   /* élan supplémentaire de la voiture qui sort de l'écran pour changer de côté */
+const PIXEL_BUDGET = 2.4e6;
 const NUM_Z = 3.5;                                  /* numéro peint à l'entrée de la place */
 /* Piliers et montants des portes du mur du fond alignés : un montant derrière chaque pilier. Le logo est au milieu
    du panneau le plus proche du centre de l'écran, entre deux piliers, au repos. */
@@ -225,7 +226,8 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
     const nose = model.lampPoints;
     const lamps = nose.map((l) => {
       const sp = new Sprite(new SpriteMaterial({ map: glowTex, color: 0xf2b632, blending: AdditiveBlending, transparent: true, opacity: 0, depthWrite: false }));
-      sp.position.set(l[0] - .06, l[1], l[2]); sp.scale.setScalar(.62); sp.renderOrder = 5;
+      /* halo à la taille de l'optique, posé sur elle : il ne déborde pas du phare */
+      sp.position.set(l[0] - .01, l[1], l[2]); sp.scale.setScalar(.2); sp.renderOrder = 5;
       group.add(sp); return sp;
     });
     const beam = new Mesh(new PlaneGeometry(6.2, 3.8), new MeshBasicMaterial({ map: beamTex, color: 0xf2b632, transparent: true, opacity: 0, blending: AdditiveBlending, depthWrite: false }));
@@ -255,6 +257,10 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
   function resize() {
     const r = canvasEl.parentElement!.getBoundingClientRect();
     st.w = Math.max(1, r.width); st.h = Math.max(1, r.height);
+    /* Budget de pixels : sur tablette, un tampon de 2 732 × 2 048 px antialiasé dépasse la mémoire graphique que
+       Safari accorde, et le contexte WebGL est perdu (la page retombe alors sur le profil vectoriel). On limite la
+       surface rendue à environ 2,4 millions de pixels, la densité restant plafonnée à 2. */
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2, Math.sqrt(PIXEL_BUDGET / (st.w * st.h))));
     renderer.setSize(st.w, st.h, false);
     camera.aspect = st.w / st.h;
     st.portrait = camera.aspect < 1;
