@@ -52,13 +52,10 @@ const BAY_FRONT = 4;                                /* entrée de la place, côt
 const EXIT = 3.9;                                   /* élan supplémentaire de la voiture qui sort de l'écran pour changer de côté */
 const PIXEL_BUDGET = 2.4e6;
 const NUM_Z = 3.5;                                  /* numéro peint à l'entrée de la place */
-/* Piliers et montants des portes du mur du fond alignés : un montant derrière chaque pilier. Le logo est au milieu
-   du panneau le plus proche du centre de l'écran, entre deux piliers, au repos. */
+/* Piliers et montants des portes du mur du fond alignés : un montant derrière chaque pilier. */
 const WALL_Z = -7.65;
 const PILLAR_X = S / 2 + bayX(WALL_Z);
 const DOOR_OFF = (((-PILLAR_X / S) % 1) + 1) % 1;
-const MID = (((PILLAR_X + S / 2) % S) + S) % S;
-const LOGO_X = MID > S / 2 ? MID - S : MID;
 const N = 3;
 const damp = (a: number, b: number, k: number, dt: number) => a + (b - a) * (1 - Math.exp(-k * dt));
 const wrap = (v: number) => { const h = N / 2; return ((((v + h) % N) + N) % N) - h; };
@@ -128,18 +125,6 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
   const neonOff = new MeshBasicMaterial({ color: 0xf2f2e6 });
   const beamMat = new MeshStandardMaterial({ color: 0x2a302a, roughness: 1 });
   const glowTex = tex(softBlob());
-  /* Le logo de la maison : le monogramme ÉM seul, grand, peint en ivoire sur le mur du fond (épaissi par un contour,
-     pigment un peu usé). Polices chargées avant la scène. */
-  const logoTex = tex(canvas(1024, 1024, (g, w, h) => {
-    g.clearRect(0, 0, w, h); g.fillStyle = g.strokeStyle = '#ede9df'; g.textAlign = 'center'; g.textBaseline = 'alphabetic';
-    g.font = '400 520px "Cormorant Garamond", Georgia, serif'; g.lineWidth = 22; g.lineJoin = 'round';
-    ([['É', w / 2 - 120, 520], ['M', w / 2 + 110, 690]] as [string, number, number][]).forEach(([ch, x, y]) => { g.fillText(ch, x, y); g.strokeText(ch, x, y); });
-    /* peinture : quelques manques dans le pigment */
-    g.globalCompositeOperation = 'destination-out';
-    for (let i = 0; i < 1400; i++) { g.fillStyle = `rgba(0,0,0,${Math.random() * .35})`; g.fillRect(Math.random() * w, Math.random() * h, 1 + Math.random() * 3, 1 + Math.random() * 3); }
-    g.globalCompositeOperation = 'source-over';
-  }));
-  const logoMat = new MeshBasicMaterial({ map: logoTex, color: 0xf2eee3, transparent: true, opacity: .95, depthWrite: false });
 
   /* Une copie du lieu au-dessus du sol, une copie en miroir en dessous */
   const items: { g: Group; k: number }[] = [];
@@ -176,8 +161,6 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
       items.push({ g, k });
       root.add(g);
     }
-    /* un seul logo, au centre du mur, sur le panneau de porte entre deux piliers (hors reflet) */
-    if (!mirrored) { const logo = new Mesh(new PlaneGeometry(2.3, 2.3), logoMat); logo.position.set(LOGO_X, 2.05, -7.97); root.add(logo); }
     scene.add(root);
   }
   buildWorld(false); buildWorld(true);

@@ -30,6 +30,8 @@ export const fr: Dictionary = {
     seeSheet: 'Voir la fiche : {name}',
     slide: 'Représentation graphique. Cliquez sur une voiture pour voir ses photos.',
     slideTouch: 'Représentation graphique. Touchez une voiture pour voir ses photos.',
+    flatHint: 'Cliquez sur le nom d’une voiture pour voir ses photos.',
+    flatHintTouch: 'Touchez le nom d’une voiture pour voir ses photos.',
   },
   focus: {
     label: 'Photos et fiche technique',

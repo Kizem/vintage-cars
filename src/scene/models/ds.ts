@@ -25,7 +25,7 @@ export function details(k: CarKit) {
   /* Phare, dans son repère (x, y dans le plan arrière de la glace, z vers l'avant) : section en amande (demi-axes
      LA, LB). Vers l'arrière, un fourreau couleur caisse qui s'enfonce de LD dans l'aile ; vers l'avant, la glace,
      longue de LL, qui s'affine jusqu'à une pointe (photos : la glace prolonge l'aile et s'effile vers l'avant). */
-  const LA = .175; const LB = .085; const LD = .16; const LL = .15;
+  const LA = .14; const LB = .092; const LD = .14; const LL = .24;
   /** Anneaux d'amande le long de z ; `out` : normales vers l'extérieur pour un tube qui avance vers +z. */
   const tube3 = (zs: number[], k: (t: number) => number, forward: boolean, ky: (t: number) => number = k) => {
     const pos: number[] = []; const idx: number[] = []; const R = 48;
@@ -36,23 +36,35 @@ export function details(k: CarKit) {
   const sleeve = tube3(Array.from({ length: 7 }, (_, i) => -i / 6 * LD), (t) => 1 - .25 * t, false);
   /* la glace : pleine largeur à l'arrière, puis de plus en plus fine, jusqu'à la pointe */
   /* glace fine : elle s'effile en largeur et s'aplatit plus vite en hauteur, pour rester tendue vue de trois-quarts */
-  const lens3 = tube3(Array.from({ length: 17 }, (_, i) => i / 16 * LL), (t) => Math.max(.04, Math.pow(1 - t, .6) * (1 - .2 * t)), true, (t) => Math.max(.03, Math.pow(1 - t, .9) * (1 - .3 * t)));
+  const kx = (t: number) => Math.max(.04, Math.pow(1 - t, .6) * (1 - .2 * t));
+  const ky = (t: number) => Math.max(.03, Math.pow(1 - t, .9) * (1 - .3 * t));
+  const lens3 = tube3(Array.from({ length: 17 }, (_, i) => i / 16 * LL), kx, true, ky);
+  /** Le point est-il dans la caisse ? (coupe de la caisse à son abscisse, en miroir) */
+  const inside = (p: Vector3) => {
+    if (p.x < nx || p.x > tx) return false;
+    const sec = k.halfSection(p.x); const z = Math.abs(p.z); const y = p.y; let inn = false;
+    for (let i = 0, j = sec.length - 1; i < sec.length; j = i++) { const [zi, yi] = sec[i]; const [zj, yj] = sec[j]; if ((yi > y) !== (yj > y) && z < (zj - zi) * (y - yi) / (yj - yi) + zi) inn = !inn; }
+    return inn;
+  };
 
   [1, -1].forEach((sg) => {
     /* --- phare, à la pointe de l'aile (photos de face et de trois-quarts) : de face, une large amande ; de côté,
        une glace qui prolonge l'aile et s'effile vers l'avant ; au fond de la glace, contre l'aile, les deux
        optiques côte à côte (la jaune à l'extérieur, la blanche vers le capot) sur un réflecteur clair, et un jonc
        chromé là où la glace rejoint l'aile. Identique des deux côtés, en miroir. --- */
-    const zc = .6; const xc = surfX(zc, true) + .03; const yc = .615;
+    /* La pointe de l'aile est arrondie en plan (carspecs) : la glace, partie de là, reforme la pointe d'origine.
+       Sa face extérieure suit l'ancien contour de l'aile, elle ne dépasse donc pas ; la tôle prise dedans est retirée. */
+    const xc = -2.19; const zc = .685; const yc = .605;
     /* repère du phare : n axe (vers l'avant, un peu vers l'extérieur et le bas), e1 horizontal, e2 vers le haut */
-    const n = new Vector3(-1, -.05, .32 * sg).normalize();
+    const n = new Vector3(-1, -.04, -.14 * sg).normalize();
     const e2 = new Vector3(0, 1, 0).addScaledVector(n, -n.y).normalize();
     const e1 = new Vector3().crossVectors(e2, n).normalize();
     const c = new Vector3(xc, yc, sg * zc);
+    if (sg > 0) mats.glassCut(c, e1, e2, n, LA, LB, LL);
     const unit = new Group(); unit.position.copy(c); unit.quaternion.setFromRotationMatrix(new Matrix4().makeBasis(e1, e2, n)); body.add(unit);
     unit.add(new Mesh(sleeve, shell));
     const back = new Mesh(new CircleGeometry(1, 48), cavity.clone()); (back.material as MeshStandardMaterial).side = FrontSide; back.scale.set(LA, LB, 1); back.position.z = -.002; unit.add(back);
-    ([[.075, .058, lens], [-.07, .052, clear]] as [number, number, typeof lens][]).forEach(([dx, r, mat]) => {
+    ([[.064, .056, lens], [-.062, .05, clear]] as [number, number, typeof lens][]).forEach(([dx, r, mat]) => {
       const ox = dx * sg; /* le repère du côté droit est le miroir du gauche, axe e1 inversé */
       const cup = new Mesh(new CylinderGeometry(r * 1.08, r * .6, .04, 32, 1, true), bucket); cup.rotation.x = Math.PI / 2; cup.position.set(ox, 0, .02); unit.add(cup);
       const glass = new Mesh(new CircleGeometry(r, 32), mat); glass.position.set(ox, 0, .03); unit.add(glass);
@@ -61,8 +73,17 @@ export function details(k: CarKit) {
       const w = new Vector3(ox, 0, .05).applyQuaternion(unit.quaternion).add(c);
       lampPoints.push([w.x, w.y, w.z]);
     });
+    /* sous la glace, le boîtier clair du phare (vu de l'intérieur) */
+    const housing = new Mesh(lens3, cavity); housing.scale.setScalar(.985); unit.add(housing);
     const cover = new Mesh(lens3, globe); cover.renderOrder = 6; unit.add(cover);
-    const ring = new Mesh(new TorusGeometry(1, .035, 8, 64), chrome); ring.scale.set(LA, LB, 1); unit.add(ring);
+    /* jonc chromé là où la glace sort de la tôle : on suit chaque génératrice de la glace jusqu'à la surface */
+    const lip: P3[] = [];
+    for (let i = 0; i <= 64; i++) {
+      const a = i / 64 * Math.PI * 2; let p = c;
+      for (let j = 0; j <= 60; j++) { const t = j / 60; p = new Vector3(Math.cos(a) * LA * kx(t), Math.sin(a) * LB * ky(t), t * LL).applyQuaternion(unit.quaternion).add(c); if (!inside(p)) break; }
+      lip.push([p.x, p.y, p.z]);
+    }
+    body.add(tube(lip, .006, chrome));
 
     /* --- avant : clignotant sur le coin du pare-chocs, butoir en caoutchouc noir sous la lame --- */
     const xi = surfX(.7, true) + .02;

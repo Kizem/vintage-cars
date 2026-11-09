@@ -29,6 +29,8 @@ export const en = {
     seeSheet: 'See the details: {name}',
     slide: 'Graphic rendering. Click a car to see its photos.',
     slideTouch: 'Graphic rendering. Tap a car to see its photos.',
+    flatHint: 'Click the name of a car to see its photos.',
+    flatHintTouch: 'Tap the name of a car to see its photos.',
   },
   focus: {
     label: 'Photos and specifications',

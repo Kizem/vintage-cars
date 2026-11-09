@@ -30,7 +30,7 @@ so every push is a production release; the owner tests on the live site.
 | Build | Vite 8, `base: './'` | Relative paths work on any Pages sub-path. |
 | UI | React 19, TypeScript 7 strict, plain CSS | No CSS framework, design tokens in `index.css`. |
 | 3D | three.js **0.170.0, pinned**, loaded with a dynamic import | Keeps the first load light; the parking is its own chunk (`parking-*.js`). |
-| Fallback | Vector side profile (`sideProfileSVG` in `carspecs.ts`) | Shown only when WebGL is missing, or after the WebGL context is lost three times in a row (each loss first rebuilds the scene on a new canvas). Never shown together with the intro monogram. |
+| Fallback | The ÉM monogram alone, no car drawn (the car name below still opens the sheet) | Shown only when WebGL is missing, or after the WebGL context is lost three times in a row (each loss first rebuilds the scene on a new canvas). Never shown together with the intro monogram. |
 | Fonts | Self-hosted woff2 (`src/assets/fonts`) | No third-party requests. |
 | Tests | Playwright, outside the repository (session scratchpad) | Playwright is **not** a dependency; never run `playwright install`. |
 
@@ -155,7 +155,7 @@ Parking behaviour (`parking.ts`, `components/garage/Parking.tsx`):
     « Représentation graphique » label stays on the scene.
   - « Fermer », Escape or a click in the empty parking close it; dragging the
     scene still works. Focus goes to the car name on opening only.
-  - Without WebGL the sheet opens the same way next to the vector profile.
+  - Without WebGL the sheet opens the same way next to the monogram.
 - Angled bays (`parking.ts`, constants at the top): every car stays in the
   axis of its bay, turned `PARK_YAW` (three-quarter front), whether parked,
   active or making way. A car is placed by one distance along that axis
@@ -171,18 +171,18 @@ Parking behaviour (`parking.ts`, `components/garage/Parking.tsx`):
   offset (`BAY_OX`) so that the row is centred on screen. Sheet open (and in
   portrait), the camera centres the projected outline of the chosen car in the
   free space.
-- DS headlamps: at each wing tip (the plan corners of the nose are rounded off to
-  make room), an almond glass that continues the wing and tapers forward, a
-  body-colour sleeve into the wing, the two lamps side by side at the back on a
-  light reflector, a chrome ring where the glass meets the wing; mirrored.
+- DS headlamps: the nose corners are rounded off in plan (`hw`) and each
+  headlamp glass rebuilds the original wing tip: it starts inside the wing and
+  tapers forward, its outer face following the former outline, so nothing sticks
+  out. The paint is not drawn inside the glass volume (`mats.glassCut`, same
+  tapering profile); the chrome lip follows the line where the glass leaves the
+  body; both lamps sit at the back on a light housing; mirrored.
   `wingRise` (DS, 504): the wings stand higher than the bonnet, which dips between
   the headlamps.
 - Long car names (over 20 characters) get `.em-parking__name--long`, a smaller
   size, two lines at most on phones.
-- One large ÉM monogram is painted in ivory (thickened, slightly worn) on the back
-  wall, fixed, in the middle of the door panel between the two pillars nearest
-  the centre (`LOGO_X`). The door texture is offset (`DOOR_OFF`) so that every
-  door post sits behind a pillar: no post crosses the logo at rest.
+- Nothing is painted on the back wall. Its door texture is offset (`DOOR_OFF`) so
+  that every door post sits behind a pillar.
 - Pixel budget: the parking canvas renders at most ~2.4 million pixels
   (`PIXEL_BUDGET`, density capped at 2). A full-density antialiased buffer on an
   iPad made Safari drop the WebGL context, and the page fell back on the vector
@@ -303,7 +303,7 @@ Data lives in `src/data/*.ts` (`{ en, fr }` fields) and `src/i18n/{en,fr}.ts`.
    then `scene`: the real WebGL scene (SwiftShader, slow), reduced motion: ready,
    sheet, click in the empty parking, context loss; and each car built alone in
    the workshop without errors.
-   Everything but `scene` runs without WebGL (vector profile, fast) and waits
+   Everything but `scene` runs without WebGL (monogram fallback, fast) and waits
    on conditions rather than fixed delays. About 2 min in all.
 3. The earlier long suites (`t1-layout`, `t4-variants`, `t7-carousel`,
    `t2-desktop`, `t3-mobile`) lived in a session scratchpad and are lost; the

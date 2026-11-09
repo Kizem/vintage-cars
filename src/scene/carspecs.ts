@@ -63,7 +63,7 @@ export const SPECS: Record<CarModelKey, CarSpec> = {
     floor: [[-2.435, .36], [-2.3, .3], [-2.0, .265], [1.9, .265], [2.25, .33], [2.435, .45]],
     belt: [[-2.435, .6], [-2.4, .7], [-2.3, .74], [-2.1, .765], [-1.8, .785], [-1.3, .83], [-.85, .895], [0, .925], [1.0, .955], [1.6, .97], [2.0, .945], [2.3, .84], [2.435, .7]],
     deck: [[-2.435, .52], [-2.38, .57], [-2.2, .62], [-1.8, .69], [-1.3, .77], [-.95, .85], [-.8, .9], [0, .95], [1.6, 1.0], [1.95, .99], [2.2, .935], [2.36, .83], [2.435, .7]],
-    hw: [[-2.435, .4], [-2.4, .52], [-2.32, .63], [-2.2, .74], [-2.05, .825], [-1.85, .875], [-1.6, .89], [-.6, .895], [.6, .89], [1.4, .86], [1.9, .8], [2.2, .72], [2.38, .64], [2.435, .57]],
+    hw: [[-2.435, .44], [-2.41, .55], [-2.34, .66], [-2.27, .765], [-2.2, .825], [-2.1, .862], [-1.8, .885], [-.6, .895], [.6, .89], [1.4, .86], [1.9, .8], [2.2, .72], [2.38, .64], [2.435, .57]],
     wingRise: true,
     glass: { xa: -.84, xb: -.14, xc: 1.0, xd: 1.98, roofY: 1.445, baseY: .93, tailY: .99, tumble: .78, crown: .045 },
     lensColor: 0xf2cf5a,
@@ -122,15 +122,3 @@ export const SPECS: Record<CarModelKey, CarSpec> = {
     pillarChrome: true,
   },
 };
-
-/* Profil vectoriel simple, pour un affichage sans 3D */
-export function sideProfileSVG(key: CarModelKey) {
-  const s = SPECS[key]; const fl = curve(s.floor); const de = curve(s.deck); const gl = s.glass;
-  const roofY = curve([[gl.xa - .5, gl.baseY - .08], [gl.xa, gl.baseY], [gl.xb, gl.roofY - .012], [lerp(gl.xb, gl.xc, .35), gl.roofY], [gl.xc, gl.roofY - .022], [gl.xd, gl.tailY], [gl.xd + .4, gl.tailY - .1]]);
-  const X = (x: number) => (x + s.L / 2 + .1) * 100; const Y = (y: number) => (1.56 - y) * 100;
-  let top = ''; let bot = '';
-  const n = 90;
-  for (let i = 0; i <= n; i++) { const x = -s.L / 2 + s.L * i / n; top += `${i ? 'L' : 'M'}${X(x).toFixed(1)} ${Y(Math.max(de(x), roofY(x))).toFixed(1)} `; }
-  for (let i = n; i >= 0; i--) { const x = -s.L / 2 + s.L * i / n; bot += `L${X(x).toFixed(1)} ${Y(fl(x)).toFixed(1)} `; }
-  return { viewBox: `0 0 ${(s.L + .2) * 100} 156`, body: `${top}${bot}Z`, wheels: s.axles.map((x) => [X(x), Y(s.wheelR), s.wheelR * 100] as [number, number, number]) };
-}

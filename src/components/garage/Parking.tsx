@@ -6,7 +6,6 @@ import { CLOSE_FOCUS, currentIndex, isLocked, reducedMotion, setLock } from '../
 import type { ParkingCar, ParkingEngine } from '../../scene/parking';
 import { hasWebGL } from '../../scene/webgl';
 import { Arrow, Brand, Monogram, Odometer } from '../ui';
-import { CarProfile } from './CarProfile';
 import type { CarouselHandle } from './PhotoCarousel';
 import { VehicleSheet } from './VehicleSheet';
 
@@ -90,8 +89,7 @@ export function Parking({ open, onOpenChange }: { open: boolean; onOpenChange: (
     }
     canvas.addEventListener('webglcontextlost', fallBack);
     box.appendChild(canvas);
-    /* polices des numéros au sol et du logo peint sur le mur */
-    const font = document.fonts ? Promise.all(['700 200px "Stardos Stencil"', '400 200px "Cormorant Garamond"'].map((f) => document.fonts.load(f))).catch(() => undefined) : undefined;
+    const font = document.fonts?.load('700 200px "Stardos Stencil"').catch(() => undefined);
     Promise.all([import('../../scene/parking'), font])
       .then(([{ createParking }]) => {
         if (dead) return;
@@ -362,7 +360,7 @@ export function Parking({ open, onOpenChange }: { open: boolean; onOpenChange: (
     const dx = e.clientX - d.sx;
     if (Math.abs(dx) > 40) step(dx < 0 ? 1 : -1);
     else if (Math.abs(dx) < 8) {
-      /* toucher le profil ouvre la fiche ; fiche ouverte, toucher à côté la referme */
+      /* toucher le monogramme ouvre la fiche ; fiche ouverte, toucher à côté la referme */
       const onCar = !!(e.target as Element).closest?.('.em-profile');
       if (!open && onCar) openSheet();
       else if (open && !onCar) closeSheet(false);
@@ -390,18 +388,21 @@ export function Parking({ open, onOpenChange }: { open: boolean; onOpenChange: (
         <div
           className="em-parking__flat"
           role="img"
-          aria-label={l(car.rendering.alt)}
+          aria-label="Époque Motors"
           onPointerDown={flatDown}
           onPointerUp={flatUp}
           onPointerCancel={() => (drag.current = null)}
-          /* seul le survol du profil suspend l'alternance : le calque couvre toute la scène (clic dans le vide) */
+          /* seul le survol du monogramme suspend l'alternance : le calque couvre toute la scène (clic dans le vide) */
           onPointerMove={(e) => (flatHover.current = !!(e.target as Element).closest?.('.em-profile'))}
           onPointerLeave={() => {
             flatHover.current = false;
             drag.current = null;
           }}
         >
-          <CarProfile model={car.rendering.model} />
+          {/* sans 3D, pas de voiture dessinée : le monogramme de la maison ; le nom, dessous, ouvre la fiche */}
+          <span className="em-profile">
+            <Monogram />
+          </span>
         </div>
       )}
       {gl && (
@@ -437,8 +438,8 @@ export function Parking({ open, onOpenChange }: { open: boolean; onOpenChange: (
             {name}
           </button>
           <p className="em-parking__sub">
-            <span className="em-only-hover">{t.garage.slide}</span>
-            <span className="em-only-touch">{t.garage.slideTouch}</span>
+            <span className="em-only-hover">{gl ? t.garage.slide : t.garage.flatHint}</span>
+            <span className="em-only-touch">{gl ? t.garage.slideTouch : t.garage.flatHintTouch}</span>
           </p>
         </div>
         <button type="button" className="em-parking__arrow" aria-label={t.garage.next} onClick={() => step(1)}>

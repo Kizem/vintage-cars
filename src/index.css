@@ -143,10 +143,10 @@ button, input, select, textarea { font-variant-numeric: lining-nums; }
 .em-parking__gl:active { cursor: grabbing; }
 .em-parking__gl canvas { display: block; width: 100%; height: 100%; opacity: 0; transition: opacity 1.2s; }
 .em-parking.is-ready canvas { opacity: 1; }
-.em-parking__flat { position: absolute; left: 0; right: 0; top: 0; bottom: 0; padding-top: 26cqh; display: flex; align-items: flex-start; justify-content: center; color: var(--ivory); cursor: grab; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.em-parking__flat { position: absolute; left: 0; right: 0; top: 0; bottom: 0; padding-top: 22cqh; display: flex; align-items: flex-start; justify-content: center; color: var(--ivory); cursor: grab; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
 .em-parking__flat .em-profile { cursor: pointer; }
 .em-parking.is-open .em-parking__flat .em-profile { cursor: grab; }
-.em-profile { display: block; width: min(80%, 44rem); height: auto; }
+.em-profile { display: block; color: var(--ivory); }
 .em-parking__top { position: absolute; left: 16px; right: 16px; top: 3.1rem; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 1.5rem; text-align: center; pointer-events: none; transition: opacity .5s; }
 .em-parking__intro { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; color: var(--ivory); }
 .em-parking.is-ready .em-parking__intro { animation: em-intro 2.6s cubic-bezier(.4,0,.2,1) both; }
