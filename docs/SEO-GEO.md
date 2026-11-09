@@ -57,16 +57,25 @@ Chaque page répond à une famille de recherches. Elle commence par une réponse
 
 Adresses anglaises : les mêmes sans `/fr`.
 
-### Guides : les pages que les IA citent quand on leur demande « que faire à Paris »
+### Les Guides de Paris : les pages que les IA citent quand on leur demande « que faire à Paris »
 
-| Page | Adresse FR | Adresse EN |
-|---|---|---|
-| Les monuments de Paris en voiture ancienne (itinéraire en 8 étapes) | `/fr/guides/monuments-de-paris-en-voiture-ancienne/` | `/guides/paris-landmarks-by-vintage-car/` |
-| Paris la nuit | `/fr/guides/paris-la-nuit-en-voiture-ancienne/` | `/guides/paris-by-night-in-a-vintage-car/` |
-| Paris romantique | `/fr/guides/paris-romantique-en-voiture-ancienne/` | `/guides/romantic-paris-by-vintage-car/` |
-| Versailles en voiture ancienne | `/fr/guides/versailles-en-voiture-ancienne/` | `/guides/versailles-by-vintage-car/` |
-| Activités insolites à Paris : 10 idées | `/fr/guides/activites-insolites-a-paris/` | `/guides/unusual-things-to-do-in-paris/` |
-| Choisir sa voiture de mariage ancienne | `/fr/guides/choisir-sa-voiture-de-mariage-ancienne/` | `/guides/how-to-choose-a-vintage-wedding-car/` |
+Rubrique accessible depuis le menu principal (« Guides ») et depuis le chapitre N°2 de l’accueil.
+
+| Page | Adresse FR | Adresse EN | Recherches visées |
+|---|---|---|---|
+| Paris, autrement. (les cinq itinéraires) | `/fr/guides/` | `/guides/` | itinéraire touristique Paris, découvrir Paris autrement, Paris vintage tour |
+| N°01 Paris intemporel | `/fr/guides/paris-intemporel/` | `/guides/timeless-paris/` | balade en voiture ancienne Paris, première visite de Paris, classic car tour Paris |
+| N°02 L’élégance de la rive gauche | `/fr/guides/elegance-rive-gauche/` | `/guides/left-bank-elegance/` | rive gauche Paris balade, Butte-aux-Cailles, Left Bank tour |
+| N°03 Les villages de l’Est parisien | `/fr/guides/villages-est-parisien/` | `/guides/villages-of-east-paris/` | Paris insolite, Belleville, Buttes-Chaumont, hidden Paris |
+| N°04 Paris côté jardins et perspectives | `/fr/guides/jardins-perspectives/` | `/guides/gardens-and-perspectives/` | spots photo Paris, Bir-Hakeim, vintage car photoshoot Paris |
+| N°05 Paris bohème et confidentiel | `/fr/guides/paris-boheme-confidentiel/` | `/guides/bohemian-paris/` | canal Saint-Martin balade, Paris bohème, vintage car experience Paris |
+| Activités insolites à Paris : 10 idées | `/fr/guides/activites-insolites-a-paris/` | `/guides/unusual-things-to-do-in-paris/` | activités insolites Paris, unusual things to do in Paris |
+| Choisir sa voiture de mariage ancienne | `/fr/guides/choisir-sa-voiture-de-mariage-ancienne/` | `/guides/how-to-choose-a-vintage-wedding-car/` | choisir voiture de mariage |
+
+Chaque itinéraire a sa carte interactive (OpenStreetMap, chargée au clic), ses données structurées
+(`TouristTrip` avec les coordonnées de chaque étape, `Article`, fil d’Ariane) et des liens vers les autres
+guides et les pages de services. Les quatre anciens parcours (monuments, Paris la nuit, Paris romantique,
+Versailles) redirigent vers les nouvelles pages.
 
 ### Informations
 
@@ -118,8 +127,8 @@ l’entreprise pour les moteurs.
 5. **Avis clients.** Après chaque expérience, demande un avis Google, puis TripAdvisor. Les assistants IA
    s’appuient beaucoup sur le volume et le contenu des avis.
 6. **Plateformes d’activités**, très citées par les IA pour « things to do in Paris » : TripAdvisor (fiche
-   « Activités »), GetYourGuide, Viator, Airbnb Expériences. Une fiche par expérience (visite des monuments,
-   Paris la nuit, Versailles), avec un lien vers le site.
+   « Activités »), GetYourGuide, Viator, Airbnb Expériences. Une fiche par itinéraire des Guides de Paris
+   (Paris intemporel, rive gauche, Est parisien, jardins et perspectives, Paris bohème), avec un lien vers sa page.
 7. **Annuaires mariage** : Mariages.net, Zankyou, et les annuaires de prestataires des lieux de réception.
 8. **Apple Business Connect** (Plans, Siri), **Bing Places**, **PagesJaunes**. Partout, le même nom
    « Époque Motors » et la même description. Tu peux reprendre telle quelle la phrase de `llms.txt`.
@@ -145,8 +154,16 @@ Les pages respectent les règles du site : pas de prix, pas de disponibilités, 
 pas de superlatifs. Quelques points découlent toutefois des informations existantes et demandent ta
 confirmation. Corrige-les dans `src/content/` si besoin.
 
-- **Versailles** (guide et mention dans « Visites ») : « Paris et ses environs » inclut-il Versailles ?
-- **Soirées / Paris la nuit** : les expériences en soirée sont-elles possibles ?
+- **Itinéraires** : ils reprennent ton brief. Ce que j’ai ajouté, à vérifier : quelques repères bien établis
+  (obélisque de Louxor, pont construit pour l’Exposition de 1900, colonne de Juillet, temple de la Sibylle aux
+  Buttes-Chaumont, entrée de métro d’Hector Guimard à la porte Dauphine, réplique de la statue de la Liberté à
+  l’île aux Cygnes, rotonde de la Villette) et la rue de chaque restaurant cité (Chez Gladines rue des
+  Cinq-Diamants, Le Temps des Cerises rue de la Butte-aux-Cailles, La Marine quai de Valmy, Hôtel du Nord quai
+  de Jemmapes). Les coordonnées des étapes, dans `src/content/routes.ts`, placent chaque lieu sur la carte.
+- **Photos des itinéraires** : à fournir. Les cinq pages réutilisent pour l’instant des visuels du site
+  (illustrations signalées comme telles et photos de tes voitures). Il faut une photo par itinéraire, avec ses
+  droits d’utilisation et les plaques floutées : idéalement tes voitures sur place (pont Alexandre III,
+  Butte-aux-Cailles, Belleville, Bir-Hakeim, canal Saint-Martin).
 - **Point de rendez-vous à l’hôtel** : présenté comme une possibilité (« votre hôtel, par exemple »).
 - **Décoration de la voiture** (mariage) : la page dit seulement que vous en convenez ensemble.
 - **Coordination avec le photographe** (demande en mariage, mariage) : formulée comme un ajustement de

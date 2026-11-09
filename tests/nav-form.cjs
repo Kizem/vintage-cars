@@ -20,7 +20,7 @@ const at = (id) => { const s = document.getElementById(id); return !!s && Math.a
   await p.keyboard.press('PageDown');
   check(await until(p, at, 'sortie-2'), 'PageDown : section suivante');
   check(await until(p, () => document.querySelector('.em-top')?.classList.contains('is-shown')), 'le bouton haut de page paraît');
-  const ids = await p.$$eval('.em-nav ul li:not(.em-nav__lang) a', (as) => as.map((a) => a.getAttribute('href').slice(1)));
+  const ids = await p.$$eval('.em-nav ul li:not(.em-nav__lang):not(.em-nav__page) a', (as) => as.map((a) => a.getAttribute('href').slice(1)));
   for (const id of ids) {
     await p.click(`.em-nav a[href="#${id}"]`);
     check(await until(p, at, id), `menu : ${id}`);

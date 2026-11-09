@@ -18,6 +18,7 @@ export const fr: Dictionary = {
       experiences: 'Expériences',
       about: 'À propos',
       write: 'Écrire',
+      guides: 'Guides',
     },
     otherLanguage: 'English',
     backToTop: 'Revenir en haut de la page',
@@ -56,9 +57,10 @@ export const fr: Dictionary = {
   },
   chapter: {
     number: 'N°{n}',
+    guides: 'Les Guides de Paris',
     more: {
       events: 'Mariages, demandes et shootings',
-      'private-tours': 'Nos parcours dans Paris',
+      'private-tours': 'Les visites privées en détail',
       chauffeured: 'Le service avec chauffeur en détail',
     },
   },

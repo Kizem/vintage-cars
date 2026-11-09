@@ -22,17 +22,21 @@ export type PageId =
   | 'car-ds'
   | 'car-w115'
   | 'guides'
-  | 'guide-landmarks'
-  | 'guide-night'
-  | 'guide-romantic'
-  | 'guide-versailles'
+  | 'route-intemporel'
+  | 'route-rive-gauche'
+  | 'route-est'
+  | 'route-jardins'
+  | 'route-boheme'
   | 'guide-things-to-do'
   | 'guide-wedding-car'
   | 'faq'
   | 'about';
 
-/** service: an offer · hub: lists its children · car: one car of the collection · guide: an article or a route. */
-export type PageKind = 'service' | 'hub' | 'car' | 'guide' | 'faq' | 'about';
+/**
+ * service: an offer · hub: lists its children · car: one car of the collection · guide: an article ·
+ * route: one itinerary of « Les Guides de Paris » (practical details, stops, map).
+ */
+export type PageKind = 'service' | 'hub' | 'car' | 'guide' | 'route' | 'faq' | 'about';
 
 /** One stop of a route (rendered as an ordered list, and as the itinerary of a TouristTrip). */
 export interface Stop {
@@ -46,6 +50,32 @@ export interface Block {
   list?: string[];
   /** A route: the stops, in order. */
   stops?: Stop[];
+}
+
+/** One itinerary of « Les Guides de Paris », in one language. Durations and distances are editorial estimates. */
+export interface RouteCopy {
+  /** Number shown as « N°01 ». */
+  n: number;
+  /** Short name (« Paris intemporel »). */
+  name: string;
+  /** Who the route is for (« Première découverte de Paris »). */
+  mood: string;
+  duration: string;
+  distance: string;
+  start: string;
+  end: string;
+  /** The owner's introduction, quoted as written (exempt from the copy checks). */
+  intro: string;
+  /** Description on the guides page. */
+  teaser: string;
+  /** Presentation of the route. */
+  course: string[];
+  /** The stops, in order; their coordinates are in Page.geo. */
+  stops: Stop[];
+  photo: Stop[];
+  /** Suggested places to eat: only names supplied by the owner. */
+  food: Stop[];
+  tips: string[];
 }
 
 export interface QA {
@@ -70,6 +100,9 @@ export interface PageCopy {
   faq?: QA[];
   /** Label of the enquiry action. */
   cta?: string;
+  /** The owner's subtitle under the h1, quoted as written (exempt from the copy checks). */
+  subtitle?: string;
+  route?: RouteCopy;
 }
 
 export interface Page extends Localized<PageCopy> {
@@ -87,4 +120,6 @@ export interface Page extends Localized<PageCopy> {
   related: PageId[];
   /** Last editorial update (ISO date): dateModified and sitemap lastmod. */
   updated: string;
+  /** Route pages: latitude and longitude of each stop, in the order of route.stops. */
+  geo?: [number, number][];
 }

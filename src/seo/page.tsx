@@ -21,11 +21,11 @@ export const ui = (l: Locale): DocUi =>
   l === 'fr' ? (Object.fromEntries(Object.entries(docUi.fr).map(([k, v]) => [k, frTypo(v)])) as DocUi) : docUi.en;
 
 /** Pages of the top menu, in order. */
-const MENU: PageId[] = ['collection', 'events', 'tours', 'chauffeur', 'guides', 'faq'];
+export const MENU: PageId[] = ['collection', 'events', 'tours', 'chauffeur', 'guides', 'faq'];
 const FOOT: Record<'footExperiences' | 'footCollection' | 'footGuides' | 'footInfo', PageId[]> = {
   footExperiences: ['events', 'wedding', 'proposal', 'photoshoot', 'tours', 'chauffeur', 'rental'],
   footCollection: ['collection', 'car-ds', 'car-504', 'car-w115'],
-  footGuides: ['guides', 'guide-landmarks', 'guide-night', 'guide-romantic', 'guide-versailles', 'guide-things-to-do', 'guide-wedding-car'],
+  footGuides: ['guides', 'route-intemporel', 'route-rive-gauche', 'route-est', 'route-jardins', 'route-boheme', 'guide-things-to-do', 'guide-wedding-car'],
   footInfo: ['faq', 'about'],
 };
 
@@ -35,10 +35,10 @@ export interface Ctx {
   path: string;
 }
 
-const href = (c: Ctx, to: string) => relHref(c.path, to);
-const pageHref = (c: Ctx, id: PageId) => href(c, getPage(id)[c.l].path);
+export const href = (c: Ctx, to: string) => relHref(c.path, to);
+export const pageHref = (c: Ctx, id: PageId) => href(c, getPage(id)[c.l].path);
 
-function Img({ c, a, sizes, eager, cls }: { c: Ctx; a: MediaAsset; sizes: string; eager?: boolean; cls?: string }) {
+export function Img({ c, a, sizes, eager, cls }: { c: Ctx; a: MediaAsset; sizes: string; eager?: boolean; cls?: string }) {
   return (
     <img
       className={cls}
@@ -179,7 +179,7 @@ function Facts({ c, p }: { c: Ctx; p: Page }) {
   );
 }
 
-function Section({ b }: { b: Block }) {
+export function Section({ b }: { b: Block }) {
   return (
     <section className="dp-block">
       <h2>{b.h2}</h2>
@@ -273,7 +273,7 @@ function CarSheet({ c, v }: { c: Ctx; v: Vehicle }) {
   );
 }
 
-function Index({ c, items }: { c: Ctx; items: Page[] }) {
+export function Index({ c, items }: { c: Ctx; items: Page[] }) {
   return (
     <ul className="dp-index">
       {items.map((q) => (
@@ -304,7 +304,7 @@ function Faq({ c, items, title }: { c: Ctx; items: { q: string; a: string }[]; t
   );
 }
 
-function Breadcrumb({ c, p }: { c: Ctx; p: Page }) {
+export function Breadcrumb({ c, p }: { c: Ctx; p: Page }) {
   const chain: Page[] = [];
   for (let q: Page | undefined = p; q; q = q.parent ? getPage(q.parent) : undefined) chain.unshift(q);
   const t = ui(c.l);

@@ -13,7 +13,11 @@ const doc = manifest['src/seo/doc.css'];
 if (!doc) throw new Error('prerender: src/seo/doc.css missing from the manifest');
 const docCss = doc.file.endsWith('.css') ? doc.file : doc.css?.[0];
 
-const files = buildSite({ siteUrl: process.env.VITE_SITE_URL, template: readFileSync(join(dist, 'index.html'), 'utf8'), docCss });
+const mapEntry = manifest['src/seo/map.ts'];
+if (!mapEntry) throw new Error('prerender: src/seo/map.ts missing from the manifest');
+const map = { js: mapEntry.file, css: mapEntry.css ?? [] };
+
+const files = buildSite({ siteUrl: process.env.VITE_SITE_URL, template: readFileSync(join(dist, 'index.html'), 'utf8'), docCss, map });
 for (const [path, content] of Object.entries(files)) {
   mkdirSync(dirname(join(dist, path)), { recursive: true });
   writeFileSync(join(dist, path), content);

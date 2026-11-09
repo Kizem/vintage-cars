@@ -5,11 +5,12 @@ import { en } from '../i18n/en';
 import { fr } from '../i18n/fr';
 import { locales, type Locale } from '../i18n/locales';
 import { llmsFullTxt, llmsTxt, robotsTxt, sitemapXml } from './files';
-import { docCsp, headTags, ogImage } from './head';
+import { docCsp, headTags, ogImage, routeCsp } from './head';
 import { renderHome } from './home';
 import { Monogram, NotFound, renderBody } from './page';
+import { renderGuides } from './routes';
 import { homeGraph, pageGraph, type Abs } from './schema';
-import { homePath, prefixFor, siteUrl } from './urls';
+import { homePath, prefixFor, relHref, siteUrl } from './urls';
 
 /**
  * Writes the whole site at build time (scripts/prerender.mjs calls it after `vite build`):
@@ -30,6 +31,39 @@ export interface BuildInput {
   template: string;
   /** Stylesheet of the content pages, from the site root ('assets/doc-xxxx.css'). */
   docCss: string;
+  /** Script and stylesheets of the route map (src/seo/map.ts), from the site root. */
+  map?: { js: string; css: string[] };
+}
+
+/**
+ * Addresses of the four routes replaced by « Les Guides de Paris » (November 2026): each old address
+ * sends visitors and search engines to its successor (GitHub Pages cannot answer with a 301).
+ */
+export const REDIRECTS: Record<string, string> = {
+  'guides/paris-landmarks-by-vintage-car/': 'guides/timeless-paris/',
+  'fr/guides/monuments-de-paris-en-voiture-ancienne/': 'fr/guides/paris-intemporel/',
+  'guides/paris-by-night-in-a-vintage-car/': 'guides/',
+  'fr/guides/paris-la-nuit-en-voiture-ancienne/': 'fr/guides/',
+  'guides/romantic-paris-by-vintage-car/': 'guides/',
+  'fr/guides/paris-romantique-en-voiture-ancienne/': 'fr/guides/',
+  'guides/versailles-by-vintage-car/': 'guides/',
+  'fr/guides/versailles-en-voiture-ancienne/': 'fr/guides/',
+};
+
+function redirectHtml(from: string, to: string, abs: Abs): string {
+  const rel = relHref(from, to);
+  return `<!doctype html>
+<html lang="${from.startsWith('fr/') ? 'fr' : 'en'}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="robots" content="noindex, follow" />
+    <link rel="canonical" href="${abs(to)}" />
+    <meta http-equiv="refresh" content="0; url=${rel}" />
+    <title>${site.name}</title>
+  </head>
+  <body><p><a href="${rel}">${abs(to)}</a></p></body>
+</html>
+`;
 }
 
 const dict = { en, fr };
@@ -59,9 +93,10 @@ function homeHtml(template: string, l: Locale, abs: Abs): string {
   return html;
 }
 
-function docHtml(p: Page, l: Locale, abs: Abs, docCss: string): string {
+function docHtml(p: Page, l: Locale, abs: Abs, docCss: string, map?: BuildInput['map']): string {
   const c = p[l];
   const prefix = prefixFor(c.path);
+  const withMap = p.kind === 'route' && map;
   const head = headTags({
     locale: l,
     title: c.title,
@@ -70,21 +105,23 @@ function docHtml(p: Page, l: Locale, abs: Abs, docCss: string): string {
     alternates: { en: abs(p.en.path), fr: abs(p.fr.path) },
     prefix,
     image: ogImage(abs, p.image, l),
-    type: p.kind === 'guide' ? 'article' : 'website',
-    modified: p.kind === 'guide' ? p.updated : undefined,
+    type: p.kind === 'guide' || p.kind === 'route' ? 'article' : 'website',
+    modified: p.kind === 'guide' || p.kind === 'route' ? p.updated : undefined,
     jsonld: pageGraph(abs, p, l, l === 'fr' ? 'Accueil' : 'Home'),
-    extra: `<link rel="stylesheet" href="${prefix}${docCss}" />`,
+    extra: [docCss, ...(withMap ? map.css : [])].map((f) => `<link rel="stylesheet" href="${prefix}${f}" />`).join('\n    '),
   });
+  const body = p.kind === 'route' || p.id === 'guides' ? renderGuides(p, l) : renderBody(p, l);
+  const script = withMap ? `<script type="module" src="${prefix}${map.js}"></script>` : '';
   return `<!doctype html>
 <html lang="${l}">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta http-equiv="Content-Security-Policy" content="${docCsp}" />
+    <meta http-equiv="Content-Security-Policy" content="${withMap ? routeCsp : docCsp}" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     ${head}
   </head>
-  <body class="dp">${renderBody(p, l)}</body>
+  <body class="dp">${body}${script}</body>
 </html>
 `;
 }
@@ -121,13 +158,14 @@ function notFoundHtml(root: string, docCss: string): string {
 `;
 }
 
-export function buildSite({ siteUrl: raw, template, docCss }: BuildInput): Record<string, string> {
+export function buildSite({ siteUrl: raw, template, docCss, map }: BuildInput): Record<string, string> {
   if (!template.includes('<!--em:head-->') || !template.includes('<!--em:app-->')) throw new Error('index.html: markers missing');
   const root = siteUrl(raw);
   const abs: Abs = (p) => root + p;
   const files: Record<string, string> = {};
   for (const l of locales) files[`${homePath(l)}index.html`] = homeHtml(template, l, abs);
-  for (const p of pages) for (const l of locales) files[`${p[l].path}index.html`] = docHtml(p, l, abs, docCss);
+  for (const p of pages) for (const l of locales) files[`${p[l].path}index.html`] = docHtml(p, l, abs, docCss, map);
+  for (const [from, to] of Object.entries(REDIRECTS)) files[`${from}index.html`] = redirectHtml(from, to, abs);
   files['404.html'] = notFoundHtml(root, docCss);
   files['sitemap.xml'] = sitemapXml(abs, HOME_UPDATED);
   files['robots.txt'] = robotsTxt(abs);

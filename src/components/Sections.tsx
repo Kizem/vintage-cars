@@ -4,7 +4,7 @@ import type { Experience } from '../data/types';
 import { fill, useI18n } from '../i18n/I18nContext';
 import { EnquirySentence } from './EnquirySentence';
 import { SectionImage } from './SectionImage';
-import { experienceLink, pageLinks } from '../data/links';
+import { experienceLink, pageLinks, routeLinks } from '../data/links';
 import { asset } from '../lib/paths';
 import { ActionLink, MoreLink } from './ui';
 
@@ -12,7 +12,7 @@ import { ActionLink, MoreLink } from './ui';
 
 /** Un chapitre, à la manière d'un portfolio : N° et titre en haut, texte et action plus bas, la photo entière à côté. */
 export function Chapter({ experience: x, n, inert }: { experience: Experience; n: number; inert: boolean }) {
-  const { t, l } = useI18n();
+  const { t, l, locale } = useI18n();
   const { startEnquiry } = useEnquiry();
   const id = `sortie-${n}`;
   return (
@@ -43,6 +43,21 @@ export function Chapter({ experience: x, n, inert }: { experience: Experience; n
           <p className="em-text em-exp__short">{l(x.summary)}</p>
         </div>
         <ActionLink onClick={() => startEnquiry({ experience: x.id })}>{l(x.cta)}</ActionLink>
+        {x.id === 'private-tours' && (
+          /* chapitre N°2 : les cinq itinéraires des Guides de Paris (le détail disparaît quand la place manque) */
+          <div className="em-guides">
+            <a className="em-more em-guides__all" href={asset(pageLinks.guides[locale])}>
+              {t.chapter.guides}
+            </a>
+            <ul className="em-guides__list">
+              {routeLinks.map((r) => (
+                <li key={r.to}>
+                  <a href={asset(pageLinks[r.to][locale])}>{l(r.name)}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
         <MoreLink to={experienceLink[x.id]}>{t.chapter.more[x.id]}</MoreLink>
       </div>
       <div className="em-exp__media">

@@ -31,7 +31,7 @@ export const sectionIds = ['garage', 'sortie-1', 'sortie-2', 'sortie-3', 'savoir
 export type SectionId = (typeof sectionIds)[number];
 
 /**
- * Top menu (four entries on purpose). A section without its own entry
+ * Top menu: four sections (on purpose), plus the « Guides » link in TopNav. A section without its own entry
  * underlines the entry of its chapter (data-part).
  */
 export const primaryNav: { key: keyof Dictionary['nav']['items']; id: SectionId }[] = [

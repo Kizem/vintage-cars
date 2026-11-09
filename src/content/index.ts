@@ -1,6 +1,7 @@
 import { collectionPages } from './collection';
 import { guidePages } from './guides';
 import { infoPages } from './info';
+import { routePages } from './routes';
 import { servicePages } from './services';
 import type { Page, PageCopy, PageId } from './types';
 
@@ -19,7 +20,7 @@ function deep<T>(v: T, f: (s: string) => string): T {
 }
 
 /** Every content page, in menu order. */
-export const pages: Page[] = [...servicePages, ...collectionPages, ...guidePages, ...infoPages].map((p) => ({
+export const pages: Page[] = [...servicePages, ...collectionPages, guidePages[0], ...routePages, ...guidePages.slice(1), ...infoPages].map((p) => ({
   ...p,
   fr: deep<PageCopy>(p.fr, frTypo),
 }));

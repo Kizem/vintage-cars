@@ -55,9 +55,10 @@ export default defineConfig(({ mode, isSsrBuild }) => {
           // The parking chunk is three.js (about 140 kB gzipped), loaded on demand
           // after the first paint. The initial bundle stays well under this limit.
           chunkSizeWarningLimit: 600,
-          // The stylesheet of the content pages is its own entry; the manifest gives its hashed name to the prerender.
+          // The stylesheet of the content pages and the map of the route pages are their own entries; the manifest
+          // gives their hashed names to the prerender.
           manifest: true,
-          rollupOptions: { input: { index: 'index.html', doc: 'src/seo/doc.css' } },
+          rollupOptions: { input: { index: 'index.html', doc: 'src/seo/doc.css', map: 'src/seo/map.ts' } },
         },
     test: {
       environment: 'jsdom',

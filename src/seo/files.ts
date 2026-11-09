@@ -97,7 +97,7 @@ export function sitemapXml(abs: Abs, homeUpdated: string): string {
 const GROUPS: { title: Record<Locale, string>; filter: (p: Page) => boolean }[] = [
   { title: { en: 'Experiences', fr: 'Expériences' }, filter: (p) => p.kind === 'service' || p.id === 'events' },
   { title: { en: 'The collection', fr: 'La collection' }, filter: (p) => p.kind === 'car' || p.id === 'collection' },
-  { title: { en: 'Guides and routes in Paris', fr: 'Guides et parcours à Paris' }, filter: (p) => p.kind === 'guide' || p.id === 'guides' },
+  { title: { en: 'Guides and routes in Paris', fr: 'Guides et parcours à Paris' }, filter: (p) => p.kind === 'guide' || p.kind === 'route' || p.id === 'guides' },
   { title: { en: 'Information', fr: 'Informations' }, filter: (p) => p.kind === 'faq' || p.kind === 'about' },
 ];
 
@@ -157,6 +157,39 @@ export function llmsFullTxt(abs: Abs): string {
     for (const p of pages) {
       const c = p[l];
       out.push(`## ${c.h1}`, '', `URL: ${abs(c.path)}`, '', c.lead, '');
+      if (c.subtitle) out.push(c.subtitle, '');
+      if (c.route) {
+        const r = c.route;
+        const fr = l === 'fr';
+        const k = (a: string, b: string) => `- ${fr ? `${a}\u00a0:` : `${b}:`}`;
+        out.push(
+          r.intro,
+          '',
+          `${k('Durée', 'Duration')} ${r.duration}`,
+          `${k('Distance', 'Distance')} ${r.distance}`,
+          `${k('Départ', 'Start')} ${r.start}`,
+          `${k('Arrivée', 'Finish')} ${r.end}`,
+          `${k('Ambiance', 'Mood')} ${r.mood}`,
+          '',
+          ...r.course.flatMap((x) => [x, '']),
+          `### ${fr ? 'Étapes' : 'Stops'}`,
+          '',
+          ...r.stops.map((s, i) => `${i + 1}. **${s.name}**${fr ? '\u00a0:' : ':'} ${s.text}`),
+          '',
+          `### ${fr ? 'Spots photo' : 'Photo spots'}`,
+          '',
+          ...r.photo.map((s) => `- **${s.name}**${fr ? '\u00a0:' : ':'} ${s.text}`),
+          '',
+          `### ${fr ? 'Pauses gourmandes (suggestions, non comprises)' : 'Places to eat (suggestions, not included)'}`,
+          '',
+          ...r.food.map((s) => `- **${s.name}**${fr ? '\u00a0:' : ':'} ${s.text}`),
+          '',
+          `### ${fr ? 'Conseils' : 'Tips'}`,
+          '',
+          ...r.tips.map((x) => `- ${x}`),
+          '',
+        );
+      }
       for (const b of c.sections) {
         out.push(`### ${b.h2}`, '');
         b.p?.forEach((x) => out.push(x, ''));

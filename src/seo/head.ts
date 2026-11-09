@@ -85,3 +85,10 @@ export const docCsp = [
   "form-action 'none'",
   'upgrade-insecure-requests',
 ].join('; ');
+
+/**
+ * Route pages: their own map script, and the OpenStreetMap tiles once the visitor has asked for the map.
+ */
+export const routeCsp = docCsp
+  .replace("script-src 'none'", "script-src 'self'")
+  .replace("img-src 'self' data:", "img-src 'self' data: https://tile.openstreetmap.org");

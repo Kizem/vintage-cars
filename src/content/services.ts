@@ -238,7 +238,7 @@ export const servicePages: Page[] = [
     experience: 'events',
     cars: ['citroen-ds', 'mercedes-benz-classic', 'peugeot-504'],
     image: img('private-tours'),
-    related: ['guide-romantic', 'guide-night', 'tours', 'car-ds'],
+    related: ['guides', 'route-jardins', 'tours', 'car-ds'],
     updated: '2026-11-09',
     en: {
       path: 'marriage-proposal-vintage-car-paris/',
@@ -340,7 +340,7 @@ export const servicePages: Page[] = [
     experience: 'events',
     cars: ['citroen-ds', 'peugeot-504', 'mercedes-benz-classic'],
     image: car('citroen-ds', 1),
-    related: ['wedding', 'guide-landmarks', 'collection', 'car-ds'],
+    related: ['wedding', 'route-jardins', 'collection', 'car-ds'],
     updated: '2026-11-09',
     en: {
       path: 'vintage-car-photoshoot-paris/',
@@ -457,13 +457,13 @@ export const servicePages: Page[] = [
     experience: 'private-tours',
     cars: ['citroen-ds', 'peugeot-504', 'mercedes-benz-classic'],
     image: img('private-tours'),
-    related: ['guide-landmarks', 'guide-night', 'guide-romantic', 'guide-versailles', 'chauffeur'],
+    related: ['guides', 'route-intemporel', 'route-rive-gauche', 'route-boheme', 'chauffeur'],
     updated: '2026-11-09',
     en: {
       path: 'vintage-car-tour-paris/',
       title: 'Private Vintage Car Tour of Paris, with Chauffeur',
       description:
-        'Discover Paris on a private tour aboard a 1970s classic car with chauffeur: Eiffel Tower, Champs-Élysées, the Seine and Montmartre. In English or French.',
+        'Discover Paris on a private tour in a 1970s classic car with chauffeur: the Eiffel Tower, the Left Bank, Belleville, the Canal Saint-Martin. In English or French.',
       h1: 'Private vintage car tours of Paris',
       nav: 'Paris tours',
       lead: 'Époque Motors offers private tours of Paris aboard 1970s classic cars, a Citroën DS 21 Henri Chapron, a Peugeot 504 GL or a Mercedes W115 220D, driven by a chauffeur. Tours last from one hour to a full day, in English or in French, along a route agreed with you.',
@@ -476,14 +476,15 @@ export const servicePages: Page[] = [
           ],
         },
         {
-          h2: 'Routes to choose from',
+          h2: 'Five routes from our Paris Guides',
           list: [
-            'The Paris landmarks: Concorde, Champs-Élysées, Arc de Triomphe, Trocadéro, the Eiffel Tower, the Invalides and the Louvre.',
-            'Paris by night: the illuminated monuments and the sparkling Eiffel Tower.',
-            'Romantic Paris: the islands, the bridges and the quieter squares.',
-            'Versailles: a day out to the château, just outside Paris.',
+            'Timeless Paris: from the Concorde to the Champ-de-Mars, by Pont Alexandre III (about 1 hr 30).',
+            'Left Bank Elegance: from Saint-Sulpice to Parc Montsouris, by the Butte-aux-Cailles (about 2 hrs).',
+            'The Villages of East Paris: from the Bastille to the Buttes-Chaumont, by Belleville (about 2 hrs 30).',
+            'Gardens and Perspectives: from the Trocadéro to the Île aux Cygnes, by the Pont de Bir-Hakeim (about 1 hr 45).',
+            'Bohemian Paris: from the Opéra Garnier to the Bassin de la Villette, along the Canal Saint-Martin (about 3 hrs).',
           ],
-          p: ['Each route is a starting point: we adapt it to your time, your interests and your meeting point.'],
+          p: ['Each route is a starting point: we adapt it to your time, your interests, the traffic of the day and your meeting point.'],
         },
         {
           h2: 'Who it is for',
@@ -501,7 +502,7 @@ export const servicePages: Page[] = [
       faq: [
         {
           q: 'How long does a vintage car tour of Paris last?',
-          a: 'From one hour to a full day. One hour is enough for a loop of the central landmarks; a longer tour leaves time for stops, Montmartre or Versailles.',
+          a: 'From one hour to a full day. The five routes of our Paris Guides last from about 1 hr 30 to 3 hrs 30, stops included.',
         },
         {
           q: 'Is the tour guided?',
@@ -522,7 +523,7 @@ export const servicePages: Page[] = [
       path: 'fr/visite-paris-voiture-ancienne/',
       title: 'Visite privée de Paris en voiture ancienne avec chauffeur',
       description:
-        'Découvrez Paris lors d’une visite privée à bord d’une voiture des années 1970 avec chauffeur : tour Eiffel, Champs-Élysées, Seine, Montmartre. En français.',
+        'Découvrez Paris lors d’une visite privée en voiture des années 1970 avec chauffeur : tour Eiffel, rive gauche, Belleville, canal Saint-Martin. En français.',
       h1: 'Visites privées de Paris en voiture de collection',
       nav: 'Visites de Paris',
       lead: 'Époque Motors propose des visites privées de Paris à bord de voitures de collection des années 1970, une Citroën DS 21 Henri Chapron, une Peugeot 504 GL ou une Mercedes W115 220D, conduites par un chauffeur. Une visite dure d’une heure à une journée, en français ou en anglais, selon un itinéraire convenu avec vous.',
@@ -535,14 +536,15 @@ export const servicePages: Page[] = [
           ],
         },
         {
-          h2: 'Des parcours au choix',
+          h2: 'Cinq itinéraires de nos Guides de Paris',
           list: [
-            'Les monuments de Paris : Concorde, Champs-Élysées, Arc de Triomphe, Trocadéro, tour Eiffel, Invalides et Louvre.',
-            'Paris la nuit : les monuments illuminés et le scintillement de la tour Eiffel.',
-            'Paris romantique : les îles, les ponts et les places plus secrètes.',
-            'Versailles : une sortie vers le château, aux portes de Paris.',
+            'Paris intemporel : de la Concorde au Champ-de-Mars, par le pont Alexandre III (environ 1 h 30).',
+            'L’élégance de la rive gauche : de Saint-Sulpice au parc Montsouris, par la Butte-aux-Cailles (environ 2 h).',
+            'Les villages de l’Est parisien : de la Bastille aux Buttes-Chaumont, par Belleville (environ 2 h 30).',
+            'Paris côté jardins et perspectives : du Trocadéro à l’île aux Cygnes, par le pont de Bir-Hakeim (environ 1 h 45).',
+            'Paris bohème et confidentiel : de l’Opéra Garnier au bassin de la Villette, le long du canal Saint-Martin (environ 3 h).',
           ],
-          p: ['Chaque parcours est un point de départ : nous l’adaptons à votre temps, à vos envies et à votre point de rendez-vous.'],
+          p: ['Chaque itinéraire est un point de départ : nous l’adaptons à votre temps, à vos envies, à la circulation du jour et à votre point de rendez-vous.'],
         },
         {
           h2: 'Pour qui',
@@ -560,7 +562,7 @@ export const servicePages: Page[] = [
       faq: [
         {
           q: 'Combien de temps dure une visite de Paris en voiture ancienne ?',
-          a: 'D’une heure à une journée entière. Une heure suffit pour une boucle des monuments du centre ; une visite plus longue laisse le temps des arrêts, de Montmartre ou de Versailles.',
+          a: 'D’une heure à une journée entière. Les cinq itinéraires de nos Guides de Paris durent d’environ 1 h 30 à 3 h 30, arrêts compris.',
         },
         {
           q: 'La visite est-elle guidée ?',

@@ -11,7 +11,8 @@ const pages = [];
 (function walk(dir) {
   for (const f of fs.readdirSync(dir, { withFileTypes: true })) {
     if (f.isDirectory() && !['assets', 'images'].includes(f.name)) walk(path.join(dir, f.name));
-    else if (f.name === 'index.html' && dir !== dist && dir !== path.join(dist, 'fr')) pages.push(path.relative(dist, dir).split(path.sep).join('/') + '/');
+    /* les anciennes adresses (redirections) sont vérifiées par les tests unitaires */
+    else if (f.name === 'index.html' && dir !== dist && dir !== path.join(dist, 'fr') && !fs.readFileSync(path.join(dir, f.name), 'utf8').includes('http-equiv="refresh"')) pages.push(path.relative(dist, dir).split(path.sep).join('/') + '/');
   }
 })(dist);
 
@@ -45,6 +46,28 @@ const pages = [];
     }
     check(!errs.length, `${w} : aucune erreur (${errs.slice(0, 3).join(' | ')})`);
   }
+  /* la carte des itinéraires : rien de chargé avant le clic, puis une étape numérotée par arrêt (les tuiles
+     d'OpenStreetMap peuvent manquer hors ligne : seules les erreurs de script comptent) */
+  const routes = pages.filter((u) => fs.readFileSync(path.join(dist, u, 'index.html'), 'utf8').includes('class="dp-map"'));
+  check(routes.length === 10, `${routes.length} pages d'itinéraire avec carte`);
+  for (const [w, h] of [[390, 844], [1280, 800]]) {
+    const p = await (await b.newContext({ viewport: { width: w, height: h }, hasTouch: w < 700 })).newPage();
+    const errs = [];
+    p.on('pageerror', (e) => errs.push(String(e)));
+    for (const u of routes) {
+      const leaflet = [];
+      p.on('request', (r) => /map-view|tile\.openstreetmap/.test(r.url()) && leaflet.push(r.url()));
+      await p.goto(BASE + u, { waitUntil: 'load' });
+      check(!leaflet.length, `${w} ${u} : rien de chargé avant le clic`);
+      const n = await p.$eval('.dp-map', (m) => JSON.parse(m.dataset.stops).length);
+      await p.click('.dp-map__show');
+      const ok = await p.waitForFunction((k) => document.querySelectorAll('.dp-pin').length === k, n, { timeout: 10000 }).then(() => true, () => false);
+      check(ok, `${w} ${u} : ${n} étapes sur la carte`);
+      p.removeAllListeners('request');
+    }
+    check(!errs.length, `${w} carte : aucune erreur (${errs.slice(0, 3).join(' | ')})`);
+  }
+
   const ctx = await b.newContext();
   for (const l of links) {
     const res = await ctx.request.get(l);

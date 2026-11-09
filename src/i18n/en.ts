@@ -16,6 +16,8 @@ export const en = {
       experiences: 'Experiences',
       about: 'About',
       write: 'Enquire',
+      /** Not a section: the guides page. */
+      guides: 'Guides',
     },
     /** Link to the other language, written in that language. */
     otherLanguage: 'Français',
@@ -56,10 +58,12 @@ export const en = {
   },
   chapter: {
     number: 'N°{n}',
+    /** Chapter N°2: the five routes of the guides. */
+    guides: 'Paris Guides',
     /** Link to the page of each experience. */
     more: {
       events: 'Weddings, proposals and photoshoots',
-      'private-tours': 'Our routes through Paris',
+      'private-tours': 'Private tours in detail',
       chauffeured: 'More about the chauffeur service',
     },
   },

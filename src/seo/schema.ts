@@ -130,14 +130,13 @@ export const faqNode = (id: string, qa: { q: string; a: string }[]): Node => ({
   mainEntity: qa.map(({ q, a }) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
 });
 
-const ROUTES = new Set(['guide-landmarks', 'guide-night', 'guide-romantic', 'guide-versailles']);
 
 /** The whole graph of a content page. */
 export function pageGraph(abs: Abs, p: Page, l: Locale, homeName: string): Node {
   const c = p[l];
   const url = pageUrl(abs, p, l);
   const biz = { '@id': abs('#business') };
-  const stops = c.sections.flatMap((s) => s.stops ?? []);
+  const stops = c.route ? c.route.stops : c.sections.flatMap((s) => s.stops ?? []);
   const nodes: Node[] = [business(abs, l), website(abs)];
   const type = p.kind === 'about' ? 'AboutPage' : p.kind === 'faq' ? 'FAQPage' : p.kind === 'hub' ? 'CollectionPage' : 'WebPage';
 
@@ -159,7 +158,7 @@ export function pageGraph(abs: Abs, p: Page, l: Locale, homeName: string): Node 
   nodes.push(webpage, breadcrumb(abs, p, l, homeName));
   if (c.faq && p.kind !== 'faq') nodes.push({ ...faqNode(`${url}#faq`, c.faq), isPartOf: { '@id': `${url}#webpage` } });
 
-  if (p.kind === 'service' || (p.kind === 'hub' && p.experience)) {
+  if (p.kind === 'service' || (p.kind === 'hub' && p.experience && p.id !== 'guides')) {
     nodes.push({
       '@type': p.id === 'tours' ? ['Service', 'TouristTrip'] : 'Service',
       '@id': `${url}#service`,
@@ -175,7 +174,7 @@ export function pageGraph(abs: Abs, p: Page, l: Locale, homeName: string): Node 
     });
   }
   if (p.kind === 'car') nodes.push(carNode(abs, getVehicle(p.cars![0])!, l, url));
-  if (p.kind === 'guide') {
+  if (p.kind === 'guide' || p.kind === 'route') {
     nodes.push({
       '@type': 'Article',
       '@id': `${url}#article`,
@@ -190,19 +189,27 @@ export function pageGraph(abs: Abs, p: Page, l: Locale, homeName: string): Node 
       mainEntityOfPage: { '@id': `${url}#webpage` },
     });
   }
-  if (stops.length && ROUTES.has(p.id)) {
+  if (c.route) {
     nodes.push({
       '@type': 'TouristTrip',
       '@id': `${url}#trip`,
       name: c.h1,
       description: c.lead,
       provider: biz,
+      touristType: c.route.mood,
+      inLanguage: inLanguage(l),
       itinerary: {
         '@type': 'ItemList',
         itemListElement: stops.map((s, i) => ({
           '@type': 'ListItem',
           position: i + 1,
-          item: { '@type': 'TouristAttraction', name: s.name, description: s.text },
+          item: {
+            '@type': 'TouristAttraction',
+            name: s.name,
+            description: s.text,
+            geo: { '@type': 'GeoCoordinates', latitude: p.geo![i][0], longitude: p.geo![i][1] },
+            address: { '@type': 'PostalAddress', addressLocality: 'Paris', addressCountry: 'FR' },
+          },
         })),
       },
     });

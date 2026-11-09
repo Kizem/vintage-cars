@@ -153,3 +153,76 @@ body.dp { margin: 0; background: var(--ivory); color: var(--ink); font-family: v
 @media (prefers-reduced-motion: reduce) {
   .dp *, .dp *::before, .dp *::after { transition: none !important; }
 }
+
+/* ==========================================================================
+   Les Guides de Paris : la page « Paris, autrement. » et les itinéraires.
+   Esprit magazine imprimé : grandes photos, numéros, filets ; pas de carte produit.
+   ========================================================================== */
+.dp-intro { margin: 1.4rem 0 0; max-width: 40rem; font-family: var(--font-display); font-style: italic; font-size: clamp(1.35rem, 2.2vw, 1.7rem); line-height: 1.4; color: var(--forest); text-wrap: pretty; }
+.dp-intro + .dp-lead { margin-top: 1.2rem; font-size: 1.05rem; }
+.dp-note { margin-top: .8rem !important; max-width: 46rem; font-size: .88rem; color: var(--ink-soft); }
+.dp-actions { display: flex; flex-wrap: wrap; gap: 0 2rem; }
+.dp-action--soft { text-transform: none; letter-spacing: .02em; font-size: .9rem; border-bottom-color: color-mix(in srgb, currentColor 55%, transparent); }
+.dp-action--soft:hover { letter-spacing: .02em; }
+
+/* une page d'itinéraire */
+.dp-route__head { padding-block: clamp(1.2rem, 4vw, 2.5rem) clamp(1.6rem, 4vw, 2.8rem); }
+.dp-route__head h1 { max-width: 22ch; }
+.dp-kicker a { text-decoration: none; }
+.dp-route__photo { width: 100%; max-width: 92rem; margin: 0 auto clamp(2rem, 5vw, 3.5rem); }
+.dp-route__photo img { aspect-ratio: 21 / 9; max-height: 78svh; }
+@media (max-width: 699px) { .dp-route__photo img { aspect-ratio: 4 / 5; max-height: 72svh; } }
+.dp-facts--route { margin-bottom: 0; }
+@media (min-width: 900px) { .dp-facts--route { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+.dp-route__body { padding-top: clamp(2.5rem, 6vw, 4rem); }
+.dp-route__pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); gap: clamp(2.5rem, 6vw, 4.5rem) clamp(2rem, 5vw, 4rem); }
+
+/* les étapes : une ligne verticale, comme un plan de route imprimé */
+.dp-timeline { margin: 0; padding: 0 0 0 1.6rem; list-style: none; border-left: 1px solid var(--champagne); }
+.dp-timeline li { position: relative; padding: 0 0 1.8rem; }
+.dp-timeline li:last-child { padding-bottom: 0; }
+.dp-timeline li::before { content: ''; position: absolute; left: calc(-1.6rem - 5px); top: .45rem; width: 9px; height: 9px; background: var(--forest); }
+.dp-timeline__no { margin: 0 0 .15rem !important; font-size: .7rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); }
+.dp-timeline h3 { font-size: 1.55rem; }
+.dp-timeline p + p { margin-top: .35rem; }
+.dp-spots { margin: 0; padding: 0; list-style: none; border-top: 1px solid color-mix(in srgb, var(--ink) 18%, transparent); }
+.dp-spots li { padding: .9rem 0; border-bottom: 1px solid color-mix(in srgb, var(--ink) 18%, transparent); }
+.dp-spots p { margin-top: .25rem; color: var(--ink-soft); }
+
+/* la carte, chargée à la demande */
+.dp-map { position: relative; height: clamp(18rem, 55svh, 32rem); margin: 0 0 1rem; background: var(--plate-ink); border: 1px solid color-mix(in srgb, var(--ink) 18%, transparent); display: grid; place-items: center; }
+.dp-map.is-on { display: block; }
+.dp-map__show { margin: 0; background: none; border: 0; border-bottom: 1px solid currentColor; color: var(--forest); font: inherit; font-size: .75rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; cursor: pointer; }
+.dp-map__list { display: flex; flex-wrap: wrap; gap: .3rem 1.6rem; margin: 0; padding: 0; list-style: none; font-size: .92rem; }
+.dp-map__list li { min-height: 32px; display: flex; align-items: center; gap: .4rem; }
+.dp-map__n, .dp-pin span { display: inline-grid; place-items: center; width: 1.6rem; height: 1.6rem; background: var(--forest); color: var(--ivory); font-size: .8rem; font-weight: 500; }
+.dp-pin { background: none; border: 0; }
+.dp-pin span { width: 30px; height: 30px; outline: 2px solid var(--ivory); }
+.dp-map .leaflet-container, .dp-map.leaflet-container { font-family: var(--font-sans); }
+
+/* la page des guides : les cinq itinéraires en composition asymétrique */
+.dp-routes { margin: 0; padding: 0; list-style: none; }
+.dp-routes > li { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: clamp(1.4rem, 4vw, 3.5rem); align-items: center; padding-block: clamp(1.8rem, 5vw, 3.5rem); border-top: 1px solid color-mix(in srgb, var(--ink) 18%, transparent); }
+.dp-routes > li:nth-child(even) { grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); }
+.dp-routes > li:nth-child(even) .dp-figure { order: 2; }
+.dp-routes .dp-figure img { aspect-ratio: 3 / 2; }
+.dp-routes > li:nth-child(even) .dp-figure img { aspect-ratio: 4 / 5; max-height: 34rem; }
+.dp-routes__no { margin: 0 !important; font-family: var(--font-display); font-weight: 300; font-size: clamp(2.6rem, 6vw, 4.2rem); line-height: 1; color: var(--champagne); }
+.dp-routes h3 { margin-top: .3rem; font-size: clamp(1.7rem, 3vw, 2.3rem); color: var(--forest); }
+.dp-routes h3 a { text-decoration: none; }
+.dp-routes h3 a:hover { text-decoration: underline; }
+.dp-routes__text > p:not(.dp-routes__no) { margin-top: .7rem; max-width: 30rem; }
+.dp-routes__meta { display: flex; flex-wrap: wrap; gap: .4rem 1.6rem; margin: 1rem 0 0; }
+.dp-routes__meta dt { font-size: .68rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); }
+.dp-routes__meta dd { margin: 0; font-family: var(--font-display); font-size: 1.15rem; }
+@media (max-width: 899px) {
+  .dp-routes > li, .dp-routes > li:nth-child(even) { grid-template-columns: 1fr; }
+  .dp-routes > li:nth-child(even) .dp-figure { order: 0; }
+  .dp-routes > li:nth-child(even) .dp-figure img { aspect-ratio: 3 / 2; }
+}
+
+/* les autres itinéraires */
+.dp-routes-nav { padding-block: clamp(2.5rem, 6vw, 4rem); }
+.dp-routes-nav__pn { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .6rem 2rem; margin: 0 0 1.6rem !important; }
+.dp-routes-nav__pn a { font-family: var(--font-display); font-size: 1.2rem; text-decoration: none; min-height: 44px; display: inline-flex; align-items: center; }
+.dp-routes-nav__pn a:hover { text-decoration: underline; }

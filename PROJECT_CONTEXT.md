@@ -57,8 +57,10 @@ Seven full-screen sections, in this order (`sectionIds` in `src/data/site.ts`):
   notch still change section. ↑ ↓ and Page Up / Down move one section; F toggles fullscreen.
 - `animateTo` dispatches a synthetic `scroll` event on arrival.
 - Navigation is locked while the vehicle sheet or the legal dialog is open.
-- Top menu: exactly four entries (« La collection » / « The collection », the
-  parking section, whose id stays `garage`; Experiences, About, Write), then the
+- Top menu: four section entries (« La collection » / « The collection », the
+  parking section, whose id stays `garage`; Experiences, About, Write) and, since the
+  owner's brief of November 2026, a fifth entry « Guides », a link to the guides page
+  (`.em-nav__page`, not a section); then the
   language switch: a thin-line globe and « FR / EN » (current language in
   full, the other dimmed) on desktop; the globe and the other language on
   phones; the globe alone below 341 px. Its accessible name is the other
@@ -68,6 +70,9 @@ Seven full-screen sections, in this order (`sectionIds` in `src/data/site.ts`):
   switch stays on the page (no reload) and replaces the address (`/` ↔ `/fr/`). Every file of `public/` is
   reached through `asset()` (`src/lib/paths.ts`), which starts from the site root (`<meta name="em-root">`,
   written at build time), so that `/fr/` finds `images/…`.
+- Chapter N°2 (Private Paris Tours) carries « Les Guides de Paris » under its action: a link to the guides
+  page and the five routes (`.em-guides`; the five route links are hidden where the short chapter text is
+  shown, phones and low windows), then the link to the tours page.
 - Discreet links (`MoreLink`, `.em-more`) lead from the home to the content pages: under each chapter action,
   under « Demander cette voiture » in the sheet, under the Good to know questions, under About, and in the
   Écrire footer (Collection · Guides · FAQ). Their addresses are in `src/data/links.ts` (tested against
@@ -391,7 +396,8 @@ language) and `<!--em:app-->` (the pre-rendered app). Do not remove them; the bu
 ### Content pages (`src/content/`)
 
 - One file per family: `services.ts` (events and its three occasions, tours, chauffeur, rental),
-  `collection.ts` (the collection and one page per car), `guides.ts` (routes and articles), `info.ts` (FAQ,
+  `collection.ts` (the collection and one page per car), `guides.ts` (the guides page and two articles),
+  `routes.ts` (the five routes of « Les Guides de Paris », see below), `info.ts` (FAQ,
   About). Types in `types.ts`, registry in `index.ts`.
 - A page = `{ id, kind, parent, experience, cars, image, related, updated, en, fr }`; each language has
   `path` (from the root, ending with `/`; English at the root, French under `fr/`), `title`, `description`,
@@ -427,3 +433,30 @@ of a domain: on `github.io/vintage-cars/` they are not read, hence the custom do
 ### Viewing the content pages
 
 They exist only after a build: `npm run build && npm run preview`, then `/fr/guides/` for instance.
+
+### Les Guides de Paris (`src/content/routes.ts`, `src/seo/routes.tsx`, `src/seo/map.ts`)
+
+From the owner's brief (November 2026). The guides page (`/fr/guides/`, `/guides/`, « Paris, autrement. »)
+presents five routes, each with its own page: `paris-intemporel`, `elegance-rive-gauche`,
+`villages-est-parisien`, `jardins-perspectives`, `paris-boheme-confidentiel` (English addresses:
+`timeless-paris`, `left-bank-elegance`, `villages-of-east-paris`, `gardens-and-perspectives`, `bohemian-paris`).
+
+- A route page (`kind: 'route'`): kicker « Itinéraire N°01 », h1, the owner's introduction (`route.intro`,
+  quoted as written), the answer-first `lead`, a full-width photo, practical details (duration, distance,
+  start, finish, mood; editorial estimates), the route, the stops (vertical timeline), photo spots, places to
+  eat (only the restaurants named by the owner; suggestions, not included; allergies note), practical advice
+  (walk to the photo spots, legal stops only, route adapted on the day), the map, the closing invitation
+  (owner's text: « Et si vous découvriez Paris… », « Découvrir nos expériences » → home `#sortie-1`,
+  « Nous contacter pour imaginer votre parcours » → form pre-filled with private tours), then the other routes.
+- Durations, distances, stops, spots and restaurants come from the brief: do not add any. `route.intro` and the
+  guides page `subtitle` are the owner's words and are exempt from the copy checks.
+- Map: Leaflet **1.9.4, pinned**, with OpenStreetMap tiles, numbered markers in route order (`geo` on the page,
+  one pair per stop). Nothing is loaded until the visitor clicks « Afficher la carte interactive »: the page
+  script (`map.ts`, under 1 kB) then imports `map-view.ts` (Leaflet and its CSS). No line is drawn between the
+  stops: no road routing is available offline, and a straight line would mislead (the brief forbids it). Each
+  stop also has a « Voir sur OpenStreetMap » link that works without the map. Only route pages run a script;
+  their CSP allows `script-src 'self'` and the tile host `https://tile.openstreetmap.org`.
+- The four earlier routes (landmarks, Paris by night, romantic Paris, Versailles) were replaced. Their
+  addresses stay as `noindex` redirect pages with a canonical (`REDIRECTS` in `src/seo/build.tsx`).
+- Photos: the routes reuse the site's images until a photograph per route is supplied (see
+  `docs/SEO-GEO.md`). Every new photo must have its rights, and plates blurred (§ 5).
