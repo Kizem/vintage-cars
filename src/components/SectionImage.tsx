@@ -20,15 +20,15 @@ function useNear(ref: RefObject<HTMLElement | null>) {
     let io: IntersectionObserver | null = null;
     const watch = () => {
       io = new IntersectionObserver((entries) => entries.some((x) => x.isIntersecting) && setNear(true), {
-        root: sc,
+        root: null,
         rootMargin: '100% 0px',
       });
       io.observe(el);
     };
     if (sc.scrollTop > 0) watch();
-    else sc.addEventListener('scroll', watch, { once: true, passive: true });
+    else window.addEventListener('scroll', watch, { once: true, passive: true });
     return () => {
-      sc.removeEventListener('scroll', watch);
+      window.removeEventListener('scroll', watch);
       io?.disconnect();
     };
   }, [near, ref]);

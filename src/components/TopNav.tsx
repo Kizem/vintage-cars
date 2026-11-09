@@ -39,13 +39,13 @@ export function TopNav() {
     on();
     const later = window.setTimeout(on, 400);
     const ro = new ResizeObserver(on);
-    ro.observe(sc);
-    sc.addEventListener('scroll', on, { passive: true });
+    ro.observe(document.querySelector('.em-scroll') ?? sc);
+    window.addEventListener('scroll', on, { passive: true });
     window.addEventListener('resize', on);
     return () => {
       clearTimeout(later);
       ro.disconnect();
-      sc.removeEventListener('scroll', on);
+      window.removeEventListener('scroll', on);
       window.removeEventListener('resize', on);
     };
   }, []);

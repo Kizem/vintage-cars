@@ -2,7 +2,7 @@ import { act, render } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { CLOSE_FOCUS, currentIndex, isLocked, reducedMotion, scroller, scrollToId, sections, setLock, usePageNavigation } from './pageNav';
 
-/* Une page de sections dont la position suit scrollTop : section i à i * 800 px. */
+/* Une page de sections dont la position suit le défilement de la page : section i à i * 800 px, écran de 800 px. */
 function Page() {
   usePageNavigation();
   return (
@@ -15,8 +15,8 @@ function Page() {
 }
 function layout() {
   const sc = scroller()!;
-  Object.defineProperty(sc, 'clientHeight', { value: 800, configurable: true });
-  sc.getBoundingClientRect = () => ({ top: 0, bottom: 800, height: 800, left: 0, right: 1000, width: 1000, x: 0, y: 0, toJSON() {} });
+  Object.defineProperty(window, 'innerHeight', { value: 800, configurable: true });
+  sc.scrollTop = 0; // la page garde sa position d'un test à l'autre
   sections().forEach((el, i) => { el.getBoundingClientRect = () => { const top = i * 800 - sc.scrollTop; return { top, bottom: top + 800, height: 800, left: 0, right: 1000, width: 1000, x: 0, y: top, toJSON() {} }; }; });
   return sc;
 }
@@ -40,7 +40,7 @@ describe('pageNav', () => {
     expect(reducedMotion()).toBe(false);
   });
   it('sans page : index 0, rien ne casse', () => {
-    expect(scroller()).toBeNull();
+    expect(scroller()).toBeNull(); // sans le site, la page n'est pas gérée
     expect(sections()).toEqual([]);
     expect(currentIndex()).toBe(0);
     document.body.innerHTML = '<section id="ecrire"><h2 tabindex="-1">x</h2></section>';
@@ -62,7 +62,7 @@ describe('pageNav', () => {
     render(<Page />);
     const sc = layout();
     let ts = 1000;
-    const wheel = (dy: number, opts: WheelEventInit = {}) => act(() => { const e = new WheelEvent('wheel', { deltaY: dy, cancelable: true, ...opts }); Object.defineProperty(e, 'timeStamp', { value: ts }); sc.dispatchEvent(e); });
+    const wheel = (dy: number, opts: WheelEventInit = {}) => act(() => { const e = new WheelEvent('wheel', { deltaY: dy, cancelable: true, bubbles: true, ...opts }); Object.defineProperty(e, 'timeStamp', { value: ts }); sc.dispatchEvent(e); });
     wheel(100); expect(sc.scrollTop).toBe(800);
     ts += 50; wheel(100); expect(sc.scrollTop).toBe(800); // même geste : ignoré
     ts += 1000; wheel(1); ts += 10; wheel(1); ts += 10; wheel(2); expect(sc.scrollTop).toBe(1600); // petits crans cumulés

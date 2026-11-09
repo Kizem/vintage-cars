@@ -3,7 +3,9 @@ import { sectionIds, type SectionId } from '../data/site';
 
 /*
  * Navigation section par section : un geste, une section.
- * Le défilement se fait dans .em-scroll, qui contient directement les section[id].
+ * C'est la page elle-même qui défile (et non un cadre intérieur) : sur iPhone, toucher le haut de l'écran
+ * remonte en haut du site, comme ailleurs. .em-scroll contient directement les section[id] ; l'arrêt sur
+ * chaque section est posé sur <html> (index.css).
  */
 
 export const reducedMotion = () => {
@@ -20,23 +22,24 @@ const locks = new Set<Lock>();
 export const setLock = (lock: Lock, on: boolean) => void (on ? locks.add(lock) : locks.delete(lock));
 export const isLocked = (lock?: Lock) => (lock ? locks.has(lock) : locks.size > 0);
 
-export const scroller = () => document.querySelector<HTMLElement>('.em-scroll');
+/** Élément qui défile : la page (quand le site est présent), sinon rien. */
+export const scroller = () => (document.querySelector('.em-scroll') ? (document.scrollingElement as HTMLElement | null) ?? document.documentElement : null);
+/** Hauteur visible de la page. */
+const viewH = () => window.innerHeight || document.documentElement.clientHeight;
 export const sections = () => {
-  const sc = scroller();
-  return sc ? Array.from(sc.querySelectorAll<HTMLElement>(':scope > section[id]')) : [];
+  const main = document.querySelector<HTMLElement>('.em-scroll');
+  return main ? Array.from(main.querySelectorAll<HTMLElement>(':scope > section[id]')) : [];
 };
 
 /** Index de la section qui occupe l'écran (celle qui passe la ligne des 40 %). */
 export function currentIndex() {
-  const sc = scroller();
-  if (!sc) return 0;
-  const y = sc.getBoundingClientRect().top + sc.clientHeight * 0.4;
+  if (!scroller()) return 0;
+  const y = viewH() * 0.4;
   return sections().reduce((acc, el, i) => (el.getBoundingClientRect().top <= y ? i : acc), 0);
 }
 
 function sectionTop(el: HTMLElement) {
-  const sc = scroller()!;
-  return el.getBoundingClientRect().top - sc.getBoundingClientRect().top + sc.scrollTop;
+  return el.getBoundingClientRect().top + scroller()!.scrollTop;
 }
 
 let animating = false;
@@ -44,8 +47,8 @@ let animRun = 0;
 
 /* La position finale est toujours signalée : le menu et les images ne dépendent pas
    du regroupement des événements scroll par le navigateur quand la page est chargée. */
-const arrived = (sc: HTMLElement, done?: () => void) => {
-  sc.dispatchEvent(new Event('scroll'));
+const arrived = (_sc: HTMLElement, done?: () => void) => {
+  window.dispatchEvent(new Event('scroll'));
   done?.();
 };
 
@@ -142,9 +145,9 @@ export function usePageNavigation() {
       if (cur && !animating) {
         /* une section plus haute que l'écran se lit d'abord en entier */
         const r = cur.getBoundingClientRect();
-        const box = sc.getBoundingClientRect();
-        if (r.height > box.height + 2) {
-          if ((dir > 0 && r.bottom > box.bottom + 2) || (dir < 0 && r.top < box.top - 2)) return;
+        const h = viewH();
+        if (r.height > h + 2) {
+          if ((dir > 0 && r.bottom > h + 2) || (dir < 0 && r.top < -2)) return;
         }
       }
       e.preventDefault();
@@ -153,7 +156,7 @@ export function usePageNavigation() {
         return;
       }
       /* en pixels, quelle que soit l'unité de la molette (pixels, lignes ou pages) */
-      const dy = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? sc.clientHeight : 1);
+      const dy = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? viewH() : 1);
       if (now - accAt > 200 || Math.sign(acc) !== dir) acc = 0;
       acc += dy;
       accAt = now;
@@ -162,8 +165,8 @@ export function usePageNavigation() {
       quietUntil = now + 150;
       goSection(dir);
     };
-    sc.addEventListener('wheel', onWheel, { passive: false });
-    return () => sc.removeEventListener('wheel', onWheel);
+    window.addEventListener('wheel', onWheel, { passive: false });
+    return () => window.removeEventListener('wheel', onWheel);
   }, []);
 
   /* ↑ ↓ et Page précédente / suivante entre sections, F pour le plein écran */

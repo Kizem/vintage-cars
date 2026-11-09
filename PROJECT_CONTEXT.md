@@ -43,6 +43,14 @@ React rules used across the code:
 
 ## 3. Page structure and navigation
 
+- The page itself scrolls (not an inner container), so that tapping the top of
+  an iPhone screen scrolls back to the top. Section snapping is set on `<html>`;
+  `.em-page` is an inline-size container: with no block-size container, `cqh`
+  falls back to the small viewport height (`svh`), so a section stays the height
+  of the screen with Safari's toolbar shown and does not jump when it collapses.
+  Height-dependent rules outside the parking use `@media`; the parking keeps its
+  own size container. The wheel listener is on `window`, scroll listeners too.
+
 Seven full-screen sections, in this order (`sectionIds` in `src/data/site.ts`):
 `garage`, `sortie-1`, `sortie-2`, `sortie-3`, `savoir`, `apropos`, `ecrire`.
 
