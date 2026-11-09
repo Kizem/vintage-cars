@@ -2,6 +2,7 @@ import { useEffect, useImperativeHandle, useRef, useState, type Ref } from 'reac
 import type { MediaAsset } from '../../data/types';
 import { useI18n } from '../../i18n/I18nContext';
 import { reducedMotion, setLock } from '../../lib/pageNav';
+import { asset, assetSet } from '../../lib/paths';
 import { Arrow, Counter } from '../ui';
 
 export interface CarouselHandle {
@@ -86,8 +87,8 @@ export function PhotoCarousel({ photos, label, ref }: { photos: MediaAsset[]; la
           <figure className="em-carousel__slide" key={x.src} aria-hidden={k === i ? undefined : true}>
             <button type="button" className="em-carousel__open" onClick={() => setBig(true)} aria-label={`${t.focus.enlarge} : ${l(x.alt)}`} tabIndex={k === i ? 0 : -1}>
               <img
-                src={x.src}
-                srcSet={x.srcSet}
+                src={asset(x.src)}
+                srcSet={assetSet(x.srcSet)}
                 sizes={x.srcSet ? '(orientation: portrait) 100vw, 34rem' : undefined}
                 width={x.width}
                 height={x.height}
@@ -142,7 +143,7 @@ export function PhotoCarousel({ photos, label, ref }: { photos: MediaAsset[]; la
                 if (Math.abs(dx) > 50) go(i + (dx < 0 ? 1 : -1));
               }}
             >
-              <img src={p.src} srcSet={p.srcSet} sizes="100vw" width={p.width} height={p.height} alt={l(p.alt)} draggable={false} />
+              <img src={asset(p.src)} srcSet={assetSet(p.srcSet)} sizes="100vw" width={p.width} height={p.height} alt={l(p.alt)} draggable={false} />
               {p.credit && <span className="em-carousel__credit">{l(p.credit)}</span>}
             </figure>
             {pager('em-lightbox__pager')}

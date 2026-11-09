@@ -6,8 +6,10 @@ and day-to-day use; this file explains how the project is built and why.
 
 ## 1. What the site is
 
-A single-page, bilingual (EN / FR) landing page for **Époque Motors**, private
-vintage car experiences in Paris, by enquiry only. Three cars: Peugeot 504 GL (1971),
+A bilingual (EN / FR) site for **Époque Motors**, private
+vintage car experiences in Paris, by enquiry only: a single-page home (the 3D garage and
+seven sections) plus static content pages written at build time for search engines and AI
+assistants (services, cars, guides, FAQ; see § 9). Three cars: Peugeot 504 GL (1971),
 Citroën DS 21 Henri Chapron (1971), Mercedes W115 220D (1973, manual). There is no booking engine and no online payment.
 
 Branches:
@@ -33,6 +35,8 @@ so every push is a production release; the owner tests on the live site.
 | Fallback | The ÉM monogram alone, no car drawn (the car name below still opens the sheet) | Shown only when WebGL is missing, or after the WebGL context is lost three times in a row (each loss first rebuilds the scene on a new canvas). Never shown together with the intro monogram. |
 | Fonts | Self-hosted woff2 (`src/assets/fonts`) | No third-party requests. |
 | Tests | Playwright, outside the repository (session scratchpad) | Playwright is **not** a dependency; never run `playwright install`. |
+| Pre-rendering | `npm run build` = client build, then an SSR build of `src/seo/build.tsx` (`.ssr/`, deleted after), then `scripts/prerender.mjs` | Crawlers that do not run JavaScript (most AI assistants) get the full text. No extra dependency. |
+| Site address | `VITE_SITE_URL` (set by the deploy workflow from GitHub Pages, or the `SITE_URL` repository variable) | Canonical, hreflang, sitemap, Open Graph and llms.txt need absolute URLs; links between pages stay relative. |
 
 React rules used across the code:
 
@@ -59,6 +63,15 @@ Seven full-screen sections, in this order (`sectionIds` in `src/data/site.ts`):
   full, the other dimmed) on desktop; the globe and the other language on
   phones; the globe alone below 341 px. Its accessible name is the other
   language (« English » / « Français »).
+- Languages have their own address: `/` (English, x-default) and `/fr/`. The path wins (`/fr/` is always
+  French); at `/`, `?lang=` (older links), then the stored choice, then the browser language. The language
+  switch stays on the page (no reload) and replaces the address (`/` ↔ `/fr/`). Every file of `public/` is
+  reached through `asset()` (`src/lib/paths.ts`), which starts from the site root (`<meta name="em-root">`,
+  written at build time), so that `/fr/` finds `images/…`.
+- Discreet links (`MoreLink`, `.em-more`) lead from the home to the content pages: under each chapter action,
+  under « Demander cette voiture » in the sheet, under the Good to know questions, under About, and in the
+  Écrire footer (Collection · Guides · FAQ). Their addresses are in `src/data/links.ts` (tested against
+  `src/content`), so the app bundle does not carry the text of the pages.
 - The Époque Motors logo (`Brand` in `components/ui.tsx`) stays visible and
   leads back to the garage: monogram and name at the top left on desktop,
   monogram only at the top left of the menu on phones (the garage also shows
@@ -314,7 +327,11 @@ Data lives in `src/data/*.ts` (`{ en, fr }` fields) and `src/i18n/{en,fr}.ts`.
 1. `npm test` runs everything, in order: the unit tests with coverage
    (`npm run test:unit`), the build, then the end-to-end battery
    (`npm run test:e2e`). `npm run typecheck` checks the types.
-   Unit tests (Vitest + jsdom + Testing Library, `src/**/*.test.ts(x)`): the form
+   Unit tests (Vitest + jsdom + Testing Library, `src/**/*.test.ts(x)`; `src/seo/seo.test.ts` runs without a
+   browser, like the build): the SEO guard (unique addresses, title ≤ 65 and description 120 to 165 characters,
+   no long dash, superlative, price, guest count or placeholder text, French non-breaking spaces, reciprocal
+   hreflang, valid JSON-LD with no placeholder contact, every internal link resolves, sitemap, robots, llms),
+   addresses and languages (`/fr/`, `?lang=`, pre-filled form from a content page), the form
    logic and its protections, page navigation, data and images (every file exists
    at its declared size), translations (same keys and variables in FR and EN), the
    construction of the three cars, the parking engine and the 3D workshop on a fake
@@ -335,6 +352,8 @@ Data lives in `src/data/*.ts` (`{ en, fr }` fields) and `src/i18n/{en,fr}.ts`.
    - `nav-form`: wheel (including a small notch), keys, menu, back to top,
      form errors and the `not-configured` state (never a false « sent »);
    - `timing`: the 504 stays at least 9 s, then one car about every 5 s;
+   - `pages`: every content page at 320, 390, 1024 and 1440 px (no overflow, no error, one h1, every image
+     and internal link answers), and sitemap, robots, llms served;
    then `scene`: the real WebGL scene (SwiftShader, slow), reduced motion: ready,
    sheet, click in the empty parking, context loss; and each car built alone in
    the workshop without errors.
@@ -349,3 +368,62 @@ Data lives in `src/data/*.ts` (`{ en, fr }` fields) and `src/i18n/{en,fr}.ts`.
    after, and compare them (`ds.html?car=…&view=…`, or a free camera with
    `&cam=x,y,z&at=x,y,z` for close-ups).
 5. Commit messages: short, in English, with the session attribution lines.
+
+## 9. SEO and GEO (search engines and AI assistants)
+
+The owner-facing strategy (keywords, off-site actions, what to validate) is in `docs/SEO-GEO.md`, in French.
+This section is the technical contract.
+
+### What the build writes (`src/seo/build.tsx`)
+
+| File | Content |
+|---|---|
+| `index.html`, `fr/index.html` | The home, rendered ahead of time from the React app (`src/seo/home.tsx`, `renderToString`), with its head (title, description, canonical, hreflang, Open Graph, JSON-LD). In the browser, `createRoot` renders it again (no hydration: no mismatch to manage). |
+| `<path>/index.html` | One static page per content page and language, **no JavaScript** (`src/seo/page.tsx`, `src/seo/doc.css`, CSP `script-src 'none'`). |
+| `sitemap.xml` | Every address, its two languages (`xhtml:link`) and its images. |
+| `robots.txt` | Everything open; search engines and AI crawlers (GPTBot, OAI-SearchBot, ClaudeBot, PerplexityBot, Google-Extended…) named explicitly; sitemap. |
+| `llms.txt`, `llms-full.txt` | The map of the site and the full text of every page, in Markdown, for AI assistants (llmstxt.org). |
+| `404.html` | Bilingual, absolute addresses (GitHub Pages serves it at any depth), `noindex`. |
+
+`index.html` (source) keeps two markers: `<!--em:head-->…<!--/em:head-->` (replaced by the head of each
+language) and `<!--em:app-->` (the pre-rendered app). Do not remove them; the build fails without them.
+
+### Content pages (`src/content/`)
+
+- One file per family: `services.ts` (events and its three occasions, tours, chauffeur, rental),
+  `collection.ts` (the collection and one page per car), `guides.ts` (routes and articles), `info.ts` (FAQ,
+  About). Types in `types.ts`, registry in `index.ts`.
+- A page = `{ id, kind, parent, experience, cars, image, related, updated, en, fr }`; each language has
+  `path` (from the root, ending with `/`; English at the root, French under `fr/`), `title`, `description`,
+  `h1`, `nav`, `lead`, `sections` (`p`, `list` or `stops`), `faq`, `cta`.
+- `lead` is the answer in two or three sentences (who, what, where, how), always naming Époque Motors: it is
+  what search engines and AI assistants quote. Keep it factual.
+- Same editorial rules as the rest of the site (§ 5), checked by `seo.test.ts`: no long dash, no superlative,
+  no price, no availability, no guest count, nothing unconfirmed. French copy is typed with ordinary spaces:
+  `frTypo` adds the non-breaking spaces at render time.
+- Car specifications and photos come from `src/data/vehicles.ts`; model history on the car pages is limited
+  to well-documented facts about the model (listed for validation in `docs/SEO-GEO.md`).
+- Every enquiry action links to the home form, pre-filled: `/fr/?experience=events&car=citroen-ds#ecrire`
+  (`EnquiryContext` reads and removes the parameters; only values of the lists are kept).
+- To add a page: an entry in the right file (both languages), its id in `PageId`, then `npm test`. Header,
+  footer, sitemap, llms, breadcrumb and structured data follow. To link it from the home, add it to
+  `src/data/links.ts`.
+
+### Structured data (`src/seo/schema.ts`)
+
+Every page carries the same business (`AutoRental`, `@id` `<site>#business`, Paris, languages, offer catalogue)
+and `WebSite`, then its own nodes: `WebPage` / `CollectionPage` / `AboutPage` / `FAQPage`, `BreadcrumbList`,
+`Service` (offers), `Car` (car pages: year, body, seats, engine, gearbox, drive, colour), `Article` and
+`TouristTrip` with its itinerary (routes), `ItemList`, `FAQPage` (questions). Contact details, telephone and
+`sameAs` are published only once `src/data/site.ts` holds real values (placeholders are detected and left out).
+
+### Production address
+
+`VITE_SITE_URL` (absolute, e.g. `https://www.epoque-motors.fr`). The deploy workflow passes the repository
+variable `SITE_URL` when it exists, otherwise the GitHub Pages address. A local build without it uses
+`https://www.epoque-motors.example/` (placeholder). `robots.txt` and `llms.txt` only take effect at the root
+of a domain: on `github.io/vintage-cars/` they are not read, hence the custom domain in `docs/SEO-GEO.md`.
+
+### Viewing the content pages
+
+They exist only after a build: `npm run build && npm run preview`, then `/fr/guides/` for instance.

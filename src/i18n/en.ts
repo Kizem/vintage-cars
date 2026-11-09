@@ -5,9 +5,9 @@
  */
 export const en = {
   meta: {
-    title: 'Époque Motors | Private Vintage Car Experiences in Paris',
+    title: 'Vintage Car Tours & Wedding Cars in Paris | Époque Motors',
     description:
-      'Private tours, chauffeured journeys and special occasions in classic automobiles, by enquiry.',
+      'Private tours of Paris, wedding cars and chauffeured journeys in a 1970s Citroën DS 21, Peugeot 504 or Mercedes W115. From 1 hour to a day, by enquiry.',
   },
   nav: {
     label: 'Primary',
@@ -47,6 +47,8 @@ export const en = {
     nextCar: 'Next car: {name}',
     /** Label on the scene while the vehicle sheet is open. */
     rendering: 'Graphic rendering',
+    /** Link to the car's own page. */
+    page: 'The full page of this car',
   },
   service: {
     chauffeur: 'With chauffeur',
@@ -54,9 +56,16 @@ export const en = {
   },
   chapter: {
     number: 'N°{n}',
+    /** Link to the page of each experience. */
+    more: {
+      events: 'Weddings, proposals and photoshoots',
+      'private-tours': 'Our routes through Paris',
+      chauffeured: 'More about the chauffeur service',
+    },
   },
   goodToKnow: {
     title: 'Good to know',
+    more: 'All our answers',
     facts: ['1 hour to a full day', 'In English and in French', 'In Paris and its surroundings', 'No payment online'],
     faq: [
       {
@@ -81,6 +90,7 @@ export const en = {
     title: 'About',
     p1: 'Some automobiles become symbols of an era. At Époque Motors, we believe these icons deserve to be experienced, not simply admired.',
     p2: 'Our ambition is to share the beauty of classic motoring through personal, authentic experiences in Paris.',
+    more: 'Our guides to Paris by vintage car',
   },
   form: {
     title: 'Enquire',
@@ -144,6 +154,9 @@ export const en = {
     flexible: 'Flexible',
   },
   footer: {
+    collection: 'Collection',
+    guides: 'Guides',
+    faq: 'FAQ',
     legalNotice: 'Legal notice',
     privacy: 'Privacy',
   },

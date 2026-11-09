@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type MouseEvent } from 'react';
 import { primaryNav } from '../data/site';
 import { useI18n } from '../i18n/I18nContext';
 import { Brand } from './ui';
+import { homeHref } from '../lib/paths';
 import { currentIndex, scroller, scrollToId, sections } from '../lib/pageNav';
 
 /**
@@ -83,7 +84,7 @@ export function TopNav() {
           ))}
           <li className="em-nav__lang">
             <a
-              href={`?lang=${other}`}
+              href={homeHref(other)}
               hrefLang={other}
               lang={other}
               aria-label={t.nav.otherLanguage}

@@ -7,6 +7,7 @@ import { TopNav } from './components/TopNav';
 import { Parking } from './components/garage/Parking';
 import { About, Chapter, GoodToKnow, Write } from './components/Sections';
 import { LegalDialog } from './components/LegalDialog';
+import type { Locale } from './i18n/locales';
 
 /**
  * Le Garage : sept sections plein écran, un geste par section.
@@ -34,9 +35,10 @@ function Page() {
   );
 }
 
-export default function App() {
+/** `locale`: language of a page rendered ahead of time (pre-rendering). In the browser, the address decides. */
+export default function App({ locale }: { locale?: Locale }) {
   return (
-    <I18nProvider>
+    <I18nProvider initial={locale}>
       <EnquiryProvider>
         <Page />
         <LegalDialog />

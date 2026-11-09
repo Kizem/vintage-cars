@@ -1,7 +1,8 @@
 import type { Ref } from 'react';
 import type { Vehicle } from '../../data/types';
 import { fill, useI18n } from '../../i18n/I18nContext';
-import { ActionLink } from '../ui';
+import { carLink } from '../../data/links';
+import { ActionLink, MoreLink } from '../ui';
 import { PhotoCarousel, type CarouselHandle } from './PhotoCarousel';
 
 /**
@@ -46,6 +47,7 @@ export function VehicleSheet({
         ))}
       </dl>
       <ActionLink onClick={onEnquire}>{t.focus.enquire}</ActionLink>
+      {carLink[car.slug] && <MoreLink to={carLink[car.slug]}>{t.focus.page}</MoreLink>}
     </div>
   );
 }

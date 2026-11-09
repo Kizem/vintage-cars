@@ -7,9 +7,9 @@ import type { Dictionary } from './en';
  */
 export const fr: Dictionary = {
   meta: {
-    title: 'Époque Motors | Expériences privées en voiture de collection à Paris',
+    title: 'Voitures de collection à Paris : visites, mariages | Époque Motors',
     description:
-      'Visites privées de Paris, voiture de collection avec chauffeur et événements. Des expériences sur mesure, uniquement sur demande.',
+      'Visites privées de Paris, voitures de mariage et trajets avec chauffeur en Citroën DS 21, Peugeot 504 ou Mercedes W115 des années 1970. Sur demande.',
   },
   nav: {
     label: 'Navigation principale',
@@ -48,6 +48,7 @@ export const fr: Dictionary = {
     nextCar: 'Voiture suivante\u00a0: {name}',
     /** Étiquette posée sur la scène pendant que la fiche est ouverte. */
     rendering: 'Représentation graphique',
+    page: 'Toute la fiche de cette voiture',
   },
   service: {
     chauffeur: 'Avec chauffeur',
@@ -55,9 +56,15 @@ export const fr: Dictionary = {
   },
   chapter: {
     number: 'N°{n}',
+    more: {
+      events: 'Mariages, demandes et shootings',
+      'private-tours': 'Nos parcours dans Paris',
+      chauffeured: 'Le service avec chauffeur en détail',
+    },
   },
   goodToKnow: {
     title: 'Bon à savoir',
+    more: 'Toutes nos réponses',
     facts: ['De 1 h à une journée', 'En français et en anglais', 'À Paris et dans ses environs', 'Aucun paiement en ligne'],
     faq: [
       {
@@ -82,6 +89,7 @@ export const fr: Dictionary = {
     title: 'À propos',
     p1: 'Certaines automobiles deviennent le symbole d’une époque. Chez Époque Motors, nous pensons que ces voitures sont faites pour rouler, pas seulement pour être admirées.',
     p2: 'Notre envie : partager le plaisir de rouler en voiture ancienne, à Paris, lors d’expériences simples, authentiques et personnelles.',
+    more: 'Nos guides de Paris en voiture de collection',
   },
   form: {
     title: 'Écrire',
@@ -144,6 +152,9 @@ export const fr: Dictionary = {
     flexible: 'Dates flexibles',
   },
   footer: {
+    collection: 'Collection',
+    guides: 'Guides',
+    faq: 'FAQ',
     legalNotice: 'Mentions légales',
     privacy: 'Confidentialité',
   },

@@ -1,0 +1,155 @@
+/* ==========================================================================
+   Époque Motors, pages de contenu (services, voitures, guides, FAQ).
+   Pages statiques, sans JavaScript, écrites au build (src/seo/build.tsx).
+   Charte du site : pas de rayon, pas de carte, pas d'ombre ; couleurs des jetons seulement.
+   ========================================================================== */
+
+@import '../tokens.css';
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: 1rem; }
+body.dp { margin: 0; background: var(--ivory); color: var(--ink); font-family: var(--font-sans); font-size: 1.0625rem; line-height: 1.65; font-variant-numeric: lining-nums; -webkit-font-smoothing: antialiased; }
+.dp :focus-visible { outline: 1px solid currentColor; outline-offset: 4px; }
+.dp a { color: inherit; text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
+.dp a:hover { color: var(--forest); }
+.dp img { display: block; max-width: 100%; height: auto; }
+.dp-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.dp-skip { position: absolute; left: 1rem; top: -4rem; background: var(--forest); color: var(--ivory); padding: .6rem 1rem; z-index: 2; }
+.dp-skip:focus { top: 1rem; }
+.dp-wrap { width: 100%; max-width: 74rem; margin-inline: auto; padding-inline: max(16px, clamp(1.25rem, 4vw, 3rem)); }
+
+/* --- Haut de page : logo, menu, langue --- */
+.dp-top { background: var(--forest-deep); color: var(--ivory); }
+.dp-top .dp-wrap { display: flex; align-items: center; gap: .5rem 1.3rem; min-height: 4rem; padding-block: .5rem; }
+.dp-nav { margin-left: auto; min-width: 0; }
+.dp-brand { display: inline-flex; align-items: center; gap: .7rem; min-height: 44px; text-decoration: none !important; }
+.dp-mono { display: inline-grid; grid-template-columns: auto auto; font-family: var(--font-display); font-weight: 300; font-size: 1.45rem; line-height: .78; }
+.dp-mono > span:first-child { transform: translate(.1em, -.12em); }
+.dp-mono > span:last-child { transform: translate(-.08em, .36em); }
+.dp-brand__word { font-family: var(--font-display); font-size: 1.05rem; letter-spacing: .1em; text-transform: uppercase; }
+.dp-menu { display: flex; align-items: center; gap: 0 1.3rem; margin: 0; padding: 0; list-style: none; flex-wrap: wrap; }
+.dp-menu a { display: inline-flex; align-items: center; min-height: 44px; font-size: .72rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; text-decoration: none !important; }
+.dp-menu a[aria-current="page"] { border-bottom: 1px solid currentColor; }
+.dp-top a:hover { color: var(--champagne); }
+.dp-menu__cta a { border-bottom: 1px solid var(--champagne); }
+@media (max-width: 1099px) {
+  /* le logo et « Écrire / langue » sur une ligne, les pages dessous, à faire défiler du doigt si besoin */
+  .dp-top .dp-wrap { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "brand tools" "nav nav"; gap: 0 1rem; padding-block: .3rem .1rem; }
+  .dp-brand { grid-area: brand; }
+  .dp-tools { grid-area: tools; }
+  .dp-nav { grid-area: nav; margin-left: 0; overflow-x: auto; scrollbar-width: none; }
+  .dp-nav::-webkit-scrollbar { display: none; }
+  .dp-nav .dp-menu { flex-wrap: nowrap; gap: 0 1.1rem; }
+  .dp-menu li { flex: none; }
+}
+@media (max-width: 379px) { .dp-brand__word { display: none; } }
+
+/* --- Fil d'Ariane --- */
+.dp-crumbs { padding-block: 1.4rem 0; }
+.dp-crumbs ol { display: flex; flex-wrap: wrap; gap: .2rem .55rem; margin: 0; padding: 0; list-style: none; font-size: .72rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-soft); }
+.dp-crumbs li + li::before { content: '/'; margin-right: .55rem; color: var(--champagne); }
+.dp-crumbs a { text-decoration: none; }
+
+/* --- En-tête de page : titre, réponse, action ; l'image à côté --- */
+.dp-hero { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: clamp(1.5rem, 4vw, 4rem); align-items: center; padding-block: clamp(1.4rem, 4vw, 3rem) clamp(2rem, 5vw, 4rem); }
+.dp-kicker { margin: 0 0 .6rem; font-size: .78rem; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-soft); }
+.dp h1 { margin: 0; font-family: var(--font-display); font-weight: 300; font-size: clamp(2.1rem, 4vw, 3.4rem); line-height: 1.05; text-transform: uppercase; text-wrap: balance; color: var(--forest); }
+.dp-lead { margin: 1.4rem 0 0; max-width: 38rem; font-size: 1.15rem; line-height: 1.6; text-wrap: pretty; }
+.dp-figure { position: relative; margin: 0; }
+.dp-figure img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; background: var(--forest-deep); }
+.dp-credit { position: absolute; left: .6rem; bottom: .6rem; background: var(--forest-deep); color: var(--ivory); font-size: .72rem; letter-spacing: .03em; padding: .15rem .45rem; }
+@media (max-width: 899px) {
+  .dp-hero { grid-template-columns: 1fr; }
+  .dp-hero .dp-figure { order: 2; }
+}
+
+.dp-action { display: inline-block; margin-top: 1.6rem; font-size: .75rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; text-decoration: none !important; padding: .9rem 0 .35rem; min-height: 44px; border-bottom: 1px solid currentColor; transition: letter-spacing .5s cubic-bezier(.22,.61,.36,1); }
+.dp-action:hover { letter-spacing: .2em; }
+
+/* --- En bref : les faits clés, en lignes séparées d'un filet --- */
+.dp-facts { margin: 0 0 clamp(2.5rem, 6vw, 4.5rem); padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); border-top: 1px solid var(--champagne); }
+@media (min-width: 900px) { .dp-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.dp-facts > div { padding: .9rem 1rem .9rem 0; border-bottom: 1px solid color-mix(in srgb, var(--ink) 18%, transparent); }
+.dp-facts dt { font-size: .7rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); }
+.dp-facts dd { margin: .2rem 0 0; font-family: var(--font-display); font-size: 1.3rem; line-height: 1.3; }
+
+/* --- Corps --- */
+.dp-body { display: grid; gap: clamp(2.5rem, 6vw, 4.5rem); padding-bottom: clamp(3rem, 7vw, 5rem); }
+.dp-block { max-width: 46rem; }
+.dp h2 { margin: 0 0 1rem; font-family: var(--font-display); font-weight: 400; font-size: clamp(1.7rem, 3vw, 2.4rem); line-height: 1.12; color: var(--forest); text-wrap: balance; }
+.dp h3 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 1.4rem; line-height: 1.2; }
+.dp p { margin: 0; text-wrap: pretty; }
+.dp p + p { margin-top: 1rem; }
+.dp-list { margin: 0; padding-left: 1.1rem; }
+.dp-list li + li { margin-top: .5rem; }
+.dp-list li::marker { color: var(--champagne); }
+.dp-block > .dp-list + p, .dp-block > p + .dp-list { margin-top: 1rem; }
+.dp-stops { margin: 0; padding: 0; list-style: none; counter-reset: stop; border-top: 1px solid color-mix(in srgb, var(--ink) 18%, transparent); }
+.dp-stops li { counter-increment: stop; display: grid; grid-template-columns: 3.4rem minmax(0, 1fr); column-gap: 1rem; padding: 1rem 0; border-bottom: 1px solid color-mix(in srgb, var(--ink) 18%, transparent); }
+.dp-stops li::before { content: 'N°' counter(stop); grid-row: span 2; padding-top: .3rem; font-size: .9rem; color: var(--ink-soft); }
+.dp-stops p { margin-top: .25rem; }
+
+/* --- Les voitures --- */
+.dp-cars { margin: 0; padding: 0; list-style: none; border-top: 1px solid color-mix(in srgb, var(--ink) 18%, transparent); }
+.dp-cars li { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr); gap: 1.2rem; align-items: center; padding: 1rem 0; border-bottom: 1px solid color-mix(in srgb, var(--ink) 18%, transparent); }
+.dp-cars img { width: 8.5rem; height: 8.5rem; object-fit: cover; background: var(--forest-deep); }
+.dp-cars p { margin-top: .2rem; font-size: .95rem; color: var(--ink-soft); }
+.dp-cars h3 a { text-decoration: none; }
+.dp-cars .dp-more { font-size: .72rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; }
+@media (max-width: 479px) {
+  .dp-cars li { grid-template-columns: 6rem minmax(0, 1fr); }
+  .dp-cars img { width: 6rem; height: 6rem; }
+}
+.dp-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 9rem), 1fr)); gap: .6rem; margin: 0; padding: 0; list-style: none; }
+.dp-gallery img { width: 100%; aspect-ratio: 1; object-fit: cover; background: var(--forest-deep); }
+.dp-specs { margin: 0; border-top: 1px solid var(--champagne); }
+.dp-specs > div { display: grid; grid-template-columns: minmax(0, 14rem) minmax(0, 1fr); gap: 1rem; padding: .6rem 0; border-bottom: 1px solid color-mix(in srgb, var(--ink) 18%, transparent); }
+.dp-specs dt { font-size: .72rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); padding-top: .15rem; }
+.dp-specs dd { margin: 0; overflow-wrap: break-word; hyphens: auto; }
+.dp-facts dd, .dp h1, .dp h2 { overflow-wrap: break-word; hyphens: auto; }
+
+/* --- Pages filles d'un sommaire (guides, occasions) --- */
+.dp-index { margin: 0; padding: 0; list-style: none; border-top: 1px solid color-mix(in srgb, var(--ink) 18%, transparent); }
+.dp-index li { padding: 1.2rem 0; border-bottom: 1px solid color-mix(in srgb, var(--ink) 18%, transparent); }
+.dp-index h3 a { text-decoration: none; }
+.dp-index h3 a:hover { text-decoration: underline; }
+.dp-index p { margin-top: .35rem; max-width: 46rem; color: var(--ink-soft); }
+
+/* --- Questions : accordéon, un + qui devient − (comme sur l'accueil) --- */
+.dp-faq { max-width: 46rem; border-bottom: 1px solid color-mix(in srgb, var(--ink) 22%, transparent); }
+.dp-faq details { border-top: 1px solid color-mix(in srgb, var(--ink) 22%, transparent); }
+.dp-faq summary { cursor: pointer; list-style: none; min-height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .7rem 0; font-weight: 500; }
+.dp-faq summary::after { content: ''; flex: none; width: 14px; height: 14px; background: linear-gradient(currentColor, currentColor) center / 14px 1.5px no-repeat, linear-gradient(currentColor, currentColor) center / 1.5px 14px no-repeat; transition: transform .35s cubic-bezier(.22,.61,.36,1), background-size .35s; }
+.dp-faq details[open] summary::after { transform: rotate(180deg); background-size: 14px 1.5px, 1.5px 0; }
+.dp-faq summary::-webkit-details-marker { display: none; }
+.dp-faq summary:hover { color: var(--forest); }
+.dp-faq details p { padding-bottom: 1rem; color: var(--ink-soft); }
+
+/* --- Action finale, sur le vert --- */
+.dp-cta { background: var(--forest); color: var(--ivory); }
+.dp-cta .dp-wrap { padding-block: clamp(2.5rem, 6vw, 4rem); }
+.dp-cta h2 { color: var(--ivory); }
+.dp-cta p { max-width: 38rem; }
+.dp-cta a:hover { color: var(--champagne); }
+
+/* --- À lire aussi --- */
+.dp-related { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 0 2rem; margin: 0; padding: 0; list-style: none; }
+.dp-related li { padding: .9rem 0; border-top: 1px solid color-mix(in srgb, var(--ink) 18%, transparent); }
+.dp-related a { font-family: var(--font-display); font-size: 1.3rem; text-decoration: none; }
+.dp-related a:hover { text-decoration: underline; }
+.dp-updated { font-size: .85rem; color: var(--ink-soft); }
+
+/* --- Pied de page : toutes les pages, le contact --- */
+.dp-foot { background: var(--forest-deep); color: var(--ivory); font-size: .95rem; }
+.dp-foot .dp-wrap { padding-block: clamp(2.5rem, 6vw, 4rem) 2rem; }
+.dp-foot__cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: 2rem; }
+.dp-foot h2 { margin: 0 0 .6rem; font-family: var(--font-sans); font-size: .72rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--champagne); }
+.dp-foot ul { margin: 0; padding: 0; list-style: none; }
+.dp-foot li { padding: .25rem 0; }
+.dp-foot a { text-decoration: none; }
+.dp-foot a:hover { color: var(--champagne); text-decoration: underline; }
+.dp-foot__legal { margin-top: 2.5rem; padding-top: 1.2rem; border-top: 1px solid color-mix(in srgb, var(--ivory) 25%, transparent); font-size: .85rem; color: color-mix(in srgb, var(--ivory) 80%, transparent); }
+
+@media (prefers-reduced-motion: reduce) {
+  .dp *, .dp *::before, .dp *::after { transition: none !important; }
+}

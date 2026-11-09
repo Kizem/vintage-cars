@@ -29,8 +29,13 @@ jobs:
       - run: npm ci
       # un test unitaire qui échoue arrête la mise en ligne
       - run: npm run test:unit
+      # adresse publique du site (domaine personnalisé ou github.io) : canonical, hreflang, sitemap,
+      # Open Graph et llms.txt. La variable de dépôt SITE_URL, si elle existe, l'emporte.
+      - id: pages
+        uses: actions/configure-pages@v5
       - run: npm run build
-      - uses: actions/configure-pages@v5
+        env:
+          VITE_SITE_URL: ${{ vars.SITE_URL || steps.pages.outputs.base_url }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

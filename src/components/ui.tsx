@@ -1,5 +1,8 @@
 import type { MouseEvent, ReactNode } from 'react';
+import { pageLinks, type LinkedPage } from '../data/links';
+import { useI18n } from '../i18n/I18nContext';
 import { scrollToId } from '../lib/pageNav';
+import { asset } from '../lib/paths';
 
 /** Le symbole de marque : É et M décalés. */
 export function Monogram() {
@@ -76,6 +79,16 @@ export function ActionLink({ onClick, children }: { onClick: () => void; childre
   };
   return (
     <a className="em-action" href="#ecrire" onClick={click}>
+      {children}
+    </a>
+  );
+}
+
+/** A discreet link to a content page of the site (its own page, in the current language). */
+export function MoreLink({ to, children }: { to: LinkedPage; children: ReactNode }) {
+  const { locale } = useI18n();
+  return (
+    <a className="em-more" href={asset(pageLinks[to][locale])}>
       {children}
     </a>
   );

@@ -1,6 +1,6 @@
 /* Lance la batterie de tests contre le site construit (`npm run build` d'abord) servi par `vite preview`.
    Playwright et son Chromium sont ceux installés sur la machine (paquet global) ; ce script pose NODE_PATH.
-   node tests/run.cjs            → layout, sheet, nav-form, timing en parallèle, puis scene (WebGL, lent)
+   node tests/run.cjs            → layout, sheet, nav-form, timing, pages en parallèle, puis scene (WebGL, lent)
    node tests/run.cjs sheet      → un seul fichier */
 const { spawn, execSync } = require('child_process');
 const path = require('path');
@@ -26,7 +26,7 @@ const run = (name) => new Promise((ok) => {
   const server = spawn('npx', ['vite', 'preview', '--port', String(PORT), '--strictPort'], { cwd: root, stdio: 'ignore' });
   for (let i = 0; i < 60 && !(await ping()); i++) await new Promise((r) => setTimeout(r, 500));
   if (!(await ping())) { console.error('vite preview ne répond pas (le site est-il construit ?)'); server.kill(); process.exit(1); }
-  const fast = ['layout', 'sheet', 'nav-form', 'timing'].filter((n) => !only.length || only.includes(n));
+  const fast = ['layout', 'sheet', 'nav-form', 'timing', 'pages'].filter((n) => !only.length || only.includes(n));
   const results = await Promise.all(fast.map(run));
   if (!only.length || only.includes('scene')) results.push(await run('scene'));
   server.kill();

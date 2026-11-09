@@ -4,7 +4,9 @@ import type { Experience } from '../data/types';
 import { fill, useI18n } from '../i18n/I18nContext';
 import { EnquirySentence } from './EnquirySentence';
 import { SectionImage } from './SectionImage';
-import { ActionLink } from './ui';
+import { experienceLink, pageLinks } from '../data/links';
+import { asset } from '../lib/paths';
+import { ActionLink, MoreLink } from './ui';
 
 /* Les sections calmes, sur l'ivoire, sous le parking. Une idée par section. */
 
@@ -41,6 +43,7 @@ export function Chapter({ experience: x, n, inert }: { experience: Experience; n
           <p className="em-text em-exp__short">{l(x.summary)}</p>
         </div>
         <ActionLink onClick={() => startEnquiry({ experience: x.id })}>{l(x.cta)}</ActionLink>
+        <MoreLink to={experienceLink[x.id]}>{t.chapter.more[x.id]}</MoreLink>
       </div>
       <div className="em-exp__media">
         <SectionImage image={x.image} sizes="(max-width: 899px) 100vw, 50vw" natural />
@@ -73,6 +76,7 @@ export function GoodToKnow({ inert }: { inert: boolean }) {
             </details>
           ))}
         </div>
+        <MoreLink to="faq">{g.more}</MoreLink>
       </div>
     </section>
   );
@@ -90,6 +94,7 @@ export function About({ inert }: { inert: boolean }) {
         </h2>
         <p className="em-text">{t.about.p1}</p>
         <p className="em-text">{t.about.p2}</p>
+        <MoreLink to="guides">{t.about.more}</MoreLink>
       </div>
     </section>
   );
@@ -97,7 +102,7 @@ export function About({ inert }: { inert: boolean }) {
 
 /** Écrire : pas d'image. Le titre, le formulaire-phrase et le pied de page. */
 export function Write({ inert }: { inert: boolean }) {
-  const { t, l } = useI18n();
+  const { t, l, locale } = useI18n();
   const { email, phone, phoneHref, hours } = site.contact;
   return (
     <section id="ecrire" className="em-sc" data-tone="light" inert={inert} aria-labelledby="ecrire-title">
@@ -110,6 +115,10 @@ export function Write({ inert }: { inert: boolean }) {
           <a href={`mailto:${email}`}>{email}</a> · <a href={`tel:${phoneHref}`}>{phone}</a>
         </p>
         <p>{l(hours)}</p>
+        <p>
+          <a href={asset(pageLinks.collection[locale])}>{t.footer.collection}</a> · <a href={asset(pageLinks.guides[locale])}>{t.footer.guides}</a> ·{' '}
+          <a href={asset(pageLinks.faq[locale])}>{t.footer.faq}</a>
+        </p>
         <p>
           © {new Date().getFullYear()} {site.name} · <a href="#legal-notice">{t.footer.legalNotice}</a> ·{' '}
           <a href="#privacy">{t.footer.privacy}</a>

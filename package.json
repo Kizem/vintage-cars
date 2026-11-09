@@ -4,7 +4,7 @@
   "description": "ÉPOQUE MOTORS — premium vintage automotive experiences in Paris",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build",
+    "build": "tsc --noEmit && vite build && vite build --ssr src/seo/build.tsx && node scripts/prerender.mjs",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "test": "npm run test:unit && npm run build && npm run test:e2e",

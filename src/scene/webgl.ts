@@ -3,6 +3,8 @@
 let known: boolean | undefined;
 export function hasWebGL() {
   if (known !== undefined) return known;
+  /* pré-rendu : la page est écrite comme avec la scène, le navigateur décide ensuite */
+  if (typeof document === 'undefined') return true;
   try {
     const c = document.createElement('canvas');
     const g = (c.getContext('webgl2') || c.getContext('webgl')) as WebGLRenderingContext | null;

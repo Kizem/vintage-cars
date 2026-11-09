@@ -2,7 +2,9 @@
 
 Read `PROJECT_CONTEXT.md` first: architecture, decisions and business rules.
 
-Landing page for **ÉPOQUE MOTORS**, private vintage car experiences in Paris.
+Website of **ÉPOQUE MOTORS**, private vintage car experiences in Paris: a 3D home page and
+static content pages (services, cars, guides, FAQ) written at build time for search engines and AI
+assistants (PROJECT_CONTEXT § 9, strategy in `docs/SEO-GEO.md`).
 *Private vintage car experiences in Paris, by enquiry.*
 
 The page follows the **Le Garage** design system: a dark 3D parking first,
@@ -16,7 +18,8 @@ the parking). Plain CSS, no CSS framework.
 ```bash
 npm install
 npm run dev        # local development
-npm run build      # typecheck + production build in /dist
+npm run build      # typecheck + production build in /dist, with the pre-rendered pages
+                   # (VITE_SITE_URL=https://… npm run build for the production address)
 npm run preview    # serve the production build
 ```
 
@@ -58,7 +61,8 @@ See `PROJECT_CONTEXT.md` for the architecture and the rules.
 ## Languages (EN / FR)
 
 The site is bilingual, with an EN | FR link in the menu (same page, no reload).
-Language is chosen from `?lang=fr`, then the visitor's previous choice, then the
+Each language has its own address: `/` (English) and `/fr/`. At `/`, the language
+comes from `?lang=fr` (older links), then the visitor's previous choice, then the
 browser language (English by default).
 
 - Interface copy: `src/i18n/en.ts` and `src/i18n/fr.ts` (same keys, type-checked).
@@ -76,7 +80,11 @@ src/
     site.ts          sections, menu, contact details, section images
     types.ts         MediaAsset / Vehicle / Experience types
   i18n/            dictionaries (en, fr) + language provider
+  content/         content pages (services, collection, guides, FAQ, about), EN + FR
+  seo/             site writer: pre-rendered home, page template, JSON-LD, sitemap,
+                   robots, llms.txt (build.tsx), content page styles (doc.css)
   lib/enquiry.ts   form validation + submission service
+  lib/paths.ts     site root, image addresses, language from the path
   lib/pageNav.ts   one gesture, one section (wheel, keys, menu)
   context/         enquiry pre-fill (car / chapter actions → form)
   scene/           the 3D showroom: car data sheets (carspecs.ts), shared
@@ -121,7 +129,8 @@ field filters basic bots.
 - Enquiry backend (form service, serverless function or CRM) + `VITE_ENQUIRY_ENDPOINT`.
 - Real contact details & Instagram URL in `src/data/site.ts`.
 - Legal Notice & Privacy Policy texts (`legal` keys in `src/i18n/en.ts` and `fr.ts`).
-- Production domain in `index.html` (canonical, Open Graph URLs).
+- Production domain: set it in GitHub Pages and, if needed, the `SITE_URL` repository
+  variable (canonical, hreflang, sitemap, Open Graph, llms.txt). See `docs/SEO-GEO.md`.
 - Citroën DS: the three-quarter rear sheet photo is small (1000 px wide); replace it
   with a full-resolution original when available.
 - Exact version of the DS (provisional name and partial specs in `src/data/vehicles.ts`).

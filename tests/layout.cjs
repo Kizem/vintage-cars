@@ -38,14 +38,14 @@ const { launch, page, suite, until, SIZES } = require('./lib.cjs');
       await p.context().close();
     }
   }
-  /* bascule de langue depuis le menu (l'anglais est la langue par défaut : seul le français est dans l'URL) */
+  /* bascule de langue depuis le menu (chaque langue a son adresse : / pour l'anglais, /fr/ pour le français) */
   const p = await page(b, 'desktop', { lang: 'en' });
   const before = await p.textContent('.em-nav ul li:first-child a');
   await p.click('.em-nav__lang a');
   check(await until(p, () => document.documentElement.lang === 'fr'), 'bascule EN → FR');
   const after = await p.textContent('.em-nav ul li:first-child a');
   check(before !== after, `le menu change de langue (${before} → ${after})`);
-  check(/lang=fr/.test(p.url()), "l'URL garde la langue choisie");
+  check(/\/fr\/$/.test(new URL(p.url()).pathname) && !/lang=/.test(p.url()), `l'URL devient celle de la page française (${p.url()})`);
   await b.close();
   done();
 })();

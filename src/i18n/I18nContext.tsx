@@ -2,13 +2,16 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 import { en, type Dictionary } from './en';
 import { fr } from './fr';
 import { defaultLocale, isLocale, type Locale, type Localized } from './locales';
+import { homeHref, localeFromPath } from '../lib/paths';
 
 const dictionaries: Record<Locale, Dictionary> = { en, fr };
 const STORAGE_KEY = 'epoque-lang';
 const PARAM = 'lang';
 
-/** URL (?lang=) first, then the visitor's previous choice, then the browser language. */
+/** The page's path (/fr/) first, then ?lang= (older links), then the visitor's previous choice, then the browser language. */
 function detectLocale(): Locale {
+  const fromPath = localeFromPath();
+  if (fromPath) return fromPath;
   const fromUrl = new URLSearchParams(window.location.search).get(PARAM);
   if (isLocale(fromUrl)) return fromUrl;
   try {
@@ -30,8 +33,9 @@ interface I18nValue {
 
 const I18nContext = createContext<I18nValue | null>(null);
 
-export function I18nProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>(detectLocale);
+/** `initial`: the language of a page rendered ahead of time (pre-rendering, no window). */
+export function I18nProvider({ children, initial }: { children: ReactNode; initial?: Locale }) {
+  const [locale, setLocaleState] = useState<Locale>(() => initial ?? detectLocale());
   const t = dictionaries[locale];
 
   useEffect(() => {
@@ -39,9 +43,10 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     document.title = t.meta.title;
     document.querySelector('meta[name="description"]')?.setAttribute('content', t.meta.description);
 
+    /* each language has its own address: / (English) and /fr/ */
     const url = new URL(window.location.href);
-    if (locale === defaultLocale) url.searchParams.delete(PARAM);
-    else url.searchParams.set(PARAM, locale);
+    url.searchParams.delete(PARAM);
+    url.pathname = new URL(homeHref(locale), window.location.href).pathname;
     window.history.replaceState(null, '', url);
   }, [locale, t]);
 

@@ -1,0 +1,27 @@
+/* ==========================================================================
+   Époque Motors, design tokens et polices : partagés par la page (index.css)
+   et les pages de contenu (seo/doc.css). Toutes les couleurs passent par ces jetons.
+   ========================================================================== */
+
+:root {
+  --ink: #252522;
+  --ink-soft: #4a4b45;
+  --forest: #172820;
+  --forest-deep: #101c16;
+  --ivory: #ede9df;
+  --champagne: #b39a70;
+  --phare: #f2b632;
+  --plate: #0d0f0d;
+  --plate-ink: #e4e1d6;
+  --error: #7a2a1f;
+  --font-display: "Cormorant Garamond", Garamond, "Times New Roman", serif;
+  --font-sans: Barlow, "Helvetica Neue", Arial, sans-serif;
+  --font-stencil: "Stardos Stencil", "Courier New", serif;
+}
+
+/* Polices auto-hébergées. Stardos Stencil ne sert qu'aux numéros peints au sol de la scène 3D. */
+@font-face { font-family: "Cormorant Garamond"; src: url("./assets/fonts/cormorant-garamond-300.woff2") format("woff2"); font-weight: 300; font-display: swap; }
+@font-face { font-family: "Cormorant Garamond"; src: url("./assets/fonts/cormorant-garamond-400.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Barlow"; src: url("./assets/fonts/barlow-400.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Barlow"; src: url("./assets/fonts/barlow-500.woff2") format("woff2"); font-weight: 500; font-display: swap; }
+@font-face { font-family: "Stardos Stencil"; src: url("./assets/fonts/stardos-stencil-700.woff2") format("woff2"); font-weight: 700; font-display: swap; }

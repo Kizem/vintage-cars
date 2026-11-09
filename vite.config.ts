@@ -41,18 +41,24 @@ function securityMeta(endpoint?: string): Plugin {
   };
 }
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ mode, isSsrBuild }) => {
   const env = loadEnv(mode, process.cwd(), 'VITE_');
   return {
     // Relative base: works at the domain root, under a GitHub Pages
     // project path (/vintage-cars/) or on a future custom domain.
     base: './',
     plugins: [react(), securityMeta(env.VITE_ENQUIRY_ENDPOINT)],
-    build: {
-      // The parking chunk is three.js (about 140 kB gzipped), loaded on demand
-      // after the first paint. The initial bundle stays well under this limit.
-      chunkSizeWarningLimit: 600,
-    },
+    build: isSsrBuild
+      ? /* the site writer (src/seo/build.tsx), run once by scripts/prerender.mjs, then deleted */
+        { outDir: '.ssr', emptyOutDir: true, copyPublicDir: false }
+      : {
+          // The parking chunk is three.js (about 140 kB gzipped), loaded on demand
+          // after the first paint. The initial bundle stays well under this limit.
+          chunkSizeWarningLimit: 600,
+          // The stylesheet of the content pages is its own entry; the manifest gives its hashed name to the prerender.
+          manifest: true,
+          rollupOptions: { input: { index: 'index.html', doc: 'src/seo/doc.css' } },
+        },
     test: {
       environment: 'jsdom',
       globals: true,
