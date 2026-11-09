@@ -422,7 +422,7 @@ export function Parking({ open, onOpenChange }: { open: boolean; onOpenChange: (
           <button
             ref={nameBtn}
             type="button"
-            className="em-parking__name"
+            className={`em-parking__name${name.length > 20 ? ' em-parking__name--long' : ''}`}
             key={car.slug}
             onClick={openSheet}
             aria-label={fill(t.garage.seeSheet, { name })}

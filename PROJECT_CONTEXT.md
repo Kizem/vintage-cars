@@ -7,8 +7,8 @@ and day-to-day use; this file explains how the project is built and why.
 ## 1. What the site is
 
 A single-page, bilingual (EN / FR) landing page for **Époque Motors**, private
-vintage car experiences in Paris, by enquiry only. Three cars: Peugeot 504,
-Citroën DS, Mercedes W115 220D (1973, manual). There is no booking engine and no online payment.
+vintage car experiences in Paris, by enquiry only. Three cars: Peugeot 504 GL (1971),
+Citroën DS 21 Henri Chapron (1971), Mercedes W115 220D (1973, manual). There is no booking engine and no online payment.
 
 Branches:
 
@@ -171,6 +171,13 @@ Parking behaviour (`parking.ts`, `components/garage/Parking.tsx`):
   offset (`BAY_OX`) so that the row is centred on screen. Sheet open (and in
   portrait), the camera centres the projected outline of the chosen car in the
   free space.
+- Cut-outs: `mats.cutout(c, e1, e2, n, a, b, d)` discards the paint inside an
+  ellipsoid (mirrored on both sides): the DS headlamps are recessed in the wing
+  tips, a deep cavity behind a flush almond glass with the two lamps at its back.
+  `wingRise` (DS, 504): the wings stand higher than the bonnet, which dips between
+  the headlamps.
+- Long car names (over 20 characters) get `.em-parking__name--long`, a smaller
+  size, two lines at most on phones.
 - Car lights (the bay light under the ceiling and the headlamps) fade in and
   out; they never flicker (a flicker read as a fault in the ceiling tubes).
 - `onReady` fires after the first rendered frame.

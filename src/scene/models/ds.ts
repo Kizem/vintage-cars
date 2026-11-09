@@ -8,7 +8,7 @@
    - poupe : malle aux chevrons dorés et monogramme DS21, feux rouges cerclés de chrome aux coins, plaque au centre,
      pare-chocs enveloppant ;
    - flancs : poignées chromées, lignes du capot le long des ailes. */
-import { BoxGeometry, CapsuleGeometry, CylinderGeometry, ExtrudeGeometry, Group, Mesh, MeshBasicMaterial, MeshPhysicalMaterial, PlaneGeometry, Shape, SphereGeometry, TorusGeometry } from 'three';
+import { BackSide, BoxGeometry, CapsuleGeometry, CircleGeometry, CylinderGeometry, DoubleSide, ExtrudeGeometry, Group, Matrix4, Mesh, MeshBasicMaterial, MeshPhysicalMaterial, MeshStandardMaterial, PlaneGeometry, Shape, SphereGeometry, TorusGeometry, Vector3 } from 'three';
 import { lerp, type Pt } from '../carspecs';
 import { badgeTexture, loft, stations, tube, type P3 } from '../geometry';
 import type { CarKit } from '../kit';
@@ -16,24 +16,64 @@ import type { CarKit } from '../kit';
 export function details(k: CarKit) {
   const { body, mats, gl, curves: { be, hw }, gh, nx, tx, bumper, plate, surfX, topY, yawAt, lay, lampPoints } = k;
   const { chrome, dark, black, rubber, gold, crease, lens, amber, red } = mats;
-  const globe = new MeshPhysicalMaterial({ color: 0xdfe8ec, roughness: .02, transparent: true, opacity: .3, clearcoat: 1, clearcoatRoughness: .02, envMap: mats.env, envMapIntensity: 1.6, depthWrite: false });
+  const globe = new MeshPhysicalMaterial({ color: 0xdfe8ec, roughness: .02, transparent: true, opacity: .22, clearcoat: 1, clearcoatRoughness: .02, envMap: mats.env, envMapIntensity: 1.6, depthWrite: false });
+  const cavity = new MeshStandardMaterial({ color: 0xc9c7bd, metalness: .55, roughness: .38, envMap: mats.env, envMapIntensity: .9, side: BackSide });
+  const bucket = new MeshStandardMaterial({ color: 0xe7e8e8, metalness: 1, roughness: .2, envMap: mats.env, envMapIntensity: 1.4, side: DoubleSide });
+  const clear = new MeshStandardMaterial({ color: 0xf4f2ea, metalness: .7, roughness: .1, envMap: mats.env, envMapIntensity: 1.5 });
 
+  /** Le point est-il dans la caisse ? (coupe de la caisse à son abscisse, en miroir) */
+  const inside = (p: Vector3) => {
+    if (p.x < nx || p.x > tx) return false;
+    const sec = k.halfSection(p.x); const z = Math.abs(p.z); const y = p.y;
+    let inn = false;
+    for (let i = 0, j = sec.length - 1; i < sec.length; j = i++) {
+      const [zi, yi] = sec[i]; const [zj, yj] = sec[j];
+      if ((yi > y) !== (yj > y) && z < (zj - zi) * (y - yi) / (yj - yi) + zi) inn = !inn;
+    }
+    return inn;
+  };
   [1, -1].forEach((sg) => {
-    /* --- phare caréné, à la pointe de l'aile --- */
-    const zm = .6; const x0 = surfX(zm, true) + .06; const ly = .64;
-    const unit = new Group(); unit.position.set(x0, ly, sg * zm); unit.rotation.y = sg * (yawAt(x0 + .15) - Math.PI / 2) * .45; body.add(unit);
-    /* cuvette sombre au fond, puis les deux optiques côte à côte */
-    const well = new Mesh(new SphereGeometry(1, 36, 18, 0, Math.PI), dark); well.scale.set(.15, .095, .07); well.rotation.y = Math.PI / 2; well.position.x = .1; unit.add(well);
-    ([[.065, .068], [-.07, .06]] as [number, number][]).forEach(([dz, r]) => {
-      const zz = sg * dz;
-      const bowl = new Mesh(new SphereGeometry(r, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2), chrome); bowl.rotation.z = -Math.PI / 2; bowl.scale.y = .55; bowl.position.set(.1, .004, zz); unit.add(bowl);
-      const bulb = new Mesh(new SphereGeometry(r * .8, 24, 12), lens); bulb.scale.set(.32, 1, 1); bulb.position.set(.086, .004, zz); unit.add(bulb);
-      const rim = new Mesh(new TorusGeometry(r, r * .07, 8, 32), chrome); rim.rotation.y = Math.PI / 2; rim.position.set(.084, .004, zz); unit.add(rim);
-      lampPoints.push([x0 + .03, ly, sg * (zm + dz)]);
+    /* --- phare creusé dans la pointe de l'aile (photos) : une glace en amande, au ras de la carrosserie et cerclée
+       de chrome ; derrière, une cavité profonde, claire, au fond de laquelle sont enfoncées les deux optiques :
+       la jaune à l'extérieur, la blanche (phare pivotant) vers le capot. La caisse est réellement percée
+       (mats.cutout) : on voit la profondeur sous tous les angles. --- */
+    const zc = .59; const xc = surfX(zc, true) + .07; const yc = .6;
+    /* repère du phare : n normale de l'aile (en plan, relevée vers le haut), e1 horizontal, e2 vers le haut */
+    const dh = (hw(xc + .01) - hw(xc - .01)) / .02;
+    const n = new Vector3(-dh, .35, 1).normalize(); n.z *= sg;
+    const e2 = new Vector3(0, 1, 0).addScaledVector(n, -n.y).normalize();
+    const e1 = new Vector3().crossVectors(e2, n).normalize();
+    const A = .16; const B = .08; const D = .2;
+    /* Le plan de l'ouverture est reculé dans l'aile (de sh) ; la peinture est percée là où l'ellipsoïde traverse la tôle. */
+    const at = (u: number, v: number, w: number, o: Vector3) => o.clone().addScaledVector(e1, u).addScaledVector(e2, v).addScaledVector(n, w);
+    const c0 = new Vector3(xc, yc, sg * zc);
+    const ring = (o: Vector3) => Array.from({ length: 32 }, (_, i) => { const t = i / 32 * Math.PI * 2; return at(Math.cos(t) * A, Math.sin(t) * B, 0, o); });
+    /* recul limité : là où l'aile est trop mince (vers le capot, qui plonge entre les ailes), la glace bombée ferme le phare */
+    let sh = 0; while (sh < .05 && ring(at(0, 0, -sh, c0)).filter(inside).length < 28) sh += .005;
+    const c = at(0, 0, -sh, c0);
+    if (sg > 0) mats.cutout(c, e1, e2, n, A, B, sh * 2.2 + .03);
+    const unit = new Group(); unit.position.copy(c); unit.quaternion.setFromRotationMatrix(new Matrix4().makeBasis(e1, e2, n)); body.add(unit);
+    /* la cavité : moitié arrière de l'ellipsoïde, vue de l'intérieur */
+    const cav = new Mesh(new SphereGeometry(1, 40, 20, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), cavity); cav.rotation.x = Math.PI / 2; cav.scale.set(A, D, B); /* échelle avant rotation : y devient la profondeur */ unit.add(cav);
+    /* les deux optiques, au fond : cuvette chromée et verre */
+    ([[.068, .054, lens], [-.064, .05, clear]] as [number, number, typeof lens][]).forEach(([dx, r, mat]) => {
+      const ox = dx * sg; /* le repère du côté droit est le miroir du gauche, axe e1 inversé */
+      const zDeep = -D * .55;
+      const cup = new Mesh(new CylinderGeometry(r * 1.05, r * .55, .05, 32, 1, true), bucket); cup.rotation.x = Math.PI / 2; cup.position.set(ox, .01, zDeep + .025); unit.add(cup);
+      const glass = new Mesh(new CircleGeometry(r, 32), mat); glass.position.set(ox, .01, zDeep + .05); unit.add(glass);
+      const rim = new Mesh(new TorusGeometry(r, .005, 8, 32), chrome); rim.position.set(ox, .01, zDeep + .05); unit.add(rim);
+      const w = new Vector3(ox, .01, zDeep + .06).applyQuaternion(unit.quaternion).add(c);
+      lampPoints.push([w.x, w.y, w.z]);
     });
-    /* le globe de verre, en saillie devant les optiques, et son cerclage chromé contre l'aile */
-    const fair = new Mesh(new SphereGeometry(1, 40, 20, 0, Math.PI), globe); fair.scale.set(.152, .102, .2); fair.rotation.y = -Math.PI / 2; fair.position.x = .1; fair.renderOrder = 6; unit.add(fair);
-    const ring = new Mesh(new TorusGeometry(1, .045, 8, 48), chrome); ring.scale.set(.152, .102, 1); ring.rotation.y = Math.PI / 2; ring.position.x = .1; unit.add(ring);
+    /* la glace, à peine bombée hors de la tôle, et son jonc chromé, posé sur la tôle tout autour de l'ouverture */
+    const cover = new Mesh(new SphereGeometry(1, 40, 20, 0, Math.PI * 2, 0, Math.PI / 2), globe); cover.rotation.x = Math.PI / 2; cover.scale.set(A, sh + .045, B); cover.renderOrder = 6; unit.add(cover);
+    const lip: P3[] = [];
+    for (let i = 0; i <= 64; i++) {
+      const t = i / 64 * Math.PI * 2; const u = Math.cos(t) * A * .99; const v = Math.sin(t) * B * .99;
+      let w = 0; while (w < sh + .1 && inside(at(u, v, w, c))) w += .002;
+      const p = at(u, v, w, c); lip.push([p.x, p.y, p.z]);
+    }
+    body.add(tube(lip, .006, chrome));
 
     /* --- avant : clignotant sur le coin du pare-chocs, butoir en caoutchouc noir sous la lame --- */
     const xi = surfX(.7, true) + .02;

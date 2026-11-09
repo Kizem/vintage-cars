@@ -11,13 +11,13 @@ import type { CarKit } from '../kit';
 export function details(k: CarKit) {
   const { body, mats, curves: { be, hw }, nx, tx, bumper, plate, surfX, topY, lay, lampPoints } = k;
   const { chrome, dark, black, gold, crease, lens, lampGlass, rubber, amber, red } = mats;
-  const gy = .73;
+  const gy = .73; const cy = .705;
   const fx = surfX(.3, true);
-  /* calandre : cadre chromé, fond noir, lamelles horizontales, lion */
-  plate(fx + .004, gy, 0, .7, .19, .018, chrome, .012);
-  plate(fx - .004, gy, 0, .66, .16, .012, dark, .012);
-  for (let i = 0; i < 6; i++) { const b = new Mesh(new BoxGeometry(.008, .007, .64), chrome); b.position.set(fx - .022, gy - .065 + i * .026, 0); body.add(b); }
-  const lion = plate(fx - .026, gy, 0, .045, .06, .012, gold, .006);
+    /* calandre, sous le capot qui plonge entre les phares : fines lamelles chromées serrées, lion doré au centre */
+  plate(fx + .004, cy, 0, .7, .165, .012, chrome, .012);
+  plate(fx - .004, cy, 0, .67, .14, .008, dark, .012);
+  for (let i = 0; i < 9; i++) { const b = new Mesh(new BoxGeometry(.008, .006, .66), chrome); b.position.set(fx - .022, cy - .062 + i * .0155, 0); body.add(b); }
+  const lion = plate(fx - .03, cy, 0, .05, .07, .012, gold, .006);
   lion.scale.set(1, 1, .6);
   /* optique : trapèze, bord extérieur vertical, bord intérieur en biais vers le bas */
   const lamp = new Shape(); lamp.moveTo(-.165, -.075); lamp.lineTo(.165, -.075); lamp.lineTo(.165, .085); lamp.lineTo(-.1, .085); lamp.closePath();

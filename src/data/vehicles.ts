@@ -3,8 +3,8 @@ import type { Vehicle } from './types';
 /**
  * THE COLLECTION, single source of truth.
  *
- * The order is the order of the bays in the parking: N°1 Peugeot 504,
- * N°2 Citroën DS 21, N°3 Mercedes W115 220D. The parking, the vehicle sheet
+ * The order is the order of the bays in the parking: N°1 Peugeot 504 GL,
+ * N°2 Citroën DS 21 Henri Chapron, N°3 Mercedes W115 220D. The parking, the vehicle sheet
  * and the enquiry form's car list follow it.
  *
  * Only publish verified information: no model years, specifications, trims
@@ -14,7 +14,7 @@ import type { Vehicle } from './types';
 export const vehicles: Vehicle[] = [
   {
     slug: 'peugeot-504',
-    name: { en: 'Peugeot 504', fr: 'Peugeot 504' },
+    name: { en: 'Peugeot 504 GL', fr: 'Peugeot 504 GL' },
     marque: 'Peugeot',
     mark: '504',
     category: { en: 'French Classic', fr: 'Classique français' },
@@ -109,9 +109,8 @@ export const vehicles: Vehicle[] = [
   },
   {
     slug: 'citroen-ds',
-    // Provisional: owner believes it is a DS 21 (Henri Chapron).
-    // TODO: confirm the exact version.
-    name: { en: 'Citroën DS 21', fr: 'Citroën DS 21' },
+    // Name and year confirmed by the owner.
+    name: { en: 'Citroën DS 21 Henri Chapron', fr: 'Citroën DS 21 Henri Chapron' },
     marque: 'Citroën',
     mark: 'DS',
     category: { en: 'French Icon', fr: 'Icône française' },
@@ -126,17 +125,17 @@ export const vehicles: Vehicle[] = [
     story: {
       en: [
         'Unveiled at the 1955 Paris Motor Show, the DS was styled by Flaminio Bertoni and engineered under André Lefèbvre. Its hydropneumatic suspension brought a ride comfort that was new at the time.',
-        'The DS 21 arrived in 1965 with a 2.2-litre engine and was produced until 1972.',
+        'The DS 21 arrived in 1965 with a 2.2-litre engine and was produced until 1972. The car in our collection dates from 1971.',
       ],
       fr: [
         'Présentée au Salon de Paris en 1955, la DS a été dessinée par Flaminio Bertoni sous la direction technique d’André Lefèbvre. Sa suspension hydropneumatique lui apportait un confort de roulement inédit pour l’époque.',
-        'La DS 21 apparaît en 1965 avec un moteur de 2,2 litres et sera produite jusqu’en 1972.',
+        'La DS 21 apparaît en 1965 avec un moteur de 2,2 litres et sera produite jusqu’en 1972. Celle de la collection date de 1971.',
       ],
     },
-    // Facts common to every DS 21 saloon. Power and gearbox depend on the version
-    // (carburettor or injection, manual, hydraulic or automatic) and are left out.
+    // Year confirmed by the owner; the other facts are common to every DS 21 saloon. Power and gearbox
+    // depend on the version (carburettor or injection, manual, hydraulic or automatic) and are left out.
     details: [
-      { label: { en: 'Production', fr: 'Production' }, value: { en: '1965 to 1972', fr: '1965 à 1972' } },
+      { label: { en: 'Year', fr: 'Année' }, value: { en: '1971', fr: '1971' } },
       { label: { en: 'Body', fr: 'Carrosserie' }, value: { en: 'Saloon', fr: 'Berline' } },
       { label: { en: 'Seats', fr: 'Places' }, value: { en: '5', fr: '5' } },
       {

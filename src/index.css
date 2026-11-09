@@ -160,6 +160,8 @@ button, input, select, textarea { font-variant-numeric: lining-nums; }
 .em-parking__who { text-align: center; min-width: 0; font-size: .9rem; }
 .em-parking__who .em-no { font-size: .8rem; display: flex; justify-content: center; align-items: center; gap: .35em; }
 .em-parking__name { display: block; margin: .35rem auto .3rem; background: none; border: 0; color: inherit; cursor: pointer; font-family: var(--font-display); font-weight: 300; text-transform: uppercase; font-size: clamp(2rem, 4.6cqw, 3.9rem); line-height: 1; letter-spacing: .005em; animation: em-up .7s cubic-bezier(.22,.61,.36,1) both; }
+/* nom long (« Citroën DS 21 Henri Chapron ») : un peu plus petit, sur deux lignes au plus sur téléphone */
+.em-parking__name--long { font-size: clamp(1.5rem, 3.6cqw, 3.2rem); text-wrap: balance; }
 .em-parking__sub { margin: 0; font-size: .8rem; min-height: 1.3em; }
 @keyframes em-up { from { opacity: 0; transform: translateY(10px); } }
 .em-parking__arrow { flex: none; width: 44px; height: 44px; margin-bottom: 1.8rem; display: inline-flex; align-items: center; justify-content: center; background: none; border: 0; color: inherit; cursor: pointer; }

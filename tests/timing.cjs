@@ -14,7 +14,7 @@ const { launch, page, suite } = require('./lib.cjs');
     const n = await name();
     if (n !== last) { seen.push([Date.now() - t0, n]); last = n; }
   }
-  check(seen[0][1] === 'Peugeot 504', `la 504 d'abord (${seen[0][1]})`);
+  check(seen[0][1] === 'Peugeot 504 GL', `la 504 d'abord (${seen[0][1]})`);
   check(seen.length >= 3, `au moins deux changements en 21 s (${seen.map((s) => s.join(' ms : '))})`);
   if (seen.length >= 2) check(seen[1][0] >= 9000, `la 504 reste au moins 9 s (${seen[1][0]} ms)`);
   if (seen.length >= 3) { const d = seen[2][0] - seen[1][0]; check(d > 4000 && d < 6800, `puis environ 5 s par voiture (${d} ms)`); }
