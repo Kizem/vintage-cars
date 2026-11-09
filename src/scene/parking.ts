@@ -51,9 +51,13 @@ const BAY_BACK = -6.1;                              /* fond de la place, derriè
 const BAY_FRONT = 4;                                /* entrée de la place, côté allée */
 const EXIT = 3.9;                                   /* élan supplémentaire de la voiture qui sort de l'écran pour changer de côté */
 const NUM_Z = 3.5;                                  /* numéro peint à l'entrée de la place */
-/** Abscisse du logo sur le mur : la voiture en face, avancée, projetée depuis la caméra (à ~16 m) sur le mur. */
-const LOGO_X = place(OUT)[0] * (16 + 8) / (16 - place(OUT)[1]);
+/* Piliers et montants des portes du mur du fond alignés : un montant derrière chaque pilier. Le logo est au milieu
+   du panneau le plus proche du centre de l'écran, entre deux piliers, au repos. */
 const WALL_Z = -7.65;
+const PILLAR_X = S / 2 + bayX(WALL_Z);
+const DOOR_OFF = (((-PILLAR_X / S) % 1) + 1) % 1;
+const MID = (((PILLAR_X + S / 2) % S) + S) % S;
+const LOGO_X = MID > S / 2 ? MID - S : MID;
 const N = 3;
 const damp = (a: number, b: number, k: number, dt: number) => a + (b - a) * (1 - Math.exp(-k * dt));
 const wrap = (v: number) => { const h = N / 2; return ((((v + h) % N) + N) % N) - h; };
@@ -123,18 +127,18 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
   const neonOff = new MeshBasicMaterial({ color: 0xf2f2e6 });
   const beamMat = new MeshStandardMaterial({ color: 0x2a302a, roughness: 1 });
   const glowTex = tex(softBlob());
-  /* Le logo de la maison, peint en ivoire sur le mur du fond, derrière chaque voiture : monogramme ÉM (É en haut à
-     gauche, M en bas à droite, comme sur la page) et le nom Époque Motors, espacé. Polices chargées avant la scène. */
-  const logoTex = tex(canvas(1024, 640, (g, w) => {
-    g.clearRect(0, 0, w, 640); g.fillStyle = '#ede9df'; g.textBaseline = 'alphabetic'; g.textAlign = 'center';
-    g.font = '300 300px "Cormorant Garamond", Georgia, serif';
-    g.fillText('É', w / 2 - 70, 300); g.fillText('M', w / 2 + 62, 392);
-    const word = 'ÉPOQUE MOTORS'; g.font = '400 70px "Cormorant Garamond", Georgia, serif'; const sp = 12;
-    const ws = [...word].map((ch) => g.measureText(ch).width); const tot = ws.reduce((a, b) => a + b, 0) + sp * (word.length - 1);
-    let x = (w - tot) / 2; g.textAlign = 'left';
-    [...word].forEach((ch, i) => { g.fillText(ch, x, 575); x += ws[i] + sp; });
+  /* Le logo de la maison : le monogramme ÉM seul, grand, peint en ivoire sur le mur du fond (épaissi par un contour,
+     pigment un peu usé). Polices chargées avant la scène. */
+  const logoTex = tex(canvas(1024, 1024, (g, w, h) => {
+    g.clearRect(0, 0, w, h); g.fillStyle = g.strokeStyle = '#ede9df'; g.textAlign = 'center'; g.textBaseline = 'alphabetic';
+    g.font = '400 520px "Cormorant Garamond", Georgia, serif'; g.lineWidth = 22; g.lineJoin = 'round';
+    ([['É', w / 2 - 120, 520], ['M', w / 2 + 110, 690]] as [string, number, number][]).forEach(([ch, x, y]) => { g.fillText(ch, x, y); g.strokeText(ch, x, y); });
+    /* peinture : quelques manques dans le pigment */
+    g.globalCompositeOperation = 'destination-out';
+    for (let i = 0; i < 1400; i++) { g.fillStyle = `rgba(0,0,0,${Math.random() * .35})`; g.fillRect(Math.random() * w, Math.random() * h, 1 + Math.random() * 3, 1 + Math.random() * 3); }
+    g.globalCompositeOperation = 'source-over';
   }));
-  const logoMat = new MeshBasicMaterial({ map: logoTex, color: 0xffffff, transparent: true, opacity: 1, depthWrite: false });
+  const logoMat = new MeshBasicMaterial({ map: logoTex, color: 0xf2eee3, transparent: true, opacity: .95, depthWrite: false });
 
   /* Une copie du lieu au-dessus du sol, une copie en miroir en dessous */
   const items: { g: Group; k: number }[] = [];
@@ -156,9 +160,6 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
         neon.position.set(bayX(-4.2), 3.42, -4.2); g.add(neon);
         const neon2 = new Mesh(new BoxGeometry(2.6, .05, .12), neonOff);
         neon2.position.set(bayX(-.9), 3.42, -.9); g.add(neon2);
-        /* droit derrière la voiture de la place quand elle est en face (vue depuis la caméra, sur le mur) */
-        const logo = new Mesh(new PlaneGeometry(1.8, 1.125), logoMat);
-        logo.position.set(LOGO_X, 2.3, -7.97); g.add(logo);
       }
       if (!mirrored) {
         /* lignes au sol : places en épi, dans l'axe des voitures garées, du fond de la place jusqu'à l'allée */
@@ -174,6 +175,8 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
       items.push({ g, k });
       root.add(g);
     }
+    /* un seul logo, au centre du mur, sur le panneau de porte entre deux piliers (hors reflet) */
+    if (!mirrored) { const logo = new Mesh(new PlaneGeometry(2.3, 2.3), logoMat); logo.position.set(LOGO_X, 2.05, -7.97); root.add(logo); }
     scene.add(root);
   }
   buildWorld(false); buildWorld(true);
@@ -289,7 +292,7 @@ export function createParking(canvasEl: HTMLCanvasElement, cars: ParkingCar[], o
     /* l'allée défile */
     const shift = (((st.pos * S) % S) + S) % S;
     items.forEach((it) => { it.g.position.x = it.k * S - shift; });
-    doorTex.offset.x = st.pos % 1;
+    doorTex.offset.x = st.pos % 1 + DOOR_OFF;
 
     /* La caméra. Fiche ouverte (o → 1), elle centre la voiture choisie dans l'espace laissé libre :
        à gauche de la fiche en paysage, au-dessus en portrait. */

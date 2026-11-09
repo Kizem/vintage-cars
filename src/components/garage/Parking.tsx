@@ -89,7 +89,7 @@ export function Parking({ open, onOpenChange }: { open: boolean; onOpenChange: (
     canvas.addEventListener('webglcontextlost', fallBack);
     box.appendChild(canvas);
     /* polices des numéros au sol et du logo peint sur le mur */
-    const font = document.fonts ? Promise.all(['700 200px "Stardos Stencil"', '300 200px "Cormorant Garamond"', '400 70px "Cormorant Garamond"'].map((f) => document.fonts.load(f))).catch(() => undefined) : undefined;
+    const font = document.fonts ? Promise.all(['700 200px "Stardos Stencil"', '400 200px "Cormorant Garamond"'].map((f) => document.fonts.load(f))).catch(() => undefined) : undefined;
     Promise.all([import('../../scene/parking'), font])
       .then(([{ createParking }]) => {
         if (dead) return;
