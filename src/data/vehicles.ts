@@ -24,16 +24,18 @@ export const vehicles: Vehicle[] = [
     },
     availability: 'on-request',
     service: 'chauffeur-or-self-drive',
+    // Photos of the collection car, supplied by the owner (references/504/Illu), licence plates blurred.
     image: {
-      src: 'images/collection/peugeot-504-avant.webp',
-      width: 730,
-      height: 420,
+      src: 'images/collection/peugeot-504-1-trois-quarts-avant.webp',
+      srcSet: 'images/collection/peugeot-504-1-trois-quarts-avant-900.webp 900w, images/collection/peugeot-504-1-trois-quarts-avant.webp 2000w',
+      width: 2000,
+      height: 1454,
       alt: {
         en: 'The blue Peugeot 504 saloon of the collection, three-quarter front view',
         fr: 'La Peugeot 504 berline bleue de la collection, vue de trois-quarts avant',
       },
       caption: { en: 'Three-quarter front', fr: 'Trois-quarts avant' },
-      focalPoint: '42% 60%',
+      focalPoint: '45% 60%',
     },
     // Specifications provided by the owner (listing: roadstr.fr/cars/peugeot-504-1971-saint-denis).
     details: [
@@ -51,15 +53,52 @@ export const vehicles: Vehicle[] = [
     ],
     gallery: [
       {
-        src: 'images/collection/peugeot-504-arriere.webp',
-        width: 456,
-        height: 350,
+        src: 'images/collection/peugeot-504-2-profil-portes-ouvertes.webp',
+        srcSet: 'images/collection/peugeot-504-2-profil-portes-ouvertes-900.webp 900w, images/collection/peugeot-504-2-profil-portes-ouvertes.webp 1600w',
+        width: 1600,
+        height: 1066,
         alt: {
-          en: 'The blue Peugeot 504 saloon of the collection, three-quarter rear view',
-          fr: 'La Peugeot 504 berline bleue de la collection, vue de trois-quarts arrière',
+          en: 'The Peugeot 504 in side view, doors open on its grey cabin',
+          fr: 'La Peugeot 504 de profil, portes ouvertes sur son habitacle gris',
+        },
+        caption: { en: 'Doors open', fr: 'Portes ouvertes' },
+        focalPoint: '35% 55%',
+      },
+      {
+        src: 'images/collection/peugeot-504-3-trois-quarts-arriere.webp',
+        srcSet: 'images/collection/peugeot-504-3-trois-quarts-arriere-900.webp 900w, images/collection/peugeot-504-3-trois-quarts-arriere.webp 2000w',
+        width: 2000,
+        height: 1500,
+        alt: {
+          en: 'The Peugeot 504, three-quarter rear view',
+          fr: 'La Peugeot 504, vue de trois-quarts arrière',
         },
         caption: { en: 'Three-quarter rear', fr: 'Trois-quarts arrière' },
-        focalPoint: '50% 60%',
+        focalPoint: '45% 55%',
+      },
+      {
+        src: 'images/collection/peugeot-504-4-arriere.webp',
+        srcSet: 'images/collection/peugeot-504-4-arriere-900.webp 900w, images/collection/peugeot-504-4-arriere.webp 2000w',
+        width: 2000,
+        height: 1397,
+        alt: {
+          en: 'Rear of the Peugeot 504, with its tail lamps and boot lid',
+          fr: 'L’arrière de la Peugeot 504, ses feux et sa malle',
+        },
+        caption: { en: 'Rear view', fr: 'De l’arrière' },
+        focalPoint: '50% 50%',
+      },
+      {
+        src: 'images/collection/peugeot-504-5-habitacle.webp',
+        srcSet: 'images/collection/peugeot-504-5-habitacle-900.webp 675w, images/collection/peugeot-504-5-habitacle.webp 1500w',
+        width: 1500,
+        height: 2000,
+        alt: {
+          en: 'Cabin of the Peugeot 504: steering wheel, dashboard and grey seats',
+          fr: 'L’habitacle de la Peugeot 504 : volant, planche de bord et sièges gris',
+        },
+        caption: { en: 'Cabin', fr: 'L’habitacle' },
+        focalPoint: '50% 50%',
       },
     ],
     rendering: {

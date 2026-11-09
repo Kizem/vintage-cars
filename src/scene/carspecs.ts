@@ -75,11 +75,12 @@ export const SPECS: Record<CarModelKey, CarSpec> = {
     cabin: { glass: 0x2f3a37, opacity: .6, seat: 0x93562c, trim: 0x151515 },
     pillarChrome: true,
   },
-  /* Peugeot 504 berline, d'après les photos de la voiture : tricorps, capot long et plat, face presque verticale,
-     grand vitrage aux montants fins, ligne de caisse horizontale, malle longue, ailes arrière légèrement galbées. */
+  /* Peugeot 504 berline (1971), d'après les photos de la voiture (references/504/modele) : bleu vif, tricorps, capot
+     long et plat, face presque verticale, grand vitrage aux montants fins, ligne de caisse horizontale, malle longue,
+     ailes arrière légèrement galbées ; habitacle aux sièges gris clair et garnitures bleu marine. */
   p504: {
     L: 4.49, H: 1.46, W: 1.69, wheelR: .315, wheelW: .17, hub: 'peugeot', hubTint: '#c3c4c0',
-    paint: { color: 0x2468b0, metalness: .45, roughness: .3 },
+    paint: { color: 0x1f76b6, metalness: .35, roughness: .28 },
     axles: [-1.39, 1.35], arch: [[.385, 2], [.385, 2]], trackZ: [.72, .72],
     floor: [[-2.245, .42], [-2.05, .3], [-1.75, .27], [1.75, .27], [2.05, .31], [2.245, .44]],
     belt: [[-2.245, .8], [-2.12, .84], [-1.4, .885], [-1.0, .905], [0, .915], [1.25, .935], [1.9, .925], [2.245, .88]],
@@ -92,7 +93,7 @@ export const SPECS: Record<CarModelKey, CarSpec> = {
     seams: [-.95, .28, 1.22],
     trim: [[-1.8, .36, 1.8, .36]],
     lamps: [[-2.2, .73, .515]], lampKind: 'peugeot',
-    cabin: { glass: 0x3f4f49, opacity: .5, seat: 0x6f7276, trim: 0x1b1b1b },
+    cabin: { glass: 0x3f4f49, opacity: .5, seat: 0xa4a8ab, trim: 0x22304c },
     flap: [1.85, .8, .055],
   },
   /* Mercedes W115 220D berline (1973), d'après les photos de la voiture (references/MercedesW115/modele) : ivoire,

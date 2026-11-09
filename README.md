@@ -122,7 +122,6 @@ field filters basic bots.
 - Real contact details & Instagram URL in `src/data/site.ts`.
 - Legal Notice & Privacy Policy texts (`legal` keys in `src/i18n/en.ts` and `fr.ts`).
 - Production domain in `index.html` (canonical, Open Graph URLs).
-- Photos of the Peugeot 504 in higher definition (current ones are 730 and 456 px wide).
 - Citroën DS: the three-quarter rear sheet photo is small (1000 px wide); replace it
   with a full-resolution original when available.
 - Exact version of the DS (provisional name and partial specs in `src/data/vehicles.ts`).

@@ -1,7 +1,8 @@
-/* Peugeot 504 berline, d'après les photos de la voiture : face verticale à peine inclinée, optiques
+/* Peugeot 504 berline (1971), d'après les photos de la voiture (references/504/modele) : face verticale à peine inclinée, optiques
    trapézoïdales (bord intérieur en biais) cerclées de chrome, calandre noire à fines lamelles chromées
    et lion au centre, clignotants orange sous les optiques, pare-chocs chromés à butoirs noirs ;
-   poupe tricorps aux feux verticaux orange et rouge, plaque, jonc de malle, sortie d'échappement. */
+   poupe tricorps aux grands feux orange et rouge, plaque encadrée de chrome, lettres PEUGEOT et GL, jonc de malle,
+   sortie d'échappement. */
 import { BoxGeometry, CapsuleGeometry, CylinderGeometry, ExtrudeGeometry, Mesh, MeshBasicMaterial, PlaneGeometry, Shape, type Material } from 'three';
 import { lerp } from '../carspecs';
 import { badgeTexture, tube, type P3 } from '../geometry';
@@ -36,11 +37,11 @@ export function details(k: CarKit) {
     [[nx - .03, .52], [tx + .03, .54]].forEach(([bx, by]) => { const o = new Mesh(new CapsuleGeometry(.032, .12, 4, 12), rubber); o.position.set(bx, by, sg * .36); body.add(o); });
     /* poignées de portes chromées */
     [.14, 1.08].forEach((hx) => { const h = new Mesh(new CapsuleGeometry(.011, .1, 4, 8), chrome); h.rotation.z = Math.PI / 2; h.position.set(hx, be(hx) - .065, sg * (hw(hx) + .008)); body.add(h); });
-    /* feux arrière verticaux : orange en haut, rouge en bas, cerclés de chrome */
-    const xr = surfX(.66, false) - .01;
-    const bez = plate(xr + .004, .75, sg * .66, .15, .25, .015, chrome, .01); bez.rotation.y = Math.PI / 2;
-    const am = plate(xr + .012, .83, sg * .66, .12, .07, .01, amber, .01); am.rotation.y = Math.PI / 2;
-    const rd = plate(xr + .012, .72, sg * .66, .12, .14, .01, red, .01); rd.rotation.y = Math.PI / 2;
+    /* grands feux arrière aux angles, cerclés de chrome : orange en haut, rouge en bas (photos) */
+    const xr = surfX(.64, false) - .01;
+    const bez = plate(xr + .004, .74, sg * .64, .18, .27, .02, chrome, .01); bez.rotation.y = Math.PI / 2;
+    const am = plate(xr + .012, .8, sg * .64, .15, .12, .012, amber, .01); am.rotation.y = Math.PI / 2;
+    const rd = plate(xr + .012, .675, sg * .64, .15, .1, .012, red, .01); rd.rotation.y = Math.PI / 2;
   });
   /* pare-chocs chromés */
   bumper(nx + .03, .52, .06, .03, .7, .45);
@@ -48,7 +49,9 @@ export function details(k: CarKit) {
   /* plaques sans inscription, jonc de malle */
   const pf = new Mesh(new BoxGeometry(.012, .11, .52), black); pf.position.set(nx - .03, .43, 0); body.add(pf);
   const xp = surfX(.25, false);
-  const pr = new Mesh(new BoxGeometry(.012, .11, .52), black); pr.position.set(xp + .006, .68, 0); body.add(pr);
+  const pr = new Mesh(new BoxGeometry(.012, .11, .52), black); pr.position.set(xp + .016, .7, 0); body.add(pr);
+  /* encadrement chromé de la plaque, dans son renfoncement */
+  const prf = plate(xp + .001, .7, 0, .58, .15, .02, chrome, .006); prf.rotation.y = Math.PI / 2;
   const jonc = new Mesh(new BoxGeometry(.012, .018, .9), chrome); jonc.position.set(surfX(.45, false) + .002, .79, 0); body.add(jonc);
   /* sortie d'échappement, côté gauche */
   const ex = new Mesh(new CylinderGeometry(.024, .024, .22, 14), dark); ex.rotation.z = Math.PI / 2; ex.position.set(tx - .12, .3, .45); body.add(ex);
@@ -57,5 +60,9 @@ export function details(k: CarKit) {
   const badgeMat = new MeshBasicMaterial({ map: badgeTexture('504', '#e8eaea', '700 50px Arial, sans-serif'), transparent: true, depthWrite: false });
   const b1 = new Mesh(new PlaneGeometry(.14, .035), badgeMat); b1.rotation.z = Math.PI / 2;
   lay(b1, -2.08, 0);
-  lay(new Mesh(new PlaneGeometry(.12, .03), badgeMat), 2.1, .4);
+  /* lettres PEUGEOT au bord de la malle, monogramme GL sous le feu gauche */
+  const pgMat = new MeshBasicMaterial({ map: badgeTexture('PEUGEOT', '#e2e4e4', '700 40px Arial, sans-serif'), transparent: true, depthWrite: false });
+  const pg = new Mesh(new PlaneGeometry(.26, .045), pgMat); pg.rotation.y = Math.PI / 2; pg.position.set(surfX(.1, false) + .004, .82, 0); body.add(pg);
+  const glMat = new MeshBasicMaterial({ map: badgeTexture('GL', '#e2e4e4', 'italic 700 46px Arial, sans-serif'), transparent: true, depthWrite: false });
+  const gl = new Mesh(new PlaneGeometry(.09, .03), glMat); gl.rotation.y = Math.PI / 2; gl.position.set(surfX(.42, false) + .004, .66, .42); body.add(gl);
 }
