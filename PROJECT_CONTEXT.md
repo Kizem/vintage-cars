@@ -172,11 +172,15 @@ Parking behaviour (`parking.ts`, `components/garage/Parking.tsx`):
   portrait), the camera centres the projected outline of the chosen car in the
   free space.
 - DS headlamps (`headlamps()` in `models/ds.ts`, from the owner's front and
-  three-quarter photos): the wing ends in a block (`wingWidth`: the wing keeps its
-  height over that share of the half-width before dropping to the bonnet). Its
+  three-quarter photos): the wings end in blocks (`wingInner`: the wing keeps its
+  height up to a straight inner wall at that distance from the axis) and the
+  bonnet is a domed slab between them, its front edge raised almost to the
+  headlamps (deck), as on the front photo. Its
   face carries a large rounded-trapezoid glass, flush with the skin and ringed in
-  chrome, that stretches into an almond over the wing corner; behind it a silver
-  housing and two large round lamps (fluted clear glass, yellow bulb), the outer
+  chrome, that stretches into a long almond along the wing (about 45 cm, up to
+  the front of the wheel arch); behind it a silver
+  housing that follows the skin at a constant depth and two large round lamps
+  set towards the rear of the glass, just behind it (fluted clear glass, yellow bulb), the outer
   one a little larger; a long amber indicator below. The outline is defined in the
   glass plane, projected onto the skin along the lamp axis, and the paint is not
   drawn inside it (`mats.lampCut`). Its parameters were checked offline against

@@ -37,9 +37,9 @@ export function details(k: CarKit) {
      reporté en miroir. Réglages vérifiés hors navigateur : contour entier sur la face de l'aile, une seule traversée
      de tôle, boîtier tout entier dans la caisse. */
   function headlamps() {
-    const W = { A: .165, B: .115, pF: 3.4, pR: 2.2, tF: .82, k: .06 };
-    const DEPTH = .12;
-    const D = new Vector3(-.92, .05, .39).normalize();
+    const W = { A: .24, B: .115, pF: 3.4, pR: 2.2, tF: .82, k: .05 };
+    const DEPTH = .1;
+    const D = new Vector3(-.883, .05, .469).normalize();
     const E2 = new Vector3(0, 1, 0).addScaledVector(D, -D.y).normalize();
     const E1 = new Vector3().crossVectors(E2, D).normalize();
     const s01 = (u: number) => Math.min(1, Math.max(0, (u / W.A + 1) / 2));
@@ -57,7 +57,7 @@ export function details(k: CarKit) {
       for (let i = 0; i < 20; i++) { const m = (a + b) / 2; if (inside(at(m))) b = m; else a = m; }
       return at(b);
     };
-    const C = onSkin(new Vector3(-2.36, .62, .735), 0, 0);
+    const C = onSkin(new Vector3(-2.3, .62, .77), 0, 0);
     const tOf = (p: Vector3) => p.clone().sub(C).dot(D);
 
     /* contour : bord haut d'avant en arrière, puis bord bas d'arrière en avant (points serrés aux extrémités) */
@@ -74,7 +74,7 @@ export function details(k: CarKit) {
     for (let i = 0; i < RS.length - 2; i++) for (let j = 0; j < R; j++) { const a = 1 + i * R + j; const b = 1 + i * R + (j + 1) % R; gidx.push(a, a + R, b, b, a + R, b + R); }
     const glassG = new BufferGeometry(); glassG.setAttribute('position', new Float32BufferAttribute(gpos, 3)); glassG.setAttribute('uv', new Float32BufferAttribute(guv, 2)); glassG.setIndex(gidx); glassG.computeVertexNormals();
     const tEdge = ring.map(([u, v]) => tOf(onSkin(C, u, v)));
-    const tMin = Math.min(...ts, ...tEdge); const tMax = Math.max(...ts, ...tEdge); const tBack = tMin - DEPTH;
+    const tMin = Math.min(...ts, ...tEdge); const tMax = Math.max(...ts, ...tEdge);
     mats.lampCut(C, E1, E2, D, W, tMin - .02, tMax + .02);
 
     /* matériaux : glace claire et striée, boîtier argenté, réflecteurs chromés ; l'optique blanche s'allume avec la jaune */
@@ -89,11 +89,12 @@ export function details(k: CarKit) {
     const left = new Group(); const unit = new Group(); left.add(unit);
     unit.position.copy(C); unit.quaternion.setFromRotationMatrix(new Matrix4().makeBasis(E1, E2, D));
     const glassMesh = new Mesh(glassG, glassMat); glassMesh.renderOrder = 6; unit.add(glassMesh);
-    /* boîtier : du bord de la glace jusqu'au fond, qui se resserre un peu ; fond fermé */
+    /* boîtier : une coque qui suit la tôle à profondeur constante (DEPTH derrière chaque point du bord), resserrée au fond ;
+       fond fermé. Il reste ainsi dans l'aile sur toute la longueur de la glace. */
     const hpos: number[] = []; const hidx: number[] = [];
-    ring.forEach(([u, v], j) => { hpos.push(u, v, tEdge[j] - .002, u * .86, v * .86 - .01, tBack); });
+    ring.forEach(([u, v], j) => { hpos.push(u, v, tEdge[j] - .002, u * .86, v * .86 - .01, tEdge[j] - DEPTH); });
     for (let j = 0; j < R; j++) { const a = 2 * j; const b = 2 * ((j + 1) % R); hidx.push(a, a + 1, b, b, a + 1, b + 1); }
-    const c0 = R * 2; hpos.push(0, -.01, tBack);
+    const c0 = R * 2; hpos.push(0, -.01, tOf(onSkin(C, 0, 0)) - DEPTH);
     for (let j = 0; j < R; j++) hidx.push(c0, 2 * j + 1, 2 * ((j + 1) % R) + 1);
     const housingG = new BufferGeometry(); housingG.setAttribute('position', new Float32BufferAttribute(hpos, 3)); housingG.setIndex(hidx); housingG.computeVertexNormals();
     unit.add(new Mesh(housingG, housingMat));
@@ -102,9 +103,12 @@ export function details(k: CarKit) {
     unit.add(tube(lip, .0055, chrome));
     /* les deux optiques au fond (photos) : deux grosses optiques rondes presque de même taille, réflecteur chromé
        sous une glace claire striée, ampoule jaune au centre ; l'extérieure un peu plus grande */
-    const lampsAt: [number, number, number][] = [[.06, .005, .075], [-.086, .005, .069]];
+    /* vers l'arrière de la glace, comme sur les photos ; l'avant de la glace reste vide */
+    const lampsAt: [number, number, number][] = [[.085, .004, .072], [-.06, .004, .066]];
     const glow: Vector3[] = [];
     lampsAt.forEach(([u, v, r]) => {
+      /* chaque optique juste derrière la glace, à sa place sur la tôle */
+      const tBack = tOf(onSkin(C, u, v)) - .085;
       const cup = new Mesh(new CylinderGeometry(r * 1.02, r * .55, .046, 32, 1, true), reflector); cup.rotation.x = Math.PI / 2; cup.position.set(u, v, tBack + .027); unit.add(cup);
       const face = new Mesh(new CircleGeometry(r, 40), clear); face.position.set(u, v, tBack + .046); unit.add(face);
       const bulb = new Mesh(new CircleGeometry(r * .34, 32), lens); bulb.position.set(u, v, tBack + .048); unit.add(bulb);
@@ -112,7 +116,7 @@ export function details(k: CarKit) {
       glow.push(new Vector3(u, v, tBack + .06).applyQuaternion(unit.quaternion).add(C));
     });
     /* clignotant : long feu orange cerclé de chrome, sous l'arrière de la glace */
-    const ub = .075; const pb = onSkin(C, ub, vEdge(ub, -1) - .045); const tb = tOf(pb);
+    const ub = .11; const pb = onSkin(C, ub, vEdge(ub, -1) - .045); const tb = tOf(pb);
     const bez = new Mesh(new BoxGeometry(.165, .036, .01), chrome); bez.position.set(ub, vEdge(ub, -1) - .045, tb + .003); unit.add(bez);
     const ind = new Mesh(new BoxGeometry(.15, .024, .012), amber); ind.position.set(ub, vEdge(ub, -1) - .045, tb + .008); unit.add(ind);
 
@@ -125,8 +129,8 @@ export function details(k: CarKit) {
     /* --- avant : butoir en caoutchouc noir sous la lame --- */
     const guard = new Mesh(new BoxGeometry(.2, .055, .07, 2, 1, 1), rubber); guard.position.set(nx + .02, .34, sg * .4); guard.rotation.z = .55; body.add(guard);
 
-    /* --- flancs : lignes du capot le long des ailes, poignées à l'arrière des portes --- */
-    const cl: P3[] = []; for (let i = 0; i <= 20; i++) { const x = lerp(-2.25, -.9, i / 20); const z = hw(x) * .78; cl.push([x, topY(x, z) + .002, sg * z]); }
+    /* --- flancs : joint du capot contre la paroi des ailes, poignées à l'arrière des portes --- */
+    const cl: P3[] = []; for (let i = 0; i <= 20; i++) { const x = lerp(-2.39, -.9, i / 20); const z = Math.min(hw(x) * .78, (k.s.wingInner ?? 1) - .012); cl.push([x, topY(x, z) + .002, sg * z]); }
     body.add(tube(cl, .0035, crease));
     [.18, 1.08].forEach((x) => { const h = new Mesh(new CapsuleGeometry(.011, .09, 4, 8), chrome); h.rotation.z = Math.PI / 2; h.position.set(x, be(x) - .07, sg * (hw(x) + .008)); body.add(h); });
 
@@ -138,7 +142,7 @@ export function details(k: CarKit) {
   });
 
   /* --- nez : jonc chromé au bord du capot, pointé au centre --- */
-  const blade: P3[] = []; for (let i = 0; i <= 24; i++) { const z = lerp(-.56, .56, i / 24); const x = surfX(Math.max(.6, Math.abs(z)), true) + (.56 - Math.abs(z)) * .06 - .008; blade.push([Math.min(x, nx + .05), .515 - (1 - Math.abs(z) / .56) * .025, z]); }
+  const blade: P3[] = []; for (let i = 0; i <= 24; i++) { const z = lerp(-.56, .56, i / 24); const x = surfX(Math.max(.6, Math.abs(z)), true) + (.56 - Math.abs(z)) * .06 - .008; blade.push([Math.min(x, nx + .05), .555 - (1 - Math.abs(z) / .56) * .02, z]); }
   body.add(tube(blade, .009, chrome));
   /* pare-chocs avant enveloppant, prise d'air noire et plaque dessous */
   bumper(nx + .05, .42, .06, .036, .65, .42);
