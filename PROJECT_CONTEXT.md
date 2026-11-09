@@ -176,7 +176,8 @@ Parking behaviour (`parking.ts`, `components/garage/Parking.tsx`):
   height up to a straight inner wall at that distance from the axis) and the
   bonnet is a domed slab between them, its front edge raised almost to the
   headlamps (deck), as on the front photo. Its
-  face carries a large rounded-trapezoid glass, flush with the skin and ringed in
+  face carries a large rounded-trapezoid glass (straight, tall edge on the bonnet
+  side, round outer edge, top rising outwards, bottom almost level), flush with the skin and ringed in
   chrome, that stretches into a long almond along the wing (about 45 cm, up to
   the front of the wheel arch); behind it a silver
   housing that follows the skin at a constant depth and two large round lamps

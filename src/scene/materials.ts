@@ -66,21 +66,22 @@ export function createMaterials(s: CarSpec, env: Texture, be: (x: number) => num
   const lampM = { value: new Matrix3() };
   const lampS = { value: new Vector4(1, 1, 0, 1) };
   const lampP = { value: new Vector4(2, 2, 1, -1) };
-  const lampCut = (c: Vector3, e1: Vector3, e2: Vector3, d: Vector3, w: { A: number; B: number; pF: number; pR: number; tF: number; k: number }, tMin: number, tMax: number) => {
+  const lampKb = { value: 0 };
+  const lampCut = (c: Vector3, e1: Vector3, e2: Vector3, d: Vector3, w: { A: number; B: number; pF: number; pR: number; tF: number; k: number; kb: number }, tMin: number, tMax: number) => {
     lampC.value.copy(c); lampM.value.set(e1.x, e1.y, e1.z, e2.x, e2.y, e2.z, d.x, d.y, d.z);
-    lampS.value.set(w.A, w.B, w.k, w.tF); lampP.value.set(w.pF, w.pR, tMin, tMax);
+    lampS.value.set(w.A, w.B, w.k, w.tF); lampP.value.set(w.pF, w.pR, tMin, tMax); lampKb.value = w.kb;
   };
   paint.onBeforeCompile = (sh) => {
-    sh.uniforms.uArch = archU; sh.uniforms.uClip = archC; sh.uniforms.uLampC = lampC; sh.uniforms.uLampM = lampM; sh.uniforms.uLampS = lampS; sh.uniforms.uLampP = lampP;
+    sh.uniforms.uArch = archU; sh.uniforms.uClip = archC; sh.uniforms.uLampC = lampC; sh.uniforms.uLampM = lampM; sh.uniforms.uLampS = lampS; sh.uniforms.uLampP = lampP; sh.uniforms.uLampKb = lampKb;
     sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vL;').replace('#include <begin_vertex>', '#include <begin_vertex>\nvL = position;');
-    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vL; uniform vec3 uArch[2]; uniform float uClip[2]; uniform vec3 uLampC; uniform mat3 uLampM; uniform vec4 uLampS; uniform vec4 uLampP;')
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vL; uniform vec3 uArch[2]; uniform float uClip[2]; uniform vec3 uLampC; uniform mat3 uLampM; uniform vec4 uLampS; uniform vec4 uLampP; uniform float uLampKb;')
       .replace('#include <map_fragment>', `
         if (abs(vL.z) > .25) { for (int i = 0; i < 2; i++) { if (length(vL.xy - uArch[i].xy) < uArch[i].z && vL.y < uClip[i]) discard; } }
         { vec3 q = uLampM * (vec3(vL.x, vL.y, abs(vL.z)) - uLampC);
           if (q.z > uLampP.z && q.z < uLampP.w && abs(q.x) < uLampS.x) {
             float m = clamp((q.x / uLampS.x + 1.) * .5, 0., 1.); float p = mix(uLampP.x, uLampP.y, m);
             float h = uLampS.y * mix(uLampS.w, 1., m) * pow(max(0., 1. - pow(abs(q.x) / uLampS.x, p)), 1. / p);
-            if (abs(q.y - uLampS.z * q.x) < h) discard; } }
+            if (q.y < h + uLampS.z * q.x && q.y > -h + uLampKb * q.x) discard; } }
         #include <map_fragment>`);
   };
   const roof = s.roof ? new MeshPhysicalMaterial({ ...s.roof, clearcoat: .6, clearcoatRoughness: .2, envMap: env, envMapIntensity: .9, side: DoubleSide }) : new MeshPhysicalMaterial({ ...s.paint, clearcoat: 1, clearcoatRoughness: .07, envMap: env, envMapIntensity: .95, side: DoubleSide }); /* toit du même ton que la caisse */

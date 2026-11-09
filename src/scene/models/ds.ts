@@ -37,7 +37,9 @@ export function details(k: CarKit) {
      reporté en miroir. Réglages vérifiés hors navigateur : contour entier sur la face de l'aile, une seule traversée
      de tôle, boîtier tout entier dans la caisse. */
   function headlamps() {
-    const W = { A: .24, B: .115, pF: 3.4, pR: 2.2, tF: .82, k: .05 };
+    /* contour (photo de face) : bord côté capot droit et haut (exposant 8, aux coins arrondis), bord extérieur bien rond
+       (2,2) ; le dessus monte vers l'extérieur (k), le dessous reste presque horizontal (kb) */
+    const W = { A: .24, B: .115, pF: 8, pR: 2.2, tF: .9, k: .07, kb: .02 };
     const DEPTH = .1;
     const D = new Vector3(-.883, .05, .469).normalize();
     const E2 = new Vector3(0, 1, 0).addScaledVector(D, -D.y).normalize();
@@ -46,7 +48,7 @@ export function details(k: CarKit) {
     /** bord haut (+1) ou bas (-1) du contour à l'abscisse u */
     const vEdge = (u: number, sgn: number) => {
       const p = lerp(W.pF, W.pR, s01(u));
-      return sgn * W.B * lerp(W.tF, 1, s01(u)) * Math.pow(Math.max(0, 1 - Math.pow(Math.abs(u) / W.A, p)), 1 / p) + W.k * u;
+      return sgn * W.B * lerp(W.tF, 1, s01(u)) * Math.pow(Math.max(0, 1 - Math.pow(Math.abs(u) / W.A, p)), 1 / p) + (sgn > 0 ? W.k : W.kb) * u;
     };
     /** Point de tôle atteint en venant de l'extérieur, le long de -D, depuis (u, v) du plan de la glace centré en o. */
     const onSkin = (o: Vector3, u: number, v: number) => {
@@ -57,7 +59,7 @@ export function details(k: CarKit) {
       for (let i = 0; i < 20; i++) { const m = (a + b) / 2; if (inside(at(m))) b = m; else a = m; }
       return at(b);
     };
-    const C = onSkin(new Vector3(-2.3, .62, .77), 0, 0);
+    const C = onSkin(new Vector3(-2.3, .615, .77), 0, 0);
     const tOf = (p: Vector3) => p.clone().sub(C).dot(D);
 
     /* contour : bord haut d'avant en arrière, puis bord bas d'arrière en avant (points serrés aux extrémités) */
