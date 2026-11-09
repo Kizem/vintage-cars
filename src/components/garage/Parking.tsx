@@ -226,7 +226,9 @@ export function Parking({ open, onOpenChange }: { open: boolean; onOpenChange: (
   /* Clavier : Échap ferme la fiche ; ← → changent de voiture, ou de photo quand la fiche est ouverte */
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (isLocked('dialog') || e.metaKey || e.ctrlKey || e.altKey) return;
+      /* une fenêtre modale ouverte (mentions, photo en plein écran) garde le clavier ; on regarde le DOM, pas seulement
+         le verrou, levé un instant après la fermeture */
+      if ((isLocked('dialog') && document.querySelector('dialog[open]')) || e.metaKey || e.ctrlKey || e.altKey) return;
       const a = document.activeElement;
       if (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) return;
       const isOpen = latest.current.open;

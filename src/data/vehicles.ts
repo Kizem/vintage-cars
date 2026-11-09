@@ -262,15 +262,15 @@ export const vehicles: Vehicle[] = [
       },
       {
         src: 'images/collection/mercedes-w115-5-interieur.webp',
-        srcSet: 'images/collection/mercedes-w115-5-interieur-900.webp 675w, images/collection/mercedes-w115-5-interieur.webp 1500w',
-        width: 1500,
-        height: 2000,
+        srcSet: 'images/collection/mercedes-w115-5-interieur-900.webp 675w, images/collection/mercedes-w115-5-interieur.webp 1200w',
+        width: 1200,
+        height: 1600,
         alt: {
-          en: 'Interior of the Mercedes W115 220D: ivory steering wheel, wood trim and beige upholstery',
-          fr: 'L’habitacle de la Mercedes W115 220D : volant ivoire, boiseries et sellerie beige',
+          en: 'Interior of the Mercedes W115 220D: ivory steering wheel, burr walnut dashboard and beige upholstery',
+          fr: 'L’habitacle de la Mercedes W115 220D : volant ivoire, planche de bord en ronce de noyer et sellerie beige',
         },
         caption: { en: 'Interior', fr: 'L’habitacle' },
-        focalPoint: '50% 62%',
+        focalPoint: '50% 55%',
       },
     ],
     rendering: {
