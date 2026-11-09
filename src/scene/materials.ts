@@ -1,6 +1,6 @@
 /* Bibliothèque de matériaux commune : la même peinture vernie, les mêmes chromes, verres, caoutchoucs et feux
    pour les trois voitures ; seules les teintes viennent de la fiche de chaque modèle (carspecs.ts). */
-import { DoubleSide, Matrix3, MeshBasicMaterial, MeshPhysicalMaterial, MeshStandardMaterial, Vector3, type Texture } from 'three';
+import { DoubleSide, MeshBasicMaterial, MeshPhysicalMaterial, MeshStandardMaterial, Vector3, type Texture } from 'three';
 import type { CarSpec } from './carspecs';
 import { canvasTex } from './geometry';
 
@@ -59,31 +59,18 @@ export function createMaterials(s: CarSpec, env: Texture, be: (x: number) => num
   const paint = new MeshPhysicalMaterial({ ...s.paint, map: seamTex, clearcoat: 1, clearcoatRoughness: .07, envMap: env, envMapIntensity: .95, side: DoubleSide });
   const archU = { value: s.axles.map((x, i) => new Vector3(x, s.wheelR, s.arch[i][0])) };
   const archC = { value: s.arch.map((a) => a[1]) };
-  /* Découpes dans la peinture (ellipsoïdes, de part et d'autre de l'axe) : les phares creusés dans l'aile de la DS.
-     Chacune : centre, et matrice qui ramène l'ellipsoïde à la sphère unité (voir cutout()). */
-  const cutC = { value: [new Vector3(0, -9, 0), new Vector3(0, -9, 0)] };
-  const cutM = { value: [new Matrix3(), new Matrix3()] };
-  let cuts = 0;
-  /** Perce la caisse : ellipsoïde de centre c, d'axes e1, e2, n et de demi-axes a, b, d (côté z > 0, reporté en miroir). */
-  const cutout = (c: Vector3, e1: Vector3, e2: Vector3, n: Vector3, a: number, b: number, d: number) => {
-    if (cuts > 1) return;
-    cutC.value[cuts].copy(c);
-    cutM.value[cuts].set(e1.x / a, e1.y / a, e1.z / a, e2.x / b, e2.y / b, e2.z / b, n.x / d, n.y / d, n.z / d);
-    cuts++;
-  };
   paint.onBeforeCompile = (sh) => {
-    sh.uniforms.uArch = archU; sh.uniforms.uClip = archC; sh.uniforms.uCutC = cutC; sh.uniforms.uCutM = cutM;
+    sh.uniforms.uArch = archU; sh.uniforms.uClip = archC;
     sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vL;').replace('#include <begin_vertex>', '#include <begin_vertex>\nvL = position;');
-    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vL; uniform vec3 uArch[2]; uniform float uClip[2]; uniform vec3 uCutC[2]; uniform mat3 uCutM[2];')
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vL; uniform vec3 uArch[2]; uniform float uClip[2];')
       .replace('#include <map_fragment>', `
         if (abs(vL.z) > .25) { for (int i = 0; i < 2; i++) { if (length(vL.xy - uArch[i].xy) < uArch[i].z && vL.y < uClip[i]) discard; } }
-        for (int i = 0; i < 2; i++) { if (length(uCutM[i] * (vec3(vL.x, vL.y, abs(vL.z)) - uCutC[i])) < 1.) discard; }
         #include <map_fragment>`);
   };
   const roof = s.roof ? new MeshPhysicalMaterial({ ...s.roof, clearcoat: .6, clearcoatRoughness: .2, envMap: env, envMapIntensity: .9, side: DoubleSide }) : new MeshPhysicalMaterial({ ...s.paint, clearcoat: 1, clearcoatRoughness: .07, envMap: env, envMapIntensity: .95, side: DoubleSide }); /* toit du même ton que la caisse */
   const chrome = new MeshStandardMaterial({ color: 0xf2f3f4, metalness: 1, roughness: .18, envMap: env, envMapIntensity: 1.5 });
   return {
-    paint, roof, chrome, cutout,
+    paint, roof, chrome,
     /** montants inox, ou couleur caisse */
     pillar: s.roof || s.pillarChrome ? new MeshStandardMaterial({ color: 0xcfd2d2, metalness: .95, roughness: .2, envMap: env }) : roof,
     dark: new MeshStandardMaterial({ color: 0x0b0d0c, roughness: .7, envMap: env, envMapIntensity: .3 }),

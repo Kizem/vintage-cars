@@ -64,7 +64,7 @@ export const en = {
   },
   goodToKnow: {
     title: 'Good to know',
-    facts: ['2 hours to a full day', 'In English and in French', 'In Paris and its surroundings', 'No payment online'],
+    facts: ['1 hour to a full day', 'In English and in French', 'In Paris and its surroundings', 'No payment online'],
     faq: [
       {
         q: 'Where do experiences take place?',
@@ -76,7 +76,7 @@ export const en = {
       },
       {
         q: 'How long does an experience last, and at what rate?',
-        a: 'An experience lasts from 2 hours to a full day. The rate depends on what you have in mind and is set out in our proposal, before any commitment.',
+        a: 'An experience lasts from 1 hour to a full day. The rate depends on what you have in mind and is set out in our proposal, before any commitment.',
       },
       {
         q: 'Can I drive the car myself?',

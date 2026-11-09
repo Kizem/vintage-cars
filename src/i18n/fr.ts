@@ -64,7 +64,7 @@ export const fr: Dictionary = {
   },
   goodToKnow: {
     title: 'Bon à savoir',
-    facts: ['De 2 h à une journée', 'En français et en anglais', 'À Paris et dans ses environs', 'Aucun paiement en ligne'],
+    facts: ['De 1 h à une journée', 'En français et en anglais', 'À Paris et dans ses environs', 'Aucun paiement en ligne'],
     faq: [
       {
         q: 'Où se déroulent les expériences ?',
@@ -76,7 +76,7 @@ export const fr: Dictionary = {
       },
       {
         q: 'Quelle durée, quel tarif ?',
-        a: 'Une expérience dure de 2 h à une journée. Le tarif dépend de votre projet : il figure dans notre proposition, avant tout engagement de votre part.',
+        a: 'Une expérience dure de 1 h à une journée. Le tarif dépend de votre projet : il figure dans notre proposition, avant tout engagement de votre part.',
       },
       {
         q: 'Puis-je conduire la voiture ?',

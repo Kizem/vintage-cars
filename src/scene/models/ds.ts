@@ -8,7 +8,7 @@
    - poupe : malle aux chevrons dorés et monogramme DS21, feux rouges cerclés de chrome aux coins, plaque au centre,
      pare-chocs enveloppant ;
    - flancs : poignées chromées, lignes du capot le long des ailes. */
-import { BackSide, BoxGeometry, CapsuleGeometry, CircleGeometry, CylinderGeometry, DoubleSide, ExtrudeGeometry, Group, Matrix4, Mesh, MeshBasicMaterial, MeshPhysicalMaterial, MeshStandardMaterial, PlaneGeometry, Shape, SphereGeometry, TorusGeometry, Vector3 } from 'three';
+import { BackSide, BoxGeometry, BufferGeometry, Float32BufferAttribute, FrontSide, CapsuleGeometry, CircleGeometry, CylinderGeometry, DoubleSide, ExtrudeGeometry, Group, Matrix4, Mesh, MeshBasicMaterial, MeshPhysicalMaterial, MeshStandardMaterial, PlaneGeometry, Shape, SphereGeometry, TorusGeometry, Vector3 } from 'three';
 import { lerp, type Pt } from '../carspecs';
 import { badgeTexture, loft, stations, tube, type P3 } from '../geometry';
 import type { CarKit } from '../kit';
@@ -20,60 +20,45 @@ export function details(k: CarKit) {
   const cavity = new MeshStandardMaterial({ color: 0xc9c7bd, metalness: .55, roughness: .38, envMap: mats.env, envMapIntensity: .9, side: BackSide });
   const bucket = new MeshStandardMaterial({ color: 0xe7e8e8, metalness: 1, roughness: .2, envMap: mats.env, envMapIntensity: 1.4, side: DoubleSide });
   const clear = new MeshStandardMaterial({ color: 0xf4f2ea, metalness: .7, roughness: .1, envMap: mats.env, envMapIntensity: 1.5 });
+  const shell = (mats.roof as MeshPhysicalMaterial).clone(); shell.side = FrontSide; shell.envMapIntensity = .55; shell.clearcoat = .4;
+  /* tunnel du phare, dans son repère (x et y dans le plan de la glace, z vers l'avant) : section en amande
+     (demi-axes LA, LB) qui se resserre en s'enfonçant de LD ; normales vers l'extérieur */
+  const LA = .16; const LB = .08; const LD = .2;
+  const tunnel = (() => {
+    const pos: number[] = []; const idx: number[] = []; const R = 48; const S = 8;
+    for (let i = 0; i <= S; i++) { const t = i / S; const k = 1 - .3 * t; for (let j = 0; j < R; j++) { const a = j / R * Math.PI * 2; pos.push(Math.cos(a) * LA * k, Math.sin(a) * LB * k, -t * LD); } }
+    for (let i = 0; i < S; i++) for (let j = 0; j < R; j++) { const a = i * R + j; const b = i * R + (j + 1) % R; const c = a + R; const d = b + R; idx.push(a, c, b, b, c, d); }
+    const g = new BufferGeometry(); g.setAttribute('position', new Float32BufferAttribute(pos, 3)); g.setIndex(idx); g.computeVertexNormals(); return g;
+  })();
 
-  /** Le point est-il dans la caisse ? (coupe de la caisse à son abscisse, en miroir) */
-  const inside = (p: Vector3) => {
-    if (p.x < nx || p.x > tx) return false;
-    const sec = k.halfSection(p.x); const z = Math.abs(p.z); const y = p.y;
-    let inn = false;
-    for (let i = 0, j = sec.length - 1; i < sec.length; j = i++) {
-      const [zi, yi] = sec[i]; const [zj, yj] = sec[j];
-      if ((yi > y) !== (yj > y) && z < (zj - zi) * (y - yi) / (yj - yi) + zi) inn = !inn;
-    }
-    return inn;
-  };
   [1, -1].forEach((sg) => {
-    /* --- phare creusé dans la pointe de l'aile (photos) : une glace en amande, au ras de la carrosserie et cerclée
-       de chrome ; derrière, une cavité profonde, claire, au fond de laquelle sont enfoncées les deux optiques :
-       la jaune à l'extérieur, la blanche (phare pivotant) vers le capot. La caisse est réellement percée
-       (mats.cutout) : on voit la profondeur sous tous les angles. --- */
-    const zc = .59; const xc = surfX(zc, true) + .07; const yc = .6;
-    /* repère du phare : n normale de l'aile (en plan, relevée vers le haut), e1 horizontal, e2 vers le haut */
-    const dh = (hw(xc + .01) - hw(xc - .01)) / .02;
-    const n = new Vector3(-dh, .35, 1).normalize(); n.z *= sg;
+    /* --- phare, à la pointe de l'aile (photos) : un tunnel en amande, couleur caisse au dehors, clair au dedans,
+       qui prolonge la pointe de l'aile ; à l'avant, la glace à peine bombée cerclée de chrome ; au fond, les deux
+       optiques : la jaune à l'extérieur, la blanche (phare pivotant) vers le capot. Un volume fermé et régulier,
+       identique des deux côtés (en miroir), sans découpe de la carrosserie. --- */
+    const zc = .58; const xc = surfX(zc, true) + .015; const yc = .615;
+    /* repère du phare : n axe du phare, e1 horizontal, e2 vers le haut */
+    /* tourné vers l'avant, un peu vers l'extérieur et vers le haut, comme sur les photos */
+    const n = new Vector3(-1, .3, .45 * sg).normalize();
     const e2 = new Vector3(0, 1, 0).addScaledVector(n, -n.y).normalize();
     const e1 = new Vector3().crossVectors(e2, n).normalize();
-    const A = .16; const B = .08; const D = .2;
-    /* Le plan de l'ouverture est reculé dans l'aile (de sh) ; la peinture est percée là où l'ellipsoïde traverse la tôle. */
-    const at = (u: number, v: number, w: number, o: Vector3) => o.clone().addScaledVector(e1, u).addScaledVector(e2, v).addScaledVector(n, w);
-    const c0 = new Vector3(xc, yc, sg * zc);
-    const ring = (o: Vector3) => Array.from({ length: 32 }, (_, i) => { const t = i / 32 * Math.PI * 2; return at(Math.cos(t) * A, Math.sin(t) * B, 0, o); });
-    /* recul limité : là où l'aile est trop mince (vers le capot, qui plonge entre les ailes), la glace bombée ferme le phare */
-    let sh = 0; while (sh < .05 && ring(at(0, 0, -sh, c0)).filter(inside).length < 28) sh += .005;
-    const c = at(0, 0, -sh, c0);
-    if (sg > 0) mats.cutout(c, e1, e2, n, A, B, sh * 2.2 + .03);
+    const c = new Vector3(xc, yc, sg * zc).addScaledVector(n, .045); /* l'avant du phare dépasse un peu de l'aile, pour que la tôle ne passe pas devant la cavité */
     const unit = new Group(); unit.position.copy(c); unit.quaternion.setFromRotationMatrix(new Matrix4().makeBasis(e1, e2, n)); body.add(unit);
-    /* la cavité : moitié arrière de l'ellipsoïde, vue de l'intérieur */
-    const cav = new Mesh(new SphereGeometry(1, 40, 20, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), cavity); cav.rotation.x = Math.PI / 2; cav.scale.set(A, D, B); /* échelle avant rotation : y devient la profondeur */ unit.add(cav);
+    unit.add(new Mesh(tunnel, shell), new Mesh(tunnel, cavity));
+    const back = new Mesh(new CircleGeometry(1, 40), dark); back.scale.set(LA * .7, LB * .7, 1); back.position.z = -LD; unit.add(back);
     /* les deux optiques, au fond : cuvette chromée et verre */
-    ([[.068, .054, lens], [-.064, .05, clear]] as [number, number, typeof lens][]).forEach(([dx, r, mat]) => {
+    ([[.066, .054, lens], [-.064, .05, clear]] as [number, number, typeof lens][]).forEach(([dx, r, mat]) => {
       const ox = dx * sg; /* le repère du côté droit est le miroir du gauche, axe e1 inversé */
-      const zDeep = -D * .55;
-      const cup = new Mesh(new CylinderGeometry(r * 1.05, r * .55, .05, 32, 1, true), bucket); cup.rotation.x = Math.PI / 2; cup.position.set(ox, .01, zDeep + .025); unit.add(cup);
-      const glass = new Mesh(new CircleGeometry(r, 32), mat); glass.position.set(ox, .01, zDeep + .05); unit.add(glass);
-      const rim = new Mesh(new TorusGeometry(r, .005, 8, 32), chrome); rim.position.set(ox, .01, zDeep + .05); unit.add(rim);
-      const w = new Vector3(ox, .01, zDeep + .06).applyQuaternion(unit.quaternion).add(c);
+      const zDeep = -LD * .55;
+      const cup = new Mesh(new CylinderGeometry(r * 1.05, r * .55, .05, 32, 1, true), bucket); cup.rotation.x = Math.PI / 2; cup.position.set(ox, 0, zDeep - .025); unit.add(cup);
+      const glass = new Mesh(new CircleGeometry(r, 32), mat); glass.position.set(ox, 0, zDeep); unit.add(glass);
+      const rim = new Mesh(new TorusGeometry(r, .005, 8, 32), chrome); rim.position.set(ox, 0, zDeep); unit.add(rim);
+      const w = new Vector3(ox, 0, zDeep + .01).applyQuaternion(unit.quaternion).add(c);
       lampPoints.push([w.x, w.y, w.z]);
     });
-    /* la glace, à peine bombée hors de la tôle, et son jonc chromé, posé sur la tôle tout autour de l'ouverture */
-    const cover = new Mesh(new SphereGeometry(1, 40, 20, 0, Math.PI * 2, 0, Math.PI / 2), globe); cover.rotation.x = Math.PI / 2; cover.scale.set(A, sh + .045, B); cover.renderOrder = 6; unit.add(cover);
-    const lip: P3[] = [];
-    for (let i = 0; i <= 64; i++) {
-      const t = i / 64 * Math.PI * 2; const u = Math.cos(t) * A * .99; const v = Math.sin(t) * B * .99;
-      let w = 0; while (w < sh + .1 && inside(at(u, v, w, c))) w += .002;
-      const p = at(u, v, w, c); lip.push([p.x, p.y, p.z]);
-    }
-    body.add(tube(lip, .006, chrome));
+    /* la glace et son jonc chromé */
+    const cover = new Mesh(new SphereGeometry(1, 40, 20, 0, Math.PI * 2, 0, Math.PI / 2), globe); cover.rotation.x = Math.PI / 2; cover.scale.set(LA, .025, LB); cover.renderOrder = 6; unit.add(cover);
+    const ring = new Mesh(new TorusGeometry(1, .04, 8, 64), chrome); ring.scale.set(LA, LB, 1); unit.add(ring);
 
     /* --- avant : clignotant sur le coin du pare-chocs, butoir en caoutchouc noir sous la lame --- */
     const xi = surfX(.7, true) + .02;

@@ -171,13 +171,16 @@ Parking behaviour (`parking.ts`, `components/garage/Parking.tsx`):
   offset (`BAY_OX`) so that the row is centred on screen. Sheet open (and in
   portrait), the camera centres the projected outline of the chosen car in the
   free space.
-- Cut-outs: `mats.cutout(c, e1, e2, n, a, b, d)` discards the paint inside an
-  ellipsoid (mirrored on both sides): the DS headlamps are recessed in the wing
-  tips, a deep cavity behind a flush almond glass with the two lamps at its back.
+- DS headlamps: a closed almond tunnel at each wing tip (body colour outside,
+  light inside), flush glass and chrome ring at the front, the two lamps deep
+  inside; mirrored, no cut in the paint.
   `wingRise` (DS, 504): the wings stand higher than the bonnet, which dips between
   the headlamps.
 - Long car names (over 20 characters) get `.em-parking__name--long`, a smaller
   size, two lines at most on phones.
+- The house logo (ÉM monogram and « ÉPOQUE MOTORS ») is painted in ivory on the
+  back wall of every bay (`logoTex` in `parking.ts`), straight behind the car
+  when it faces the camera (`LOGO_X`); it moves with the bays.
 - Car lights (the bay light under the ceiling and the headlamps) fade in and
   out; they never flicker (a flicker read as a fault in the ceiling tubes).
 - `onReady` fires after the first rendered frame.
