@@ -136,10 +136,18 @@ button, input, select, textarea { font-variant-numeric: lining-nums; }
      l'écran, un vide de la largeur du monogramme à droite fait contrepoids */
   .em-nav a.em-nav__guides, .em-nav__write { display: none; }
   .em-nav--fixed ul { flex: 1 1 auto; justify-content: center; }
-  .em-nav--fixed::after { content: ''; flex: none; width: 44px; }
+  /* la langue dans le coin droit, au même retrait que le monogramme à gauche ; un vide de même largeur
+     des deux côtés garde les trois entrées centrées sur l'écran */
+  .em-nav--fixed::after { content: ''; flex: none; width: var(--em-corner); }
+  .em-nav--fixed { --em-corner: 44px; }
+  .em-nav--fixed .em-brand--nav { min-width: var(--em-corner); }
+  .em-nav--fixed .em-nav__lang { position: absolute; top: 0; bottom: 0; right: max(16px, env(safe-area-inset-right, 0px)); display: flex; align-items: center; margin: 0; }
 }
-@media (max-width: 409px) { .em-nav--fixed::after { width: 32px; } }
-@media (max-width: 359px) { .em-nav--fixed::after { width: 28px; } }
+@media (max-width: 409px) {
+  .em-nav--fixed { --em-corner: 40px; }
+  /* le monogramme dessiné commence à 16 px du bord : la langue garde le même retrait à droite */
+  .em-nav--fixed .em-nav__lang { right: max(16px, env(safe-area-inset-right, 0px)); }
+}
 .em-nav--dark { color: var(--ivory); }
 .em-nav--light { color: var(--ink); }
 .em-nav__lang { margin-left: clamp(.25rem, 1vw, 1rem); }

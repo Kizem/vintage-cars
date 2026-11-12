@@ -17,7 +17,7 @@ const { launch, page, suite, until, SIZES } = require('./lib.cjs');
           if (e.closest('.em-carousel__track, .em-parking__panel, .em-sr, .em-hp, .em-parking__gl, .em-parking__flat')) return false;
           return b.right > innerWidth + 1 || b.left < -1;
         }).map((e) => e.className || e.tagName).slice(0, 5);
-        const items = [...document.querySelectorAll('.em-nav ul > li')].filter((li) => li.offsetParent).map((li) => Math.round(li.getBoundingClientRect().top));
+        const items = [...document.querySelectorAll('.em-nav ul > li')].filter((li) => li.offsetParent).map((li) => { const r = li.querySelector('a').getBoundingClientRect(); return Math.round((r.top + r.bottom) / 2 / 4); });
         return {
           ids: secs.map((s) => s.id),
           h1: document.querySelectorAll('h1').length,

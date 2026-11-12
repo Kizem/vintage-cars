@@ -59,7 +59,9 @@ Seven full-screen sections, in this order (`sectionIds` in `src/data/site.ts`):
 - Navigation is locked while the vehicle sheet or the legal dialog is open.
 - Top menu: four section entries (« La collection » / « The collection », the
   parking section, whose id stays `garage`; Experiences, About, Write); on phones (≤ 699 px)
-  only the first three, « Écrire » is hidden (`.em-nav__write`; every chapter action leads to the form).
+  only the first three, « Écrire » is hidden (`.em-nav__write`; every chapter action leads to the form);
+  the monogram sits in the left corner and the language switch in the right corner, both 16 px from the edge,
+  the three entries centred on the screen between them.
   At the right, a framed button « Les Guides de Paris » (`.em-nav__guides`: italic Cormorant, arrow,
   1 px frame that fills on hover) leads to the guides, presented as another part of the site; « Guides »
   on tablets, absent on phones (chapter N°2 links to the guides). Then the
