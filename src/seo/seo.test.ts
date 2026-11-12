@@ -336,7 +336,7 @@ describe('Les Guides de Paris', () => {
     for (const l of locales) {
       const h = files[l === 'fr' ? 'fr/index.html' : 'index.html'];
       for (const p of routes) expect(h).toContain(`${getPage('guides')[l].path}#${routeAnchor(p, l)}`);
-      expect(h).toContain('class="em-nav__page"');
+      expect(h).toContain('class="em-nav__guides"');
       expect(h).not.toContain(`href="${l === 'fr' ? '../' : ''}${getPage('tours')[l].path}"`);
     }
   });

@@ -41,25 +41,28 @@ export function Chapter({ experience: x, n, inert }: { experience: Experience; n
             ))}
           </div>
           <p className="em-text em-exp__short">{l(x.summary)}</p>
+          {/* « en savoir plus » : sous le texte, en italique avec une flèche, loin de l'action (le formulaire) */}
+          {x.id === 'private-tours' ? (
+            /* chapitre N°2 : les Guides de Paris et leurs cinq itinéraires (le détail disparaît quand la place manque) */
+            <div className="em-guides">
+              <MoreLink to="guides" arrow>
+                {t.chapter.guides}
+              </MoreLink>
+              <ul className="em-guides__list">
+                {routeLinks.map((r) => (
+                  <li key={r.to}>
+                    <a href={asset(pageLinks[r.to][locale])}>{l(r.name)}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            <MoreLink to={experienceLink[x.id]} arrow>
+              {t.chapter.more[x.id]}
+            </MoreLink>
+          )}
         </div>
         <ActionLink onClick={() => startEnquiry({ experience: x.id })}>{l(x.cta)}</ActionLink>
-        {x.id === 'private-tours' && (
-          /* chapitre N°2 : les cinq itinéraires des Guides de Paris (le détail disparaît quand la place manque) */
-          <div className="em-guides">
-            <a className="em-more em-guides__all" href={asset(pageLinks.guides[locale])}>
-              {t.chapter.guides}
-            </a>
-            <ul className="em-guides__list">
-              {routeLinks.map((r) => (
-                <li key={r.to}>
-                  <a href={asset(pageLinks[r.to][locale])}>{l(r.name)}</a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-        {/* chapitre N°2 : les guides suffisent, pas de second lien */}
-        {x.id !== 'private-tours' && <MoreLink to={experienceLink[x.id]}>{t.chapter.more[x.id]}</MoreLink>}
       </div>
       <div className="em-exp__media">
         <SectionImage image={x.image} sizes="(max-width: 899px) 100vw, 50vw" natural />
@@ -110,7 +113,6 @@ export function About({ inert }: { inert: boolean }) {
         </h2>
         <p className="em-text">{t.about.p1}</p>
         <p className="em-text">{t.about.p2}</p>
-        <MoreLink to="guides">{t.about.more}</MoreLink>
       </div>
     </section>
   );

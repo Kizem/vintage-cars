@@ -18,8 +18,11 @@ export const fr: Dictionary = {
       experiences: 'Expériences',
       about: 'À propos',
       write: 'Écrire',
-      guides: 'Guides',
     },
+    /** The button to the guides, a part of the site of its own. */
+    guides: 'Les Guides de Paris',
+    guidesShort: 'Guides',
+    guidesHint: 'Itinéraires et guides, une autre partie du site',
     otherLanguage: 'English',
     backToTop: 'Revenir en haut de la page',
   },
@@ -91,7 +94,6 @@ export const fr: Dictionary = {
     title: 'À propos',
     p1: 'Certaines automobiles deviennent le symbole d’une époque. Chez Époque Motors, nous pensons que ces voitures sont faites pour rouler, pas seulement pour être admirées.',
     p2: 'Notre envie : partager le plaisir de rouler en voiture ancienne, à Paris, lors d’expériences simples, authentiques et personnelles.',
-    more: 'Nos guides de Paris en voiture de collection',
   },
   form: {
     title: 'Écrire',

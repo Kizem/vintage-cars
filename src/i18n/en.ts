@@ -16,10 +16,12 @@ export const en = {
       experiences: 'Experiences',
       about: 'About',
       write: 'Enquire',
-      /** Not a section: the guides page. */
-      guides: 'Guides',
     },
     /** Link to the other language, written in that language. */
+    /** The button to the guides, a part of the site of its own. */
+    guides: 'Paris Guides',
+    guidesShort: 'Guides',
+    guidesHint: 'Routes and guides, another part of the site',
     otherLanguage: 'Français',
     backToTop: 'Back to the top of the page',
   },
@@ -94,7 +96,6 @@ export const en = {
     title: 'About',
     p1: 'Some automobiles become symbols of an era. At Époque Motors, we believe these icons deserve to be experienced, not simply admired.',
     p2: 'Our ambition is to share the beauty of classic motoring through personal, authentic experiences in Paris.',
-    more: 'Our guides to Paris by vintage car',
   },
   form: {
     title: 'Enquire',

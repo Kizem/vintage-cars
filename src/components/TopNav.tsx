@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type MouseEvent } from 'react';
 import { primaryNav } from '../data/site';
 import { useI18n } from '../i18n/I18nContext';
-import { Brand } from './ui';
+import { Arrow, Brand } from './ui';
 import { asset, homeHref } from '../lib/paths';
 import { pageLinks } from '../data/links';
 import { currentIndex, scroller, scrollToId, sections } from '../lib/pageNav';
@@ -70,7 +70,8 @@ export function TopNav() {
         <Brand className="em-brand--nav" />
         <ul>
           {primaryNav.map((item, i) => (
-            <li key={item.id}>
+            /* sur téléphone, « Écrire » laisse la place (les actions des chapitres mènent au formulaire) */
+            <li key={item.id} className={item.key === 'write' ? 'em-nav__write' : undefined}>
               <a
                 href={`#${item.id}`}
                 aria-current={i === cur ? 'true' : undefined}
@@ -83,10 +84,6 @@ export function TopNav() {
               </a>
             </li>
           ))}
-          {/* la rubrique des guides : une autre page, pas une section */}
-          <li className="em-nav__page">
-            <a href={asset(pageLinks.guides[locale])}>{t.nav.items.guides}</a>
-          </li>
           <li className="em-nav__lang">
             <a
               href={homeHref(other)}
@@ -110,6 +107,14 @@ export function TopNav() {
             </a>
           </li>
         </ul>
+        {/* les Guides de Paris : on quitte la vitrine pour une autre partie du site (absent sur téléphone) */}
+        <a className="em-nav__guides" href={asset(pageLinks.guides[locale])} title={t.nav.guidesHint}>
+          <span className="em-nav__guides-full">{t.nav.guides}</span>
+          <span className="em-nav__guides-short" aria-hidden="true">
+            {t.nav.guidesShort}
+          </span>
+          <Arrow />
+        </a>
       </nav>
       <button
         type="button"

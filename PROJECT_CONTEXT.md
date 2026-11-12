@@ -58,9 +58,11 @@ Seven full-screen sections, in this order (`sectionIds` in `src/data/site.ts`):
 - `animateTo` dispatches a synthetic `scroll` event on arrival.
 - Navigation is locked while the vehicle sheet or the legal dialog is open.
 - Top menu: four section entries (« La collection » / « The collection », the
-  parking section, whose id stays `garage`; Experiences, About, Write) and, since the
-  owner's brief of November 2026, a fifth entry « Guides », a link to the guides page
-  (`.em-nav__page`, not a section); then the
+  parking section, whose id stays `garage`; Experiences, About, Write); on phones (≤ 699 px)
+  only the first three, « Écrire » is hidden (`.em-nav__write`; every chapter action leads to the form).
+  At the right, a framed button « Les Guides de Paris » (`.em-nav__guides`: italic Cormorant, arrow,
+  1 px frame that fills on hover) leads to the guides, presented as another part of the site; « Guides »
+  on tablets, absent on phones (chapter N°2 links to the guides). Then the
   language switch: a thin-line globe and « FR / EN » (current language in
   full, the other dimmed) on desktop; the globe and the other language on
   phones; the globe alone below 341 px. Its accessible name is the other
@@ -70,11 +72,12 @@ Seven full-screen sections, in this order (`sectionIds` in `src/data/site.ts`):
   switch stays on the page (no reload) and replaces the address (`/` ↔ `/fr/`). Every file of `public/` is
   reached through `asset()` (`src/lib/paths.ts`), which starts from the site root (`<meta name="em-root">`,
   written at build time), so that `/fr/` finds `images/…`.
-- Chapter N°2 (Private Paris Tours) carries « Les Guides de Paris » under its action: a link to the guides
-  page and the five routes (`.em-guides`; the five route links are hidden where the short chapter text is
-  shown, phones and low windows). No other link in this chapter.
-- Discreet links (`MoreLink`, `.em-more`) lead from the home to the content pages: under each chapter action,
-  under « Demander cette voiture » in the sheet, under the Good to know questions, under About, and in the
+- The « learn more » link of each chapter sits under its text, not next to the action: italic Cormorant with an
+  arrow, no rule (`MoreLink arrow`, `.em-more--arrow`), so that it never reads as a second action. Chapter N°2
+  (Private Paris Tours) shows « Les Guides de Paris » there, with the five routes (`.em-guides`; the five route
+  links are hidden where the short chapter text is shown, phones and low windows). About has no link.
+- Discreet links (`MoreLink`, `.em-more`) lead from the home to the content pages: under each chapter text,
+  under « Demander cette voiture » in the sheet, under the Good to know questions, and in the
   Écrire footer (Collection · Guides · FAQ). Their addresses are in `src/data/links.ts` (tested against
   `src/content`), so the app bundle does not carry the text of the pages.
 - The Époque Motors logo (`Brand` in `components/ui.tsx`) stays visible and

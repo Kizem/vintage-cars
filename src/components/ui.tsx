@@ -85,11 +85,12 @@ export function ActionLink({ onClick, children }: { onClick: () => void; childre
 }
 
 /** A discreet link to a content page of the site (its own page, in the current language). */
-export function MoreLink({ to, children }: { to: LinkedPage; children: ReactNode }) {
+export function MoreLink({ to, children, arrow }: { to: LinkedPage; children: ReactNode; arrow?: boolean }) {
   const { locale } = useI18n();
   return (
-    <a className="em-more" href={asset(pageLinks[to][locale])}>
+    <a className={`em-more${arrow ? ' em-more--arrow' : ''}`} href={asset(pageLinks[to][locale])}>
       {children}
+      {arrow && <Arrow />}
     </a>
   );
 }

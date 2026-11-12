@@ -141,7 +141,7 @@ describe('App', () => {
     expect(window.location.search).toBe('');
     for (const a of within(nav).getAllByRole('link').slice(1, -1).filter((x) => x.getAttribute('href')!.startsWith('#'))) await user.click(a);
     /* la rubrique des guides est une autre page */
-    expect(within(nav).getByRole('link', { name: 'Guides' }).getAttribute('href')).toMatch(/\/guides\/$/);
+    expect(within(nav).getByRole('link', { name: /Guides/ }).getAttribute('href')).toMatch(/\/guides\/$/);
     await user.click(screen.getByRole('button', { name: /top/i, hidden: true }));
     await user.click(document.querySelector('.em-brand') as HTMLElement);
     /* page légale ouverte par son ancre, fermée par son bouton */
