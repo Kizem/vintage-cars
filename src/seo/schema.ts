@@ -1,4 +1,4 @@
-import { carPage, childrenOf, getPage, type Page } from '../content';
+import { carPage, childrenOf, getPage, routeAnchor, routes, type Page } from '../content';
 import { experiences } from '../data/experiences';
 import { site } from '../data/site';
 import type { MediaAsset, Vehicle } from '../data/types';
@@ -136,7 +136,7 @@ export function pageGraph(abs: Abs, p: Page, l: Locale, homeName: string): Node 
   const c = p[l];
   const url = pageUrl(abs, p, l);
   const biz = { '@id': abs('#business') };
-  const stops = c.route ? c.route.stops : c.sections.flatMap((s) => s.stops ?? []);
+  const stops = c.sections.flatMap((s) => s.stops ?? []);
   const nodes: Node[] = [business(abs, l), website(abs)];
   const type = p.kind === 'about' ? 'AboutPage' : p.kind === 'faq' ? 'FAQPage' : p.kind === 'hub' ? 'CollectionPage' : 'WebPage';
 
@@ -174,7 +174,7 @@ export function pageGraph(abs: Abs, p: Page, l: Locale, homeName: string): Node 
     });
   }
   if (p.kind === 'car') nodes.push(carNode(abs, getVehicle(p.cars![0])!, l, url));
-  if (p.kind === 'guide' || p.kind === 'route') {
+  if (p.kind === 'guide') {
     nodes.push({
       '@type': 'Article',
       '@id': `${url}#article`,
@@ -189,31 +189,7 @@ export function pageGraph(abs: Abs, p: Page, l: Locale, homeName: string): Node 
       mainEntityOfPage: { '@id': `${url}#webpage` },
     });
   }
-  if (c.route) {
-    nodes.push({
-      '@type': 'TouristTrip',
-      '@id': `${url}#trip`,
-      name: c.h1,
-      description: c.lead,
-      provider: biz,
-      touristType: c.route.mood,
-      inLanguage: inLanguage(l),
-      itinerary: {
-        '@type': 'ItemList',
-        itemListElement: stops.map((s, i) => ({
-          '@type': 'ListItem',
-          position: i + 1,
-          item: {
-            '@type': 'TouristAttraction',
-            name: s.name,
-            description: s.text,
-            geo: { '@type': 'GeoCoordinates', latitude: p.geo![i][0], longitude: p.geo![i][1] },
-            address: { '@type': 'PostalAddress', addressLocality: 'Paris', addressCountry: 'FR' },
-          },
-        })),
-      },
-    });
-  } else if (stops.length) {
+  if (stops.length) {
     nodes.push({
       '@type': 'ItemList',
       '@id': `${url}#list`,
@@ -221,8 +197,13 @@ export function pageGraph(abs: Abs, p: Page, l: Locale, homeName: string): Node 
       itemListElement: stops.map((s, i) => ({ '@type': 'ListItem', position: i + 1, name: s.name, description: s.text })),
     });
   }
+  /* the guides page holds the five routes, each in its pop-in, at its anchor */
+  if (p.id === 'guides') for (const r of routes) nodes.push(tripNode(abs, r, l, `${url}#${routeAnchor(r, l)}`));
   if (p.kind === 'hub') {
-    const items = p.id === 'collection' ? vehicles.map((v) => carUrl(abs, v.slug, l)) : childrenOf(p.id).map((q) => pageUrl(abs, q, l));
+    const items =
+      p.id === 'collection'
+        ? vehicles.map((v) => carUrl(abs, v.slug, l))
+        : [...(p.id === 'guides' ? routes.map((r) => `${url}#${routeAnchor(r, l)}`) : []), ...childrenOf(p.id).map((q) => pageUrl(abs, q, l))];
     if (items.length) {
       nodes.push({
         '@type': 'ItemList',
@@ -271,4 +252,35 @@ function clean<T>(v: T): T {
   if (Array.isArray(v)) return v.map(clean) as T;
   if (v && typeof v === 'object') return Object.fromEntries(Object.entries(v).filter(([, x]) => x !== undefined).map(([k, x]) => [k, clean(x)])) as T;
   return v;
+}
+
+/** One route of « Les Guides de Paris »: a TouristTrip whose stops carry their coordinates. */
+export function tripNode(abs: Abs, p: Page, l: Locale, url: string): Node {
+  const c = p[l];
+  const r = c.route!;
+  return {
+    '@type': 'TouristTrip',
+    '@id': url,
+    url,
+    name: c.h1,
+    description: c.lead,
+    provider: { '@id': abs('#business') },
+    touristType: r.mood,
+    inLanguage: inLanguage(l),
+    image: abs(p.image.src),
+    itinerary: {
+      '@type': 'ItemList',
+      itemListElement: r.stops.map((s, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        item: {
+          '@type': 'TouristAttraction',
+          name: s.name,
+          description: s.text,
+          geo: { '@type': 'GeoCoordinates', latitude: p.geo![i][0], longitude: p.geo![i][1] },
+          address: { '@type': 'PostalAddress', addressLocality: 'Paris', addressCountry: 'FR' },
+        },
+      })),
+    },
+  };
 }

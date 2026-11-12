@@ -3,7 +3,7 @@
    se charge ; chaque lien interne répond. Les fichiers du référencement (sitemap, robots, llms) sont servis. */
 const fs = require('fs');
 const path = require('path');
-const { launch, suite, BASE } = require('./lib.cjs');
+const { launch, suite, until, BASE } = require('./lib.cjs');
 const { check, done } = suite('pages');
 
 const dist = path.join(__dirname, '..', 'dist');
@@ -18,7 +18,7 @@ const pages = [];
 
 (async () => {
   const b = await launch();
-  check(pages.length >= 40, `${pages.length} pages de contenu`);
+  check(pages.length >= 32, `${pages.length} pages de contenu`);
   const links = new Set();
   for (const [w, h] of [[320, 640], [390, 844], [1024, 768], [1440, 900]]) {
     const p = await (await b.newContext({ viewport: { width: w, height: h } })).newPage();
@@ -46,26 +46,43 @@ const pages = [];
     }
     check(!errs.length, `${w} : aucune erreur (${errs.slice(0, 3).join(' | ')})`);
   }
-  /* la carte des itinéraires : rien de chargé avant le clic, puis une étape numérotée par arrêt (les tuiles
-     d'OpenStreetMap peuvent manquer hors ligne : seules les erreurs de script comptent) */
-  const routes = pages.filter((u) => fs.readFileSync(path.join(dist, u, 'index.html'), 'utf8').includes('class="dp-map"'));
-  check(routes.length === 10, `${routes.length} pages d'itinéraire avec carte`);
-  for (const [w, h] of [[390, 844], [1280, 800]]) {
-    const p = await (await b.newContext({ viewport: { width: w, height: h }, hasTouch: w < 700 })).newPage();
+  /* Les Guides de Paris : chaque itinéraire s'ouvre en pop-in (clic, adresse avec ancre, ancienne page),
+     se ferme (Échap, bouton), passe au suivant ; la page derrière ne bouge pas */
+  for (const [w, h, lang] of [[390, 844, 'fr/'], [1280, 800, ''], [1280, 800, 'fr/']]) {
+    const ctxP = await b.newContext({ viewport: { width: w, height: h }, hasTouch: w < 700 });
+    const p = await ctxP.newPage();
     const errs = [];
     p.on('pageerror', (e) => errs.push(String(e)));
-    for (const u of routes) {
-      const leaflet = [];
-      p.on('request', (r) => /map-view|tile\.openstreetmap/.test(r.url()) && leaflet.push(r.url()));
-      await p.goto(BASE + u, { waitUntil: 'load' });
-      check(!leaflet.length, `${w} ${u} : rien de chargé avant le clic`);
-      const n = await p.$eval('.dp-map', (m) => JSON.parse(m.dataset.stops).length);
-      await p.click('.dp-map__show');
-      const ok = await p.waitForFunction((k) => document.querySelectorAll('.dp-pin').length === k, n, { timeout: 10000 }).then(() => true, () => false);
-      check(ok, `${w} ${u} : ${n} étapes sur la carte`);
-      p.removeAllListeners('request');
+    p.on('console', (m) => m.type() === 'error' && errs.push(m.text()));
+    await p.goto(`${BASE}${lang}guides/`, { waitUntil: 'load' });
+    const ids = await p.$$eval('dialog.dp-pop', (d) => d.map((x) => x.id));
+    check(ids.length === 5, `${w} ${lang}guides : 5 fiches (${ids.length})`);
+    for (const id of ids) {
+      await p.click(`.dp-routes a.dp-action[href="#${id}"]`);
+      const open = await until(p, (i) => document.getElementById(i).open, id);
+      const r = await p.evaluate((i) => ({ hash: location.hash, over: document.getElementById(i).scrollWidth - document.getElementById(i).clientWidth, title: document.getElementById(i).querySelector('h2').textContent }), id);
+      check(open && r.hash === `#${id}`, `${w} ${lang}${id} : la fiche s'ouvre (${r.hash})`);
+      check(r.over <= 0, `${w} ${id} : la fiche ne déborde pas`);
+      await p.keyboard.press('Escape');
+      check(await until(p, (i) => !document.getElementById(i).open && !location.hash, id), `${w} ${id} : Échap ferme la fiche`);
     }
-    check(!errs.length, `${w} carte : aucune erreur (${errs.slice(0, 3).join(' | ')})`);
+    /* suivant dans la fiche, puis le bouton Fermer */
+    await p.click(`.dp-routes a.dp-action[href="#${ids[0]}"]`);
+    await p.click(`#${ids[0]} .dp-routes-nav__pn a:last-child`);
+    check(await until(p, (i) => document.getElementById(i).open, ids[1]), `${w} ${lang}: « itinéraire suivant » ouvre la fiche suivante`);
+    await p.click(`#${ids[1]} .dp-pop__close`);
+    check(await until(p, () => ![...document.querySelectorAll('dialog')].some((d) => d.open)), `${w} ${lang}: « Fermer » ferme`);
+    /* adresse avec ancre */
+    await p.goto(`${BASE}${lang}guides/#${ids[2]}`, { waitUntil: 'load' });
+    check(await until(p, (i) => document.getElementById(i).open, ids[2]), `${w} ${lang}: l'ancre ouvre la fiche`);
+    check(!errs.length, `${w} ${lang}guides : aucune erreur (${errs.slice(0, 3).join(' | ')})`);
+    await ctxP.close();
+  }
+  /* l'ancienne page d'un itinéraire mène à sa fiche */
+  {
+    const p = await (await b.newContext()).newPage();
+    await p.goto(`${BASE}fr/guides/paris-intemporel/`, { waitUntil: 'load' });
+    check(await until(p, () => /\/fr\/guides\/#paris-intemporel$/.test(location.href) && document.getElementById('paris-intemporel')?.open, null, 10000), `ancienne page → fiche en pop-in (${p.url()})`);
   }
 
   const ctx = await b.newContext();

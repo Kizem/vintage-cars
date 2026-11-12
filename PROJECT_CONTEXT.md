@@ -72,7 +72,7 @@ Seven full-screen sections, in this order (`sectionIds` in `src/data/site.ts`):
   written at build time), so that `/fr/` finds `images/…`.
 - Chapter N°2 (Private Paris Tours) carries « Les Guides de Paris » under its action: a link to the guides
   page and the five routes (`.em-guides`; the five route links are hidden where the short chapter text is
-  shown, phones and low windows), then the link to the tours page.
+  shown, phones and low windows). No other link in this chapter.
 - Discreet links (`MoreLink`, `.em-more`) lead from the home to the content pages: under each chapter action,
   under « Demander cette voiture » in the sheet, under the Good to know questions, under About, and in the
   Écrire footer (Collection · Guides · FAQ). Their addresses are in `src/data/links.ts` (tested against
@@ -358,7 +358,8 @@ Data lives in `src/data/*.ts` (`{ en, fr }` fields) and `src/i18n/{en,fr}.ts`.
      form errors and the `not-configured` state (never a false « sent »);
    - `timing`: the 504 stays at least 9 s, then one car about every 5 s;
    - `pages`: every content page at 320, 390, 1024 and 1440 px (no overflow, no error, one h1, every image
-     and internal link answers), and sitemap, robots, llms served;
+     and internal link answers), the route pop-ins of the guides page (click, Escape, close, next, anchor,
+     former address), and sitemap, robots, llms served;
    then `scene`: the real WebGL scene (SwiftShader, slow), reduced motion: ready,
    sheet, click in the empty parking, context loss; and each car built alone in
    the workshop without errors.
@@ -434,29 +435,31 @@ of a domain: on `github.io/vintage-cars/` they are not read, hence the custom do
 
 They exist only after a build: `npm run build && npm run preview`, then `/fr/guides/` for instance.
 
-### Les Guides de Paris (`src/content/routes.ts`, `src/seo/routes.tsx`, `src/seo/map.ts`)
+### Les Guides de Paris (`src/content/routes.ts`, `src/seo/routes.tsx`, `src/seo/guides.ts`)
 
 From the owner's brief (November 2026). The guides page (`/fr/guides/`, `/guides/`, « Paris, autrement. »)
-presents five routes, each with its own page: `paris-intemporel`, `elegance-rive-gauche`,
-`villages-est-parisien`, `jardins-perspectives`, `paris-boheme-confidentiel` (English addresses:
-`timeless-paris`, `left-bank-elegance`, `villages-of-east-paris`, `gardens-and-perspectives`, `bohemian-paris`).
+presents five routes. Owner's decision (12 November 2026): **no page per route**; each route opens in a
+pop-in of the guides page, at its anchor: `#paris-intemporel`, `#elegance-rive-gauche`,
+`#villages-est-parisien`, `#jardins-perspectives`, `#paris-boheme-confidentiel` (English: `#timeless-paris`,
+`#left-bank-elegance`, `#villages-of-east-paris`, `#gardens-and-perspectives`, `#bohemian-paris`).
 
-- A route page (`kind: 'route'`): kicker « Itinéraire N°01 », h1, the owner's introduction (`route.intro`,
-  quoted as written), the answer-first `lead`, a full-width photo, practical details (duration, distance,
-  start, finish, mood; editorial estimates), the route, the stops (vertical timeline), photo spots, places to
-  eat (only the restaurants named by the owner; suggestions, not included; allergies note), practical advice
-  (walk to the photo spots, legal stops only, route adapted on the day), the map, the closing invitation
-  (owner's text: « Et si vous découvriez Paris… », « Découvrir nos expériences » → home `#sortie-1`,
-  « Nous contacter pour imaginer votre parcours » → form pre-filled with private tours), then the other routes.
-- Durations, distances, stops, spots and restaurants come from the brief: do not add any. `route.intro` and the
-  guides page `subtitle` are the owner's words and are exempt from the copy checks.
-- Map: Leaflet **1.9.4, pinned**, with OpenStreetMap tiles, numbered markers in route order (`geo` on the page,
-  one pair per stop). Nothing is loaded until the visitor clicks « Afficher la carte interactive »: the page
-  script (`map.ts`, under 1 kB) then imports `map-view.ts` (Leaflet and its CSS). No line is drawn between the
-  stops: no road routing is available offline, and a straight line would mislead (the brief forbids it). Each
-  stop also has a « Voir sur OpenStreetMap » link that works without the map. Only route pages run a script;
-  their CSP allows `script-src 'self'` and the tile host `https://tile.openstreetmap.org`.
-- The four earlier routes (landmarks, Paris by night, romantic Paris, Versailles) were replaced. Their
-  addresses stay as `noindex` redirect pages with a canonical (`REDIRECTS` in `src/seo/build.tsx`).
+- The five sheets are `<dialog class="dp-pop">` elements written into the HTML of the guides page, so their text
+  is read by search engines and AI assistants. `src/seo/guides.ts` (about 1 kB, the only script of the content
+  pages; CSP `script-src 'self'` on this page only) opens a sheet on a click or from the address anchor,
+  closes it with Escape, « Fermer » or a click outside, keeps the anchor in the address, and returns focus.
+- A sheet: « Itinéraire N°01 », its title (h2), the owner's introduction (`route.intro`, quoted as written), a
+  photo, practical details (duration, distance, start, finish, mood; editorial estimates), the answer-first
+  `lead`, the route, the stops (vertical timeline), photo spots, places to eat (only the restaurants named by
+  the owner; suggestions, not included; allergies note), practical advice, the closing invitation (owner's
+  text, « Découvrir nos expériences » → home `#sortie-1`, « Nous contacter pour imaginer votre parcours » → form
+  pre-filled with private tours), previous and next route.
+- Routes are not in `pages` (`routes` in `src/content/index.ts`); `routeAnchor()` gives the anchor. Their
+  structured data (`TouristTrip` with the coordinates of each stop, `geo`) is on the guides page.
+- Durations, distances, stops, spots and restaurants come from the brief: do not add any.
+- No map for now (owner's decision): Leaflet was removed. The coordinates stay in `geo` for a later map.
+- Former addresses: the five route pages and the four first routes are `noindex` redirect pages with a
+  canonical to the guides page, landing on the right sheet (`redirects()` in `src/seo/build.tsx`).
+- The home links to the sheets (chapter N°2, `routeLinks` in `src/data/links.ts`); chapter N°2 has no second
+  link to the tours page (owner's decision), the tours page stays in the content menus and footers.
 - Photos: the routes reuse the site's images until a photograph per route is supplied (see
   `docs/SEO-GEO.md`). Every new photo must have its rights, and plates blurred (§ 5).

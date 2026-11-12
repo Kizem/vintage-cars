@@ -238,7 +238,7 @@ export const servicePages: Page[] = [
     experience: 'events',
     cars: ['citroen-ds', 'mercedes-benz-classic', 'peugeot-504'],
     image: img('private-tours'),
-    related: ['guides', 'route-jardins', 'tours', 'car-ds'],
+    related: ['guides', 'tours', 'photoshoot', 'car-ds'],
     updated: '2026-11-09',
     en: {
       path: 'marriage-proposal-vintage-car-paris/',
@@ -340,7 +340,7 @@ export const servicePages: Page[] = [
     experience: 'events',
     cars: ['citroen-ds', 'peugeot-504', 'mercedes-benz-classic'],
     image: car('citroen-ds', 1),
-    related: ['wedding', 'route-jardins', 'collection', 'car-ds'],
+    related: ['wedding', 'guides', 'collection', 'car-ds'],
     updated: '2026-11-09',
     en: {
       path: 'vintage-car-photoshoot-paris/',
@@ -457,7 +457,7 @@ export const servicePages: Page[] = [
     experience: 'private-tours',
     cars: ['citroen-ds', 'peugeot-504', 'mercedes-benz-classic'],
     image: img('private-tours'),
-    related: ['guides', 'route-intemporel', 'route-rive-gauche', 'route-boheme', 'chauffeur'],
+    related: ['guides', 'chauffeur', 'collection', 'events'],
     updated: '2026-11-09',
     en: {
       path: 'vintage-car-tour-paris/',

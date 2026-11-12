@@ -86,9 +86,5 @@ export const docCsp = [
   'upgrade-insecure-requests',
 ].join('; ');
 
-/**
- * Route pages: their own map script, and the OpenStreetMap tiles once the visitor has asked for the map.
- */
-export const routeCsp = docCsp
-  .replace("script-src 'none'", "script-src 'self'")
-  .replace("img-src 'self' data:", "img-src 'self' data: https://tile.openstreetmap.org");
+/** The guides page: its own pop-in script (src/seo/guides.ts), nothing else. */
+export const guidesCsp = docCsp.replace("script-src 'none'", "script-src 'self'");

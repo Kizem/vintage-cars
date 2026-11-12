@@ -25,7 +25,7 @@ export const MENU: PageId[] = ['collection', 'events', 'tours', 'chauffeur', 'gu
 const FOOT: Record<'footExperiences' | 'footCollection' | 'footGuides' | 'footInfo', PageId[]> = {
   footExperiences: ['events', 'wedding', 'proposal', 'photoshoot', 'tours', 'chauffeur', 'rental'],
   footCollection: ['collection', 'car-ds', 'car-504', 'car-w115'],
-  footGuides: ['guides', 'route-intemporel', 'route-rive-gauche', 'route-est', 'route-jardins', 'route-boheme', 'guide-things-to-do', 'guide-wedding-car'],
+  footGuides: ['guides', 'guide-things-to-do', 'guide-wedding-car'],
   footInfo: ['faq', 'about'],
 };
 

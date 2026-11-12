@@ -1,4 +1,4 @@
-import { pages, type Page } from '../content';
+import { pages, routeAnchor, routes, type Page } from '../content';
 import { experiences } from '../data/experiences';
 import { site } from '../data/site';
 import { getVehicle, vehicles } from '../data/vehicles';
@@ -97,7 +97,7 @@ export function sitemapXml(abs: Abs, homeUpdated: string): string {
 const GROUPS: { title: Record<Locale, string>; filter: (p: Page) => boolean }[] = [
   { title: { en: 'Experiences', fr: 'Expériences' }, filter: (p) => p.kind === 'service' || p.id === 'events' },
   { title: { en: 'The collection', fr: 'La collection' }, filter: (p) => p.kind === 'car' || p.id === 'collection' },
-  { title: { en: 'Guides and routes in Paris', fr: 'Guides et parcours à Paris' }, filter: (p) => p.kind === 'guide' || p.kind === 'route' || p.id === 'guides' },
+  { title: { en: 'Guides and routes in Paris', fr: 'Guides et parcours à Paris' }, filter: (p) => p.kind === 'guide' || p.id === 'guides' },
   { title: { en: 'Information', fr: 'Informations' }, filter: (p) => p.kind === 'faq' || p.kind === 'about' },
 ];
 
@@ -137,7 +137,11 @@ export function llmsTxt(abs: Abs): string {
     lines.push(`## ${l === 'fr' ? 'Accueil' : 'Home'}`, '', `- [${site.name}](${abs(homePath(l))}): ${(l === 'fr' ? fr : en).meta.description}`, '');
     for (const g of GROUPS) {
       lines.push(`## ${g.title[l]}`, '');
-      for (const p of pages.filter(g.filter)) lines.push(`- [${p[l].h1}](${abs(p[l].path)}): ${p[l].description}`);
+      for (const p of pages.filter(g.filter)) {
+        lines.push(`- [${p[l].h1}](${abs(p[l].path)}): ${p[l].description}`);
+        /* the routes open in a pop-in of the guides page, at their anchor */
+        if (p.id === 'guides') for (const r of routes) lines.push(`- [${r[l].h1}](${abs(p[l].path)}#${routeAnchor(r, l)}): ${r[l].description}`);
+      }
       lines.push('');
     }
   }
@@ -158,8 +162,10 @@ export function llmsFullTxt(abs: Abs): string {
       const c = p[l];
       out.push(`## ${c.h1}`, '', `URL: ${abs(c.path)}`, '', c.lead, '');
       if (c.subtitle) out.push(c.subtitle, '');
-      if (c.route) {
-        const r = c.route;
+      for (const q of p.id === 'guides' ? routes : []) {
+        const c = q[l];
+        out.push(`### ${c.h1}`, '', `URL: ${abs(p[l].path)}#${routeAnchor(q, l)}`, '', c.lead, '');
+        const r = c.route!;
         const fr = l === 'fr';
         const k = (a: string, b: string) => `- ${fr ? `${a}\u00a0:` : `${b}:`}`;
         out.push(
@@ -172,19 +178,19 @@ export function llmsFullTxt(abs: Abs): string {
           `${k('Ambiance', 'Mood')} ${r.mood}`,
           '',
           ...r.course.flatMap((x) => [x, '']),
-          `### ${fr ? 'Étapes' : 'Stops'}`,
+          `#### ${fr ? 'Étapes' : 'Stops'}`,
           '',
           ...r.stops.map((s, i) => `${i + 1}. **${s.name}**${fr ? '\u00a0:' : ':'} ${s.text}`),
           '',
-          `### ${fr ? 'Spots photo' : 'Photo spots'}`,
+          `#### ${fr ? 'Spots photo' : 'Photo spots'}`,
           '',
           ...r.photo.map((s) => `- **${s.name}**${fr ? '\u00a0:' : ':'} ${s.text}`),
           '',
-          `### ${fr ? 'Pauses gourmandes (suggestions, non comprises)' : 'Places to eat (suggestions, not included)'}`,
+          `#### ${fr ? 'Pauses gourmandes (suggestions, non comprises)' : 'Places to eat (suggestions, not included)'}`,
           '',
           ...r.food.map((s) => `- **${s.name}**${fr ? '\u00a0:' : ':'} ${s.text}`),
           '',
-          `### ${fr ? 'Conseils' : 'Tips'}`,
+          `#### ${fr ? 'Conseils' : 'Tips'}`,
           '',
           ...r.tips.map((x) => `- ${x}`),
           '',

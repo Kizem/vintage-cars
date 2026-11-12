@@ -165,16 +165,30 @@ body.dp { margin: 0; background: var(--ivory); color: var(--ink); font-family: v
 .dp-action--soft { text-transform: none; letter-spacing: .02em; font-size: .9rem; border-bottom-color: color-mix(in srgb, currentColor 55%, transparent); }
 .dp-action--soft:hover { letter-spacing: .02em; }
 
-/* une page d'itinéraire */
-.dp-route__head { padding-block: clamp(1.2rem, 4vw, 2.5rem) clamp(1.6rem, 4vw, 2.8rem); }
-.dp-route__head h1 { max-width: 22ch; }
-.dp-kicker a { text-decoration: none; }
-.dp-route__photo { width: 100%; max-width: 92rem; margin: 0 auto clamp(2rem, 5vw, 3.5rem); }
-.dp-route__photo img { aspect-ratio: 21 / 9; max-height: 78svh; }
-@media (max-width: 699px) { .dp-route__photo img { aspect-ratio: 4 / 5; max-height: 72svh; } }
+/* la fiche d'un itinéraire, dans sa pop-in (page des guides) */
+.dp-locked, .dp-locked body { overflow: hidden; }
+.dp-pop { width: min(100%, 60rem); max-width: 100vw; max-height: 100svh; height: 100svh; margin: 0 0 0 auto; padding: 0; border: 0; border-left: 1px solid var(--champagne); background: var(--ivory); color: var(--ink); overflow-y: auto; overscroll-behavior: contain; }
+.dp-pop::backdrop { background: color-mix(in srgb, var(--forest-deep) 72%, transparent); }
+.dp-pop[open] { animation: dp-in .45s cubic-bezier(.22,.61,.36,1); }
+@keyframes dp-in { from { transform: translateX(3rem); opacity: 0; } }
+.dp-pop__bar { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .3rem clamp(1.25rem, 4vw, 3rem); background: var(--ivory); border-bottom: 1px solid color-mix(in srgb, var(--ink) 18%, transparent); }
+.dp-pop__bar .dp-kicker { margin: 0; }
+.dp-pop__close { display: inline-flex; align-items: center; min-height: 44px; font-size: .75rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; text-decoration: none !important; border-bottom: 1px solid currentColor; }
+.dp-pop__body { display: grid; gap: clamp(1.8rem, 4vw, 2.6rem); padding: clamp(1.4rem, 4vw, 2.5rem) clamp(1.25rem, 4vw, 3rem) clamp(2.5rem, 6vw, 4rem); }
+.dp-pop__body > * { margin: 0; }
+.dp-pop__body h2 { margin: 0; font-family: var(--font-display); font-weight: 300; font-size: clamp(1.9rem, 4vw, 2.9rem); line-height: 1.08; text-transform: uppercase; text-wrap: balance; }
+.dp-pop__body h2:focus { outline: none; }
+.dp-pop__body .dp-intro { margin-top: -.8rem; }
+.dp-pop__body h3 { margin: 0 0 .8rem; font-size: clamp(1.45rem, 2.6vw, 1.85rem); color: var(--forest); }
+.dp-pop__body h4 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 1.35rem; line-height: 1.2; }
+.dp-pop__body section > p + p { margin-top: .8rem; }
+.dp-pop__photo img { aspect-ratio: 16 / 9; }
+@media (max-width: 699px) { .dp-pop { width: 100%; border-left: 0; } .dp-pop__photo img { aspect-ratio: 4 / 3; } }
 .dp-facts--route { margin-bottom: 0; }
-@media (min-width: 900px) { .dp-facts--route { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
-.dp-route__body { padding-top: clamp(2.5rem, 6vw, 4rem); }
+@media (min-width: 700px) { .dp-facts--route { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.dp-pop__cta { padding: clamp(1.4rem, 4vw, 2rem); background: var(--forest); color: var(--ivory); }
+.dp-pop__cta h3 { color: var(--ivory); }
+.dp-pop__cta a:hover { color: var(--champagne); }
 .dp-route__pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); gap: clamp(2.5rem, 6vw, 4.5rem) clamp(2rem, 5vw, 4rem); }
 
 /* les étapes : une ligne verticale, comme un plan de route imprimé */
@@ -183,22 +197,11 @@ body.dp { margin: 0; background: var(--ivory); color: var(--ink); font-family: v
 .dp-timeline li:last-child { padding-bottom: 0; }
 .dp-timeline li::before { content: ''; position: absolute; left: calc(-1.6rem - 5px); top: .45rem; width: 9px; height: 9px; background: var(--forest); }
 .dp-timeline__no { margin: 0 0 .15rem !important; font-size: .7rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); }
-.dp-timeline h3 { font-size: 1.55rem; }
+.dp-timeline h4 { font-size: 1.45rem; }
 .dp-timeline p + p { margin-top: .35rem; }
 .dp-spots { margin: 0; padding: 0; list-style: none; border-top: 1px solid color-mix(in srgb, var(--ink) 18%, transparent); }
 .dp-spots li { padding: .9rem 0; border-bottom: 1px solid color-mix(in srgb, var(--ink) 18%, transparent); }
 .dp-spots p { margin-top: .25rem; color: var(--ink-soft); }
-
-/* la carte, chargée à la demande */
-.dp-map { position: relative; height: clamp(18rem, 55svh, 32rem); margin: 0 0 1rem; background: var(--plate-ink); border: 1px solid color-mix(in srgb, var(--ink) 18%, transparent); display: grid; place-items: center; }
-.dp-map.is-on { display: block; }
-.dp-map__show { margin: 0; background: none; border: 0; border-bottom: 1px solid currentColor; color: var(--forest); font: inherit; font-size: .75rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; cursor: pointer; }
-.dp-map__list { display: flex; flex-wrap: wrap; gap: .3rem 1.6rem; margin: 0; padding: 0; list-style: none; font-size: .92rem; }
-.dp-map__list li { min-height: 32px; display: flex; align-items: center; gap: .4rem; }
-.dp-map__n, .dp-pin span { display: inline-grid; place-items: center; width: 1.6rem; height: 1.6rem; background: var(--forest); color: var(--ivory); font-size: .8rem; font-weight: 500; }
-.dp-pin { background: none; border: 0; }
-.dp-pin span { width: 30px; height: 30px; outline: 2px solid var(--ivory); }
-.dp-map .leaflet-container, .dp-map.leaflet-container { font-family: var(--font-sans); }
 
 /* la page des guides : les cinq itinéraires en composition asymétrique */
 .dp-routes { margin: 0; padding: 0; list-style: none; }

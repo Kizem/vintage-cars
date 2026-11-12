@@ -58,7 +58,8 @@ export function Chapter({ experience: x, n, inert }: { experience: Experience; n
             </ul>
           </div>
         )}
-        <MoreLink to={experienceLink[x.id]}>{t.chapter.more[x.id]}</MoreLink>
+        {/* chapitre N°2 : les guides suffisent, pas de second lien */}
+        {x.id !== 'private-tours' && <MoreLink to={experienceLink[x.id]}>{t.chapter.more[x.id]}</MoreLink>}
       </div>
       <div className="em-exp__media">
         <SectionImage image={x.image} sizes="(max-width: 899px) 100vw, 50vw" natural />

@@ -69,7 +69,7 @@ export const guidePages: Page[] = [
     parent: 'guides',
     experience: 'private-tours',
     image: photo('citroen-ds', 3),
-    related: ['guides', 'route-boheme', 'route-est', 'tours'],
+    related: ['guides', 'tours', 'rental', 'events'],
     updated: '2026-11-09',
     en: {
       path: 'guides/unusual-things-to-do-in-paris/',

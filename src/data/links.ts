@@ -16,11 +16,12 @@ export const pageLinks = {
   'car-504': { en: 'collection/peugeot-504-gl-1971/', fr: 'fr/collection/peugeot-504-gl-1971/' },
   'car-ds': { en: 'collection/citroen-ds-21-henri-chapron-1971/', fr: 'fr/collection/citroen-ds-21-henri-chapron-1971/' },
   'car-w115': { en: 'collection/mercedes-w115-220d-1973/', fr: 'fr/collection/mercedes-w115-220d-1973/' },
-  'route-intemporel': { en: 'guides/timeless-paris/', fr: 'fr/guides/paris-intemporel/' },
-  'route-rive-gauche': { en: 'guides/left-bank-elegance/', fr: 'fr/guides/elegance-rive-gauche/' },
-  'route-est': { en: 'guides/villages-of-east-paris/', fr: 'fr/guides/villages-est-parisien/' },
-  'route-jardins': { en: 'guides/gardens-and-perspectives/', fr: 'fr/guides/jardins-perspectives/' },
-  'route-boheme': { en: 'guides/bohemian-paris/', fr: 'fr/guides/paris-boheme-confidentiel/' },
+  /* the routes open in a pop-in of the guides page, at their anchor */
+  'route-intemporel': { en: 'guides/#timeless-paris', fr: 'fr/guides/#paris-intemporel' },
+  'route-rive-gauche': { en: 'guides/#left-bank-elegance', fr: 'fr/guides/#elegance-rive-gauche' },
+  'route-est': { en: 'guides/#villages-of-east-paris', fr: 'fr/guides/#villages-est-parisien' },
+  'route-jardins': { en: 'guides/#gardens-and-perspectives', fr: 'fr/guides/#jardins-perspectives' },
+  'route-boheme': { en: 'guides/#bohemian-paris', fr: 'fr/guides/#paris-boheme-confidentiel' },
 } satisfies Record<string, Localized>;
 
 /** The five routes of « Les Guides de Paris », with the short names shown in the chapter N°2 of the home. */

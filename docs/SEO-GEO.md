@@ -59,23 +59,26 @@ Adresses anglaises : les mêmes sans `/fr`.
 
 ### Les Guides de Paris : les pages que les IA citent quand on leur demande « que faire à Paris »
 
-Rubrique accessible depuis le menu principal (« Guides ») et depuis le chapitre N°2 de l’accueil.
+Rubrique accessible depuis le menu principal (« Guides ») et depuis le chapitre N°2 de l’accueil. Les cinq
+itinéraires n’ont plus de page à eux : chacun s’ouvre en pop-in dans la page des guides, à son ancre.
 
-| Page | Adresse FR | Adresse EN | Recherches visées |
+| Contenu | Adresse FR | Adresse EN | Recherches visées |
 |---|---|---|---|
-| Paris, autrement. (les cinq itinéraires) | `/fr/guides/` | `/guides/` | itinéraire touristique Paris, découvrir Paris autrement, Paris vintage tour |
-| N°01 Paris intemporel | `/fr/guides/paris-intemporel/` | `/guides/timeless-paris/` | balade en voiture ancienne Paris, première visite de Paris, classic car tour Paris |
-| N°02 L’élégance de la rive gauche | `/fr/guides/elegance-rive-gauche/` | `/guides/left-bank-elegance/` | rive gauche Paris balade, Butte-aux-Cailles, Left Bank tour |
-| N°03 Les villages de l’Est parisien | `/fr/guides/villages-est-parisien/` | `/guides/villages-of-east-paris/` | Paris insolite, Belleville, Buttes-Chaumont, hidden Paris |
-| N°04 Paris côté jardins et perspectives | `/fr/guides/jardins-perspectives/` | `/guides/gardens-and-perspectives/` | spots photo Paris, Bir-Hakeim, vintage car photoshoot Paris |
-| N°05 Paris bohème et confidentiel | `/fr/guides/paris-boheme-confidentiel/` | `/guides/bohemian-paris/` | canal Saint-Martin balade, Paris bohème, vintage car experience Paris |
+| Paris, autrement. (page des guides) | `/fr/guides/` | `/guides/` | itinéraire touristique Paris, découvrir Paris autrement, Paris vintage tour, classic car tour Paris |
+| N°01 Paris intemporel | `/fr/guides/#paris-intemporel` | `/guides/#timeless-paris` | balade en voiture ancienne Paris, première visite de Paris |
+| N°02 L’élégance de la rive gauche | `/fr/guides/#elegance-rive-gauche` | `/guides/#left-bank-elegance` | rive gauche Paris balade, Butte-aux-Cailles |
+| N°03 Les villages de l’Est parisien | `/fr/guides/#villages-est-parisien` | `/guides/#villages-of-east-paris` | Paris insolite, Belleville, Buttes-Chaumont |
+| N°04 Paris côté jardins et perspectives | `/fr/guides/#jardins-perspectives` | `/guides/#gardens-and-perspectives` | spots photo Paris, Bir-Hakeim |
+| N°05 Paris bohème et confidentiel | `/fr/guides/#paris-boheme-confidentiel` | `/guides/#bohemian-paris` | canal Saint-Martin balade, Paris bohème |
 | Activités insolites à Paris : 10 idées | `/fr/guides/activites-insolites-a-paris/` | `/guides/unusual-things-to-do-in-paris/` | activités insolites Paris, unusual things to do in Paris |
 | Choisir sa voiture de mariage ancienne | `/fr/guides/choisir-sa-voiture-de-mariage-ancienne/` | `/guides/how-to-choose-a-vintage-wedding-car/` | choisir voiture de mariage |
 
-Chaque itinéraire a sa carte interactive (OpenStreetMap, chargée au clic), ses données structurées
-(`TouristTrip` avec les coordonnées de chaque étape, `Article`, fil d’Ariane) et des liens vers les autres
-guides et les pages de services. Les quatre anciens parcours (monuments, Paris la nuit, Paris romantique,
-Versailles) redirigent vers les nouvelles pages.
+**Effet des pop-ins sur le référencement.** Le texte complet des cinq fiches est dans le HTML de la page des
+guides, avec leurs données structurées (`TouristTrip`, coordonnées de chaque étape), et `llms-full.txt` le
+reprend : Google et les IA le lisent. En revanche, un itinéraire ne peut plus apparaître seul dans Google
+avec son propre titre : c’est la page des guides qui se positionne pour l’ensemble, et un texte masqué
+jusqu’au clic pèse un peu moins. Les anciennes adresses des itinéraires redirigent vers la bonne fiche. Si un
+itinéraire devient important pour l’acquisition, lui redonner une page reste possible.
 
 ### Informations
 
@@ -128,7 +131,8 @@ l’entreprise pour les moteurs.
    s’appuient beaucoup sur le volume et le contenu des avis.
 6. **Plateformes d’activités**, très citées par les IA pour « things to do in Paris » : TripAdvisor (fiche
    « Activités »), GetYourGuide, Viator, Airbnb Expériences. Une fiche par itinéraire des Guides de Paris
-   (Paris intemporel, rive gauche, Est parisien, jardins et perspectives, Paris bohème), avec un lien vers sa page.
+   (Paris intemporel, rive gauche, Est parisien, jardins et perspectives, Paris bohème), avec un lien vers sa
+   fiche (`/fr/guides/#paris-intemporel`…).
 7. **Annuaires mariage** : Mariages.net, Zankyou, et les annuaires de prestataires des lieux de réception.
 8. **Apple Business Connect** (Plans, Siri), **Bing Places**, **PagesJaunes**. Partout, le même nom
    « Époque Motors » et la même description. Tu peux reprendre telle quelle la phrase de `llms.txt`.
@@ -159,7 +163,7 @@ confirmation. Corrige-les dans `src/content/` si besoin.
   Buttes-Chaumont, entrée de métro d’Hector Guimard à la porte Dauphine, réplique de la statue de la Liberté à
   l’île aux Cygnes, rotonde de la Villette) et la rue de chaque restaurant cité (Chez Gladines rue des
   Cinq-Diamants, Le Temps des Cerises rue de la Butte-aux-Cailles, La Marine quai de Valmy, Hôtel du Nord quai
-  de Jemmapes). Les coordonnées des étapes, dans `src/content/routes.ts`, placent chaque lieu sur la carte.
+  de Jemmapes). Les coordonnées des étapes, dans `src/content/routes.ts`, sont publiées dans les données structurées et serviront à la future carte.
 - **Photos des itinéraires** : à fournir. Les cinq pages réutilisent pour l’instant des visuels du site
   (illustrations signalées comme telles et photos de tes voitures). Il faut une photo par itinéraire, avec ses
   droits d’utilisation et les plaques floutées : idéalement tes voitures sur place (pont Alexandre III,

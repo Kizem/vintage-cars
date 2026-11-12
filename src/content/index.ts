@@ -19,11 +19,20 @@ function deep<T>(v: T, f: (s: string) => string): T {
   return v;
 }
 
-/** Every content page, in menu order. */
-export const pages: Page[] = [...servicePages, ...collectionPages, guidePages[0], ...routePages, ...guidePages.slice(1), ...infoPages].map((p) => ({
-  ...p,
-  fr: deep<PageCopy>(p.fr, frTypo),
-}));
+const typo = (p: Page): Page => ({ ...p, fr: deep<PageCopy>(p.fr, frTypo) });
+
+/** Every content page with its own address, in menu order. */
+export const pages: Page[] = [...servicePages, ...collectionPages, ...guidePages, ...infoPages].map(typo);
+
+/**
+ * The five routes of « Les Guides de Paris ». They have no page of their own: each opens in a pop-in of the
+ * guides page, at its anchor (/fr/guides/#paris-intemporel). Their `path` is the former address of their
+ * page, now a redirect to that anchor.
+ */
+export const routes: Page[] = routePages.map(typo);
+
+/** Anchor of a route in the guides page: the last segment of its former address. */
+export const routeAnchor = (r: Page, l: 'en' | 'fr') => r[l].path.split('/').filter(Boolean).at(-1)!;
 
 export const getPage = (id: PageId): Page => {
   const p = pages.find((x) => x.id === id);

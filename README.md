@@ -13,8 +13,7 @@ then calm full-screen sections on ivory, one idea each.
 ## Stack
 
 React 19 · TypeScript · Vite · three.js 0.170.0 (pinned, loaded on demand for
-the parking) · Leaflet 1.9.4 (pinned, route maps of « Les Guides de Paris », loaded on
-click). Plain CSS, no CSS framework.
+the parking). Plain CSS, no CSS framework.
 
 ```bash
 npm install

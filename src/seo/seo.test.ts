@@ -3,11 +3,11 @@
    règles du projet et du référencement. Sert de garde-fou à chaque ajout de page. Sans navigateur, comme le build. */
 import { existsSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { carPage, childrenOf, frTypo, getPage, pages, type Page } from '../content';
+import { carPage, childrenOf, frTypo, getPage, pages, routeAnchor, routes, type Page } from '../content';
 import { pageLinks, routeLinks } from '../data/links';
 import { vehicles } from '../data/vehicles';
 import { locales } from '../i18n/locales';
-import { buildSite, HOME_UPDATED, REDIRECTS } from './build';
+import { buildSite, HOME_UPDATED, redirects as allRedirects } from './build';
 import { AI_CRAWLERS } from './files';
 import { realContact } from './schema';
 import { docUi } from './ui';
@@ -27,8 +27,9 @@ const TEMPLATE = `<!doctype html>
   </body>
 </html>`;
 const DOC_CSS = 'assets/doc-x.css';
-const MAP = { js: 'assets/map-x.js', css: [] as string[] };
-const files = buildSite({ siteUrl: SITE, template: TEMPLATE, docCss: DOC_CSS, map: MAP });
+const GUIDES_JS = 'assets/guides-x.js';
+const files = buildSite({ siteUrl: SITE, template: TEMPLATE, docCss: DOC_CSS, guidesJs: GUIDES_JS });
+const REDIRECTS = allRedirects();
 
 /** Every string of a value (the copy of a page); the owner's quoted texts (subtitle, route intro) are left out. */
 const OWNER = new Set(['path', 'subtitle', 'intro']);
@@ -105,7 +106,10 @@ describe('pages de contenu', () => {
   });
 
   it('les liens de l’accueil mènent aux bonnes pages', () => {
-    for (const [id, link] of Object.entries(pageLinks)) for (const l of locales) expect(link[l], id).toBe(getPage(id as Page['id'])[l].path);
+    for (const [id, link] of Object.entries(pageLinks)) {
+      const r = routes.find((x) => x.id === id);
+      for (const l of locales) expect(link[l], id).toBe(r ? `${getPage('guides')[l].path}#${routeAnchor(r, l)}` : getPage(id as Page['id'])[l].path);
+    }
   });
 });
 
@@ -185,8 +189,10 @@ describe('le site écrit au build', () => {
     expect(car).toMatchObject({ vehicleModelDate: '1971', model: 'DS 21 Henri Chapron', driveWheelConfiguration: 'https://schema.org/FrontWheelDriveConfiguration', seatingCapacity: 5 });
     const w115 = JSON.parse(files['fr/collection/mercedes-w115-220d-1973/index.html'].match(/ld\+json">(.*?)<\/script>/s)![1]);
     expect(w115['@graph'].find((n: Record<string, unknown>) => n['@type'] === 'Car').vehicleEngine.fuelType).toBe('Diesel');
-    const route = JSON.parse(files['guides/timeless-paris/index.html'].match(/ld\+json">(.*?)<\/script>/s)![1]);
-    const trip = route['@graph'].find((n: Record<string, unknown>) => n['@type'] === 'TouristTrip');
+    const hub = JSON.parse(files['guides/index.html'].match(/ld\+json">(.*?)<\/script>/s)![1]);
+    const trips = hub['@graph'].filter((n: Record<string, unknown>) => n['@type'] === 'TouristTrip');
+    expect(trips.map((x: { url: string }) => x.url)).toContain(`${SITE}guides/#timeless-paris`);
+    const trip = trips[0];
     expect(trip.itinerary.itemListElement.length).toBe(4);
     expect(trip.itinerary.itemListElement[1].item.geo.latitude).toBeCloseTo(48.86, 1);
     const faq = JSON.parse(files['fr/faq/index.html'].match(/ld\+json">(.*?)<\/script>/s)![1]);
@@ -202,7 +208,7 @@ describe('le site écrit au build', () => {
         const u = raw.startsWith(SITE) ? new URL(raw.slice(SITE.length), 'https://x.test/') : new URL(raw, base);
         let p = decodeURIComponent(u.pathname.slice(1));
         if (p === '' || p.endsWith('/')) p += 'index.html';
-        const ok = known.has(p) || p === DOC_CSS || p === MAP.js || p.startsWith('assets/index-x') || existsSync(`public/${p}`);
+        const ok = known.has(p) || p === DOC_CSS || p === GUIDES_JS || p.startsWith('assets/index-x') || existsSync(`public/${p}`);
         expect(ok, `${f} : ${attr} ${raw}`).toBe(true);
       }
     }
@@ -264,28 +270,30 @@ describe('le site écrit au build', () => {
   it('anciennes adresses des parcours : redirection vers les guides, non indexées', () => {
     for (const [from, to] of Object.entries(REDIRECTS)) {
       const h = files[`${from}index.html`];
-      expect(h, from).toContain(`<link rel="canonical" href="${SITE}${to}" />`);
+      const target = to.split('#')[0];
+      expect(h, from).toContain(`<link rel="canonical" href="${SITE}${target}" />`);
       expect(h, from).toContain('noindex');
-      expect(files[`${to}index.html`], to).toBeDefined();
+      expect(h, from).toContain(`url=${'../'.repeat(from.split('/').length - 1)}${to}`);
+      expect(files[`${target}index.html`], to).toBeDefined();
+      if (to.includes('#')) expect(files[`${target}index.html`], to).toContain(`id="${to.split('#')[1]}"`);
       expect(files['sitemap.xml']).not.toContain(`${SITE}${from}<`);
     }
   });
 });
 
 describe('Les Guides de Paris', () => {
-  const routes = pages.filter((p) => p.kind === 'route');
-
-  it('cinq itinéraires, numérotés, avec leurs coordonnées, dans les deux langues', () => {
+  it('cinq itinéraires, numérotés, avec leurs coordonnées, dans les deux langues, sans page à eux', () => {
     expect(routes.map((p) => p.en.route!.n)).toEqual([1, 2, 3, 4, 5]);
     for (const p of routes) {
+      expect(pages).not.toContain(p);
       for (const l of locales) {
         const r = p[l].route!;
         expect(r.n, p.id).toBe(p.en.route!.n);
         expect(r.stops.length, `${p.id} ${l}`).toBe(p.geo!.length);
         expect(r.stops[0].name, p.id).toBe(r.start);
-        expect(r.stops.at(-1)!.name.startsWith(r.end.replace(/^Parc des? /, '').slice(0, 6)) || r.stops.at(-1)!.name === r.end, p.id).toBe(true);
         for (const x of [r.duration, r.distance, r.intro, r.teaser, r.mood]) expect(x.length, p.id).toBeGreaterThan(3);
         expect(r.photo.length && r.food.length && r.tips.length, p.id).toBeTruthy();
+        expect(files[`${p[l].path}index.html`], p.id).toContain('http-equiv="refresh"');
       }
       for (const [lat, lng] of p.geo!) {
         expect(lat).toBeGreaterThan(48.81);
@@ -296,45 +304,40 @@ describe('Les Guides de Paris', () => {
     }
   });
 
-  it('page d’un itinéraire : infos pratiques, étapes, spots, pauses, conseils, carte, invitation, autres guides', () => {
-    for (const p of routes) {
-      for (const l of locales) {
-        const h = files[`${p[l].path}index.html`];
-        const where = `${p.id} ${l}`;
-        for (const id of ['pratique', 'parcours', 'etapes', 'photos', 'pauses', 'conseils', 'carte', 'autres']) expect(h, `${where} ${id}`).toContain(`id="${id}"`);
-        const stops = JSON.parse(h.match(/data-stops="([^"]+)"/)![1].replace(/&quot;/g, '"'));
-        expect(stops.length, where).toBe(p.geo!.length);
-        expect(h, where).toContain(`src="${'../'.repeat(p[l].path.split('/').length - 1)}${MAP.js}"`);
-        expect(h, where).toContain('https://tile.openstreetmap.org');
-        expect(h, where).toContain(l === 'fr' ? 'Et si vous découvriez Paris à bord d’une voiture de collection' : 'What if you discovered Paris aboard a classic car?');
-        expect(h, where).toContain(l === 'fr' ? 'allergies' : 'allergies');
-        expect(h, where).toContain('#sortie-1');
-        expect(h, where).toContain('experience=private-tours');
-        for (const q of routes) if (q !== p) expect(h, `${where} → ${q.id}`).toContain(`href="${'../'.repeat(p[l].path.split('/').length - 1)}${q[l].path}"`);
+  it('page des guides : les cinq itinéraires et leur fiche complète en pop-in, sans carte', () => {
+    for (const l of locales) {
+      const path = getPage('guides')[l].path;
+      const h = files[`${path}index.html`];
+      expect(h).toContain(l === 'fr' ? 'Paris, autrement.' : 'Paris, differently.');
+      expect(h.match(/<h1[\s>]/g)?.length).toBe(1);
+      expect(h).toContain(`src="${'../'.repeat(path.split('/').length - 1)}${GUIDES_JS}"`);
+      expect(h).toContain("script-src 'self'");
+      expect(h).not.toMatch(/openstreetmap|leaflet|dp-map/i);
+      for (const p of routes) {
+        const a = routeAnchor(p, l);
+        const r = p[l].route!;
+        const sheet = h.match(new RegExp(`<dialog class="dp-pop" id="${a}"[\\s\\S]*?</dialog>`))![0];
+        expect(h, a).toContain(`href="#${a}" data-route=""`);
+        for (const x of [r.duration, r.distance, r.start, ...r.stops.map((s) => s.name), ...r.food.map((s) => s.name)]) expect(sheet, `${a} ${x}`).toContain(x.replace(/&/g, '&amp;').replace(/’/g, '’'));
+        expect(sheet, a).toContain(l === 'fr' ? 'Et si vous découvriez Paris à bord d’une voiture de collection' : 'What if you discovered Paris aboard a classic car?');
+        expect(sheet, a).toContain('allergies');
+        expect(sheet, a).toContain('#sortie-1');
+        expect(sheet, a).toContain('experience=private-tours');
+        expect(sheet.match(/<h2[\s>]/g)?.length, a).toBe(1);
       }
     }
-    /* les autres pages n'ont ni script ni tuiles */
+    /* les autres pages n'ont pas de script */
     expect(files['fr/faq/index.html']).not.toContain('<script type="module"');
     expect(files['fr/faq/index.html']).toContain("script-src 'none'");
   });
 
-  it('page des guides : les cinq itinéraires, leur durée et leur distance', () => {
-    for (const l of locales) {
-      const h = files[`${getPage('guides')[l].path}index.html`];
-      expect(h).toContain(l === 'fr' ? 'Paris, autrement.' : 'Paris, differently.');
-      for (const p of routes) {
-        expect(h).toContain(`href="${'../'.repeat(l === 'fr' ? 2 : 1)}${p[l].path}"`);
-        expect(h).toContain(p[l].route!.duration);
-      }
-    }
-  });
-
-  it('l’accueil (chapitre N°2) et le menu mènent aux guides', () => {
+  it('l’accueil (chapitre N°2, sans second lien) et le menu mènent aux guides', () => {
     expect(routeLinks.map((r) => r.to)).toEqual(routes.map((p) => p.id));
     for (const l of locales) {
       const h = files[l === 'fr' ? 'fr/index.html' : 'index.html'];
-      for (const p of routes) expect(h).toContain(p[l].path);
+      for (const p of routes) expect(h).toContain(`${getPage('guides')[l].path}#${routeAnchor(p, l)}`);
       expect(h).toContain('class="em-nav__page"');
+      expect(h).not.toContain(`href="${l === 'fr' ? '../' : ''}${getPage('tours')[l].path}"`);
     }
   });
 });
