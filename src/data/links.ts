@@ -13,6 +13,7 @@ export const pageLinks = {
   collection: { en: 'collection/', fr: 'fr/collection/' },
   guides: { en: 'guides/', fr: 'fr/guides/' },
   faq: { en: 'faq/', fr: 'fr/faq/' },
+  about: { en: 'about/', fr: 'fr/a-propos/' },
   'car-504': { en: 'collection/peugeot-504-gl-1971/', fr: 'fr/collection/peugeot-504-gl-1971/' },
   'car-ds': { en: 'collection/citroen-ds-21-henri-chapron-1971/', fr: 'fr/collection/citroen-ds-21-henri-chapron-1971/' },
   'car-w115': { en: 'collection/mercedes-w115-220d-1973/', fr: 'fr/collection/mercedes-w115-220d-1973/' },
@@ -34,6 +35,20 @@ export const routeLinks: { to: LinkedPage; name: Localized }[] = [
 ];
 
 export type LinkedPage = keyof typeof pageLinks;
+
+/**
+ * The tabs of the detailed part of the site, in the menu order of the content pages, with their names (the
+ * `nav` of each page in src/content, checked by a unit test). The mobile menu of the home lists them all.
+ */
+export const siteTabs: { to: LinkedPage; name: Localized }[] = [
+  { to: 'collection', name: { en: 'The collection', fr: 'La collection' } },
+  { to: 'events', name: { en: 'Events', fr: 'Événements' } },
+  { to: 'tours', name: { en: 'Paris tours', fr: 'Visites de Paris' } },
+  { to: 'chauffeur', name: { en: 'Chauffeur', fr: 'Chauffeur' } },
+  { to: 'guides', name: { en: 'Paris Guides', fr: 'Les Guides de Paris' } },
+  { to: 'faq', name: { en: 'FAQ', fr: 'FAQ' } },
+  { to: 'about', name: { en: 'About', fr: 'À propos' } },
+];
 
 /** The page that tells more about each experience chapter. */
 export const experienceLink: Record<ExperienceId, LinkedPage> = {

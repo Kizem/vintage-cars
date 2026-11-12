@@ -4,7 +4,7 @@
 import { existsSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { carPage, childrenOf, frTypo, getPage, pages, routeAnchor, routes, type Page } from '../content';
-import { pageLinks, routeLinks } from '../data/links';
+import { pageLinks, routeLinks, siteTabs } from '../data/links';
 import { vehicles } from '../data/vehicles';
 import { locales } from '../i18n/locales';
 import { buildSite, HOME_UPDATED, redirects as allRedirects } from './build';
@@ -103,6 +103,10 @@ describe('pages de contenu', () => {
 
   it('l’anglais et le français de l’interface des pages ont les mêmes clés', () => {
     expect(Object.keys(docUi.fr).sort()).toEqual(Object.keys(docUi.en).sort());
+  });
+
+  it('le menu de l’accueil (téléphone) reprend les onglets et les noms de la partie détaillée', () => {
+    for (const x of siteTabs) for (const l of locales) expect(x.name[l], x.to).toBe(getPage(x.to as Page['id'])[l].nav);
   });
 
   it('les liens de l’accueil mènent aux bonnes pages', () => {
@@ -336,8 +340,9 @@ describe('Les Guides de Paris', () => {
     for (const l of locales) {
       const h = files[l === 'fr' ? 'fr/index.html' : 'index.html'];
       for (const p of routes) expect(h).toContain(`${getPage('guides')[l].path}#${routeAnchor(p, l)}`);
-      expect(h).toContain('class="em-nav__guides"');
-      expect(h).not.toContain(`href="${l === 'fr' ? '../' : ''}${getPage('tours')[l].path}"`);
+      expect(h).toContain('class="em-nav__site"');
+      const chapter2 = h.match(/<section id="sortie-2"[\s\S]*?<\/section>/)![0];
+      expect(chapter2).not.toContain(`href="${l === 'fr' ? '../' : ''}${getPage('tours')[l].path}"`);
     }
   });
 });

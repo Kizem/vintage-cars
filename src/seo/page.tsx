@@ -65,9 +65,29 @@ export function Monogram() {
   );
 }
 
-export function Header({ c, current, alternate }: { c: Ctx; current?: PageId; alternate: string }) {
+/** The language switch: a globe, the current language, the other one dimmed (as on the home page). */
+function Lang({ c, alternate }: { c: Ctx; alternate: string }) {
   const t = ui(c.l);
   const other: Locale = c.l === 'fr' ? 'en' : 'fr';
+  return (
+    <a className="dp-lang" href={href(c, alternate)} hrefLang={other} lang={other} aria-label={t.otherLanguage} title={t.otherLanguage}>
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+        <circle cx="6.5" cy="6.5" r="6" stroke="currentColor" />
+        <ellipse cx="6.5" cy="6.5" rx="2.6" ry="6" stroke="currentColor" />
+        <path d="M.5 6.5h12" stroke="currentColor" />
+      </svg>
+      {(['fr', 'en'] as const).map((code, i) => (
+        <span key={code} className={code === c.l ? 'dp-lang__cur' : 'dp-lang__other'} aria-hidden="true">
+          {i > 0 && <span className="dp-lang__sep">/</span>}
+          {code.toUpperCase()}
+        </span>
+      ))}
+    </a>
+  );
+}
+
+export function Header({ c, current, alternate }: { c: Ctx; current?: PageId; alternate: string }) {
+  const t = ui(c.l);
   return (
     <header className="dp-top">
       <a className="dp-skip" href="#contenu">
@@ -78,6 +98,7 @@ export function Header({ c, current, alternate }: { c: Ctx; current?: PageId; al
           <Monogram />
           <span className="dp-brand__word">{site.name}</span>
         </a>
+        {/* grand écran : les onglets, puis, séparés par un filet, « Écrire » (un bouton) et la langue */}
         <nav className="dp-nav" aria-label={t.menu}>
           <ul className="dp-menu">
             {MENU.map((id) => (
@@ -89,17 +110,44 @@ export function Header({ c, current, alternate }: { c: Ctx; current?: PageId; al
             ))}
           </ul>
         </nav>
-        {/* écrire et la langue restent visibles sur téléphone, à côté du logo */}
-        <ul className="dp-menu dp-tools">
-          <li className="dp-menu__cta">
-            <a href={href(c, enquiryPath(c.l))}>{t.enquire}</a>
-          </li>
-          <li>
-            <a href={href(c, alternate)} hrefLang={other} lang={other} aria-label={t.otherLanguage} title={t.otherLanguage}>
-              {t.otherLanguageShort}
+        <div className="dp-tools">
+          <a className="dp-write" href={href(c, enquiryPath(c.l))}>
+            {t.enquire}
+          </a>
+          <Lang c={c} alternate={alternate} />
+        </div>
+        {/* tablette et téléphone : un menu (sans script) avec toutes les pages, « Écrire » et la langue */}
+        <details className="dp-burger">
+          <summary aria-label={t.menu}>
+            <span className="dp-burger__icon" aria-hidden="true">
+              <span />
+              <span />
+            </span>
+            <span className="dp-burger__label">{t.menuShort}</span>
+          </summary>
+          <div className="dp-burger__panel">
+            <nav aria-label={t.menu}>
+              <ul className="dp-burger__list">
+                {[...MENU, 'about' as PageId].map((id) => (
+                  <li key={id}>
+                    <a href={pageHref(c, id)} aria-current={id === current ? 'page' : undefined}>
+                      {getPage(id)[c.l].nav}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+            <p className="dp-burger__tools">
+              <a className="dp-write" href={href(c, enquiryPath(c.l))}>
+                {t.enquire}
+              </a>
+              <Lang c={c} alternate={alternate} />
+            </p>
+            <a className="dp-burger__home" href={href(c, homePath(c.l))}>
+              ← {t.backHome}
             </a>
-          </li>
-        </ul>
+          </div>
+        </details>
       </div>
     </header>
   );

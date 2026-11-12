@@ -78,6 +78,33 @@ const pages = [];
     check(!errs.length, `${w} ${lang}guides : aucune erreur (${errs.slice(0, 3).join(' | ')})`);
     await ctxP.close();
   }
+  /* menus : sur tablette et téléphone, celui des pages détaillées (sans script) ; sur téléphone, celui de l'accueil */
+  for (const [w, h] of [[390, 844], [1024, 768]]) {
+    const p = await (await b.newContext({ viewport: { width: w, height: h }, hasTouch: w < 700 })).newPage();
+    await p.goto(`${BASE}fr/collection/`, { waitUntil: 'load' });
+    check(await p.isHidden('.dp-nav'), `${w} pages : onglets repliés dans le menu`);
+    await p.click('.dp-burger > summary');
+    const n = await p.$$eval('.dp-burger__list a', (a) => a.filter((x) => x.offsetParent).length);
+    check(n === 7, `${w} pages : le menu montre les 7 onglets (${n})`);
+    check(await p.isVisible('.dp-burger__tools .dp-write') && await p.isVisible('.dp-burger__tools .dp-lang'), `${w} pages : Écrire et la langue dans le menu`);
+  }
+  {
+    const p = await (await b.newContext({ viewport: { width: 1440, height: 900 } })).newPage();
+    await p.goto(`${BASE}fr/collection/`, { waitUntil: 'load' });
+    const r = await p.evaluate(() => ({ menu: !!document.querySelector('.dp-burger').offsetParent, gap: document.querySelector('.dp-tools').getBoundingClientRect().left - [...document.querySelectorAll('.dp-nav li')].at(-1).getBoundingClientRect().right }));
+    check(!r.menu && r.gap >= 16, `1440 pages : onglets, puis « Écrire » et la langue à part (${Math.round(r.gap)} px)`);
+  }
+  for (const w of [320, 390]) {
+    const p = await (await b.newContext({ viewport: { width: w, height: 760 }, hasTouch: true, reducedMotion: 'reduce' })).newPage();
+    await p.goto(`${BASE}fr/`, { waitUntil: 'load' });
+    await p.waitForSelector('.em-parking.is-ready', { timeout: 30000 });
+    await p.click('.em-nav__burger');
+    const n = await p.$$eval('.em-menu[open] .em-menu__list a', (a) => a.length);
+    check(n === 7, `${w} accueil : le menu montre les 7 pages (${n})`);
+    await p.click('.em-menu__list a >> nth=0');
+    check(await until(p, () => /\/fr\/collection\/$/.test(location.href), null, 10000), `${w} accueil : le menu mène à la collection`);
+  }
+
   /* l'ancienne page d'un itinéraire mène à sa fiche */
   {
     const p = await (await b.newContext()).newPage();

@@ -3,8 +3,8 @@ import { primaryNav } from '../data/site';
 import { useI18n } from '../i18n/I18nContext';
 import { Arrow, Brand } from './ui';
 import { asset, homeHref } from '../lib/paths';
-import { pageLinks } from '../data/links';
-import { currentIndex, scroller, scrollToId, sections } from '../lib/pageNav';
+import { pageLinks, siteTabs } from '../data/links';
+import { currentIndex, scroller, scrollToId, sections, setLock } from '../lib/pageNav';
 
 /**
  * Le menu minuscule en haut : quatre entrées et la langue.
@@ -18,6 +18,17 @@ export function TopNav() {
   const [deep, setDeep] = useState(false);
   const [last, setLast] = useState(false);
   const navRef = useRef<HTMLElement>(null);
+  /* téléphone : le menu de la partie détaillée du site (toutes ses pages), ouvert par le bouton du coin gauche */
+  const menuRef = useRef<HTMLDialogElement>(null);
+  const [menu, setMenu] = useState(false);
+  useEffect(() => {
+    const d = menuRef.current;
+    if (!d) return;
+    if (menu && !d.open) d.showModal();
+    if (!menu && d.open) d.close();
+    setLock('dialog', menu);
+    return () => setLock('dialog', false);
+  }, [menu]);
 
   useEffect(() => {
     const sc = scroller();
@@ -68,6 +79,19 @@ export function TopNav() {
     <>
       <nav ref={navRef} className={`em-nav em-nav--${tone} em-nav--fixed`} aria-label={t.nav.label}>
         <Brand className="em-brand--nav" />
+        {/* téléphone : le coin gauche ouvre le menu de tout le site (le nom de la maison est déjà au centre du garage) */}
+        <button
+          type="button"
+          className="em-nav__burger"
+          aria-haspopup="dialog"
+          aria-expanded={menu}
+          aria-label={t.nav.menu}
+          title={t.nav.menu}
+          onClick={() => setMenu(true)}
+        >
+          <span aria-hidden="true" />
+          <span aria-hidden="true" />
+        </button>
         <ul>
           {primaryNav.map((item, i) => (
             /* sur téléphone, « Écrire » laisse la place (les actions des chapitres mènent au formulaire) */
@@ -107,15 +131,54 @@ export function TopNav() {
             </a>
           </li>
         </ul>
-        {/* les Guides de Paris : on quitte la vitrine pour une autre partie du site (absent sur téléphone) */}
-        <a className="em-nav__guides" href={asset(pageLinks.guides[locale])} title={t.nav.guidesHint}>
-          <span className="em-nav__guides-full">{t.nav.guides}</span>
-          <span className="em-nav__guides-short" aria-hidden="true">
-            {t.nav.guidesShort}
+        {/* la partie détaillée du site, ouverte sur la collection : on quitte la vitrine (sur téléphone, le menu) */}
+        <a className="em-nav__site" href={asset(pageLinks.collection[locale])} title={t.nav.exploreHint}>
+          <span className="em-nav__site-full">{t.nav.explore}</span>
+          <span className="em-nav__site-short" aria-hidden="true">
+            {t.nav.exploreShort}
           </span>
           <Arrow />
         </a>
       </nav>
+      <dialog
+        ref={menuRef}
+        className="em-menu"
+        aria-label={t.nav.siteTitle}
+        onClose={() => setMenu(false)}
+        onClick={(e) => e.target === e.currentTarget && setMenu(false)}
+      >
+        <div className="em-menu__bar">
+          <p className="em-menu__brand">
+            <span className="em-mono em-mono--sm" aria-hidden="true">
+              <span>É</span>
+              <span>M</span>
+            </span>
+            <span className="em-brand__word">Époque Motors</span>
+          </p>
+          <button type="button" className="em-menu__close" onClick={() => setMenu(false)}>
+            {t.legal.close}
+          </button>
+        </div>
+        <p className="em-menu__title">{t.nav.siteTitle}</p>
+        <ul className="em-menu__list">
+          {siteTabs.map((x) => (
+            <li key={x.to}>
+              <a href={asset(pageLinks[x.to][locale])}>{x.name[locale]}</a>
+            </li>
+          ))}
+        </ul>
+        <a
+          className="em-action em-menu__write"
+          href="#ecrire"
+          onClick={(e) => {
+            e.preventDefault();
+            setMenu(false);
+            scrollToId('ecrire', { focusHeading: true });
+          }}
+        >
+          {t.nav.items.write}
+        </a>
+      </dialog>
       <button
         type="button"
         className={`em-top em-top--${tone}${deep ? ' is-shown' : ''}${last ? ' is-high' : ''}`}

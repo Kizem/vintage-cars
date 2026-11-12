@@ -594,7 +594,7 @@ export const servicePages: Page[] = [
       description:
         'Be driven through Paris in a 1970s classic car with a private chauffeur: Citroën DS 21 Henri Chapron, Mercedes W115 or Peugeot 504. By enquiry.',
       h1: 'A vintage car with chauffeur in Paris',
-      nav: 'With chauffeur',
+      nav: 'Chauffeur',
       lead: 'Époque Motors provides 1970s classic cars with a private chauffeur in Paris and its surroundings: a Citroën DS 21 Henri Chapron, a Mercedes W115 220D or a Peugeot 504 GL. For a special address, an evening out or a journey you want to remember, from one hour to a full day, by enquiry.',
       sections: [
         {
@@ -637,7 +637,7 @@ export const servicePages: Page[] = [
       description:
         'Laissez-vous conduire dans Paris en voiture des années 1970 avec chauffeur privé : Citroën DS 21 Henri Chapron, Mercedes W115 ou Peugeot 504. Sur demande.',
       h1: 'Une voiture de collection avec chauffeur à Paris',
-      nav: 'Avec chauffeur',
+      nav: 'Chauffeur',
       lead: 'Époque Motors met à disposition des voitures de collection des années 1970 avec chauffeur privé, à Paris et dans ses environs : une Citroën DS 21 Henri Chapron, une Mercedes W115 220D ou une Peugeot 504 GL. Pour une adresse particulière, une soirée ou un trajet dont on se souvient, d’une heure à une journée, sur demande.',
       sections: [
         {

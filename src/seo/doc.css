@@ -18,29 +18,47 @@ body.dp { margin: 0; background: var(--ivory); color: var(--ink); font-family: v
 .dp-skip:focus { top: 1rem; }
 .dp-wrap { width: 100%; max-width: 74rem; margin-inline: auto; padding-inline: max(16px, clamp(1.25rem, 4vw, 3rem)); }
 
-/* --- Haut de page : logo, menu, langue --- */
-.dp-top { background: var(--forest-deep); color: var(--ivory); }
-.dp-top .dp-wrap { display: flex; align-items: center; gap: .5rem 1.3rem; min-height: 4rem; padding-block: .5rem; }
-.dp-nav { margin-left: auto; min-width: 0; }
-.dp-brand { display: inline-flex; align-items: center; gap: .7rem; min-height: 44px; text-decoration: none !important; }
+/* --- Haut de page : logo, onglets ; puis, à part, « Écrire » et la langue ; menu sur tablette et téléphone --- */
+.dp-top { position: relative; z-index: 5; background: var(--forest-deep); color: var(--ivory); }
+.dp-top .dp-wrap { display: flex; align-items: center; gap: 2rem; max-width: 96rem; min-height: 4.2rem; padding-block: .5rem; }
+.dp-brand { flex: none; display: inline-flex; align-items: center; gap: .7rem; min-height: 44px; text-decoration: none !important; }
 .dp-mono { display: inline-grid; grid-template-columns: auto auto; font-family: var(--font-display); font-weight: 300; font-size: 1.45rem; line-height: .78; }
 .dp-mono > span:first-child { transform: translate(.1em, -.12em); }
 .dp-mono > span:last-child { transform: translate(-.08em, .36em); }
 .dp-brand__word { font-family: var(--font-display); font-size: 1.05rem; letter-spacing: .1em; text-transform: uppercase; }
-.dp-menu { display: flex; align-items: center; gap: 0 1.3rem; margin: 0; padding: 0; list-style: none; flex-wrap: wrap; }
-.dp-menu a { display: inline-flex; align-items: center; min-height: 44px; font-size: .72rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; text-decoration: none !important; }
-.dp-menu a[aria-current="page"] { border-bottom: 1px solid currentColor; }
+.dp-nav { margin-left: auto; min-width: 0; }
+.dp-menu { display: flex; align-items: center; gap: 0 1.3rem; margin: 0; padding: 0; list-style: none; }
+.dp-menu a { display: inline-flex; align-items: center; min-height: 44px; font-size: .72rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; white-space: nowrap; text-decoration: none !important; border-bottom: 1px solid transparent; }
+.dp-menu a[aria-current="page"] { border-bottom-color: currentColor; }
 .dp-top a:hover { color: var(--champagne); }
-.dp-menu__cta a { border-bottom: 1px solid var(--champagne); }
-@media (max-width: 1099px) {
-  /* le logo et « Écrire / langue » sur une ligne, les pages dessous, à faire défiler du doigt si besoin */
-  .dp-top .dp-wrap { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "brand tools" "nav nav"; gap: 0 1rem; padding-block: .3rem .1rem; }
-  .dp-brand { grid-area: brand; }
-  .dp-tools { grid-area: tools; }
-  .dp-nav { grid-area: nav; margin-left: 0; overflow-x: auto; scrollbar-width: none; }
-  .dp-nav::-webkit-scrollbar { display: none; }
-  .dp-nav .dp-menu { flex-wrap: nowrap; gap: 0 1.1rem; }
-  .dp-menu li { flex: none; }
+/* « Écrire » et la langue, séparés des onglets par un filet vertical */
+.dp-tools { flex: none; display: flex; align-items: center; gap: 1.6rem; padding-left: 1.6rem; border-left: 1px solid color-mix(in srgb, var(--ivory) 30%, transparent); }
+.dp-write { display: inline-flex; align-items: center; min-height: 40px; padding: .45rem 1rem; border: 1px solid var(--champagne); font-size: .72rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; text-decoration: none !important; transition: background-color .3s, color .3s; }
+.dp-top .dp-write:hover { background: var(--champagne); color: var(--forest-deep); }
+.dp-lang { display: inline-flex; align-items: center; gap: .45em; min-height: 44px; font-size: .72rem; font-weight: 500; letter-spacing: .14em; text-decoration: none !important; }
+.dp-lang svg { width: 1.1em; height: 1.1em; opacity: .8; }
+.dp-lang__other { opacity: .5; }
+.dp-lang:hover .dp-lang__other { opacity: 1; }
+.dp-lang__sep { margin: 0 .35em; opacity: .5; }
+/* le menu (tablette, téléphone) : sans script, un <details> */
+.dp-burger { display: none; margin-left: auto; }
+.dp-burger > summary { position: relative; z-index: 7; display: inline-flex; align-items: center; gap: .7rem; min-height: 44px; cursor: pointer; list-style: none; font-size: .72rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; }
+.dp-burger > summary::-webkit-details-marker { display: none; }
+.dp-burger__icon { display: inline-flex; flex-direction: column; gap: 7px; }
+.dp-burger__icon span { display: block; width: 24px; height: 1px; background: currentColor; transition: transform .3s, width .3s; }
+.dp-burger__icon span + span { width: 16px; margin-left: auto; }
+.dp-burger[open] .dp-burger__icon span:first-child { transform: translateY(4px) rotate(45deg); }
+.dp-burger[open] .dp-burger__icon span + span { width: 24px; transform: translateY(-4px) rotate(-45deg); }
+.dp-burger__panel { position: fixed; inset: 0; z-index: 6; overflow-y: auto; overscroll-behavior: contain; padding: 5rem max(16px, env(safe-area-inset-right, 0px)) max(2rem, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); background: var(--forest-deep); color: var(--ivory); }
+.dp-burger__list { margin: 0; padding: 0; list-style: none; border-top: 1px solid color-mix(in srgb, var(--ivory) 18%, transparent); }
+.dp-burger__list li { border-bottom: 1px solid color-mix(in srgb, var(--ivory) 18%, transparent); }
+.dp-burger__list a { display: flex; align-items: center; min-height: 52px; font-family: var(--font-display); font-size: 1.55rem; font-weight: 300; text-decoration: none !important; }
+.dp-burger__list a[aria-current="page"] { color: var(--champagne); }
+.dp-burger__tools { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.8rem; margin: 1.8rem 0 0 !important; }
+.dp-burger__home { display: inline-flex; align-items: center; min-height: 44px; margin-top: 1.4rem; font-size: .85rem; text-decoration: none !important; opacity: .8; }
+@media (max-width: 1279px) {
+  .dp-nav, .dp-tools { display: none; }
+  .dp-burger { display: block; }
 }
 @media (max-width: 379px) { .dp-brand__word { display: none; } }
 

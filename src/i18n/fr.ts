@@ -14,15 +14,19 @@ export const fr: Dictionary = {
   nav: {
     label: 'Navigation principale',
     items: {
-      garage: 'La collection',
+      garage: 'Le garage',
       experiences: 'Expériences',
       about: 'À propos',
       write: 'Écrire',
     },
-    /** The button to the guides, a part of the site of its own. */
-    guides: 'Les Guides de Paris',
-    guidesShort: 'Guides',
-    guidesHint: 'Itinéraires et guides, une autre partie du site',
+    /** The button to the detailed part of the site (it opens on the collection). */
+    explore: 'Explorer Époque Motors',
+    exploreShort: 'Explorer',
+    exploreHint: 'La collection, les expériences et les guides : le site en détail',
+    /** Phones: the menu that lists every page of the detailed part of the site. */
+    menu: 'Menu',
+    closeMenu: 'Fermer le menu',
+    siteTitle: 'Le site en détail',
     otherLanguage: 'English',
     backToTop: 'Revenir en haut de la page',
   },
@@ -94,6 +98,7 @@ export const fr: Dictionary = {
     title: 'À propos',
     p1: 'Certaines automobiles deviennent le symbole d’une époque. Chez Époque Motors, nous pensons que ces voitures sont faites pour rouler, pas seulement pour être admirées.',
     p2: 'Notre envie : partager le plaisir de rouler en voiture ancienne, à Paris, lors d’expériences simples, authentiques et personnelles.',
+    more: 'Découvrir Époque Motors en détail',
   },
   form: {
     title: 'Écrire',

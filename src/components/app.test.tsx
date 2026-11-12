@@ -141,7 +141,17 @@ describe('App', () => {
     expect(window.location.search).toBe('');
     for (const a of within(nav).getAllByRole('link').slice(1, -1).filter((x) => x.getAttribute('href')!.startsWith('#'))) await user.click(a);
     /* la rubrique des guides est une autre page */
-    expect(within(nav).getByRole('link', { name: /Guides/ }).getAttribute('href')).toMatch(/\/guides\/$/);
+    expect(within(nav).getByRole('link', { name: /Explore/ }).getAttribute('href')).toMatch(/\/collection\/$/);
+    /* téléphone : le menu de tout le site s'ouvre et se ferme */
+    await user.click(within(nav).getByRole('button', { name: 'Menu' }));
+    const menu = document.querySelector('.em-menu') as HTMLDialogElement;
+    expect(menu.open).toBe(true);
+    expect(within(menu).getAllByRole('link').map((a) => a.textContent)).toContain('The collection');
+    await user.click(within(menu).getByRole('button', { name: 'Close' }));
+    expect(menu.open).toBe(false);
+    await user.click(within(nav).getByRole('button', { name: 'Menu' }));
+    await user.click(within(menu).getByRole('link', { name: 'Enquire' }));
+    expect(menu.open).toBe(false);
     await user.click(screen.getByRole('button', { name: /top/i, hidden: true }));
     await user.click(document.querySelector('.em-brand') as HTMLElement);
     /* page légale ouverte par son ancre, fermée par son bouton */

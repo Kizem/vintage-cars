@@ -12,16 +12,20 @@ export const en = {
   nav: {
     label: 'Primary',
     items: {
-      garage: 'The collection',
+      garage: 'The garage',
       experiences: 'Experiences',
       about: 'About',
       write: 'Enquire',
     },
     /** Link to the other language, written in that language. */
-    /** The button to the guides, a part of the site of its own. */
-    guides: 'Paris Guides',
-    guidesShort: 'Guides',
-    guidesHint: 'Routes and guides, another part of the site',
+    /** The button to the detailed part of the site (it opens on the collection). */
+    explore: 'Explore Époque Motors',
+    exploreShort: 'Explore',
+    exploreHint: 'The collection, experiences and guides: the site in detail',
+    /** Phones: the menu that lists every page of the detailed part of the site. */
+    menu: 'Menu',
+    closeMenu: 'Close the menu',
+    siteTitle: 'The site in detail',
     otherLanguage: 'Français',
     backToTop: 'Back to the top of the page',
   },
@@ -96,6 +100,7 @@ export const en = {
     title: 'About',
     p1: 'Some automobiles become symbols of an era. At Époque Motors, we believe these icons deserve to be experienced, not simply admired.',
     p2: 'Our ambition is to share the beauty of classic motoring through personal, authentic experiences in Paris.',
+    more: 'Discover Époque Motors in detail',
   },
   form: {
     title: 'Enquire',

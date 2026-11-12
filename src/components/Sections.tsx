@@ -113,6 +113,10 @@ export function About({ inert }: { inert: boolean }) {
         </h2>
         <p className="em-text">{t.about.p1}</p>
         <p className="em-text">{t.about.p2}</p>
+        {/* la partie détaillée du site, ouverte sur la collection */}
+        <MoreLink to="collection" arrow>
+          {t.about.more}
+        </MoreLink>
       </div>
     </section>
   );

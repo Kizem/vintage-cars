@@ -57,14 +57,16 @@ Seven full-screen sections, in this order (`sectionIds` in `src/data/site.ts`):
   notch still change section. ↑ ↓ and Page Up / Down move one section; F toggles fullscreen.
 - `animateTo` dispatches a synthetic `scroll` event on arrival.
 - Navigation is locked while the vehicle sheet or the legal dialog is open.
-- Top menu: four section entries (« La collection » / « The collection », the
-  parking section, whose id stays `garage`; Experiences, About, Write); on phones (≤ 699 px)
-  only the first three, « Écrire » is hidden (`.em-nav__write`; every chapter action leads to the form);
-  the monogram sits in the left corner and the language switch in the right corner, both 16 px from the edge,
-  the three entries centred on the screen between them.
-  At the right, a framed button « Les Guides de Paris » (`.em-nav__guides`: italic Cormorant, arrow,
-  1 px frame that fills on hover) leads to the guides, presented as another part of the site; « Guides »
-  on tablets, absent on phones (chapter N°2 links to the guides). Then the
+- Top menu: four section entries (« Le garage » / « The garage », the parking section, whose id stays
+  `garage`, renamed so as not to repeat « La collection » of the detailed part of the site; Experiences,
+  About, Write). At the right, a framed button « Explorer Époque Motors » (`.em-nav__site`: italic
+  Cormorant, arrow, 1 px frame that fills on hover; « Explorer » on tablets) opens the detailed part of the
+  site on its collection page. On phones (≤ 699 px): the menu button (two lines, `.em-nav__burger`) in the
+  left corner opens a full-screen menu (`.em-menu`, a <dialog>) listing every page of the detailed part
+  (`siteTabs` in `src/data/links.ts`) and « Écrire »; then Le garage, Expériences, À propos centred on the
+  screen; the language switch in the right corner, 16 px from the edge like the menu button. « Écrire » and
+  the explore button are hidden on phones, and so is the monogram (the house name is already shown in the
+  garage). Then the
   language switch: a thin-line globe and « FR / EN » (current language in
   full, the other dimmed) on desktop; the globe and the other language on
   phones; the globe alone below 341 px. Its accessible name is the other
@@ -77,7 +79,8 @@ Seven full-screen sections, in this order (`sectionIds` in `src/data/site.ts`):
 - The « learn more » link of each chapter sits under its text, not next to the action: italic Cormorant with an
   arrow, no rule (`MoreLink arrow`, `.em-more--arrow`), so that it never reads as a second action. Chapter N°2
   (Private Paris Tours) shows « Les Guides de Paris » there, with the five routes (`.em-guides`; the five route
-  links are hidden where the short chapter text is shown, phones and low windows). About has no link.
+  links are hidden where the short chapter text is shown, phones and low windows). About ends with the same
+  kind of link, « Découvrir Époque Motors en détail », to the collection page.
 - Discreet links (`MoreLink`, `.em-more`) lead from the home to the content pages: under each chapter text,
   under « Demander cette voiture » in the sheet, under the Good to know questions, and in the
   Écrire footer (Collection · Guides · FAQ). Their addresses are in `src/data/links.ts` (tested against
@@ -468,3 +471,11 @@ pop-in of the guides page, at its anchor: `#paris-intemporel`, `#elegance-rive-g
   link to the tours page (owner's decision), the tours page stays in the content menus and footers.
 - Photos: the routes reuse the site's images until a photograph per route is supplied (see
   `docs/SEO-GEO.md`). Every new photo must have its rights, and plates blurred (§ 5).
+
+### Header of the content pages (`Header` in `src/seo/page.tsx`)
+
+From 1280 px: the logo, the tabs (La collection, Événements, Visites de Paris, Chauffeur, Les Guides de Paris,
+FAQ), then, set apart by a vertical rule, « Écrire » as a framed button and the language switch (globe,
+FR / EN, as on the home page). Below 1280 px: the logo and a « Menu » button (a <details>, no script) that
+opens a full-screen panel with every page (the tabs and À propos), « Écrire », the language and a link back
+to the home page.
