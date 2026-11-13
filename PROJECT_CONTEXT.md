@@ -76,7 +76,8 @@ Seven full-screen sections, in this order (`sectionIds` in `src/data/site.ts`):
   reached through `asset()` (`src/lib/paths.ts`), which starts from the site root (`<meta name="em-root">`,
   written at build time), so that `/fr/` finds `images/…`.
 - In the vehicle sheet, « Découvrir la {name} » (`focus.page`, the car's page) sits under the photos, in
-  champagne italic with an arrow, the specifications between it and « Demander cette voiture ».
+  champagne italic, underlined, no arrow (the carousel arrows are just above), the specifications between it
+  and « Demander cette voiture ». The car name takes the focus on opening, without any visible frame.
 - The « learn more » link of each chapter sits under its text, not next to the action: italic Cormorant with an
   arrow, no rule (`MoreLink arrow`, `.em-more--arrow`), so that it never reads as a second action. Chapter N°2
   (Private Paris Tours) shows « Les Guides de Paris » there, with the five routes (`.em-guides`; the five route

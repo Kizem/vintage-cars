@@ -66,8 +66,12 @@ button, input, select, textarea { font-variant-numeric: lining-nums; }
 .em-more--arrow:hover .em-arrow { transform: translateX(4px); }
 .em-exp__copy > .em-more--arrow { display: flex; width: fit-content; }
 .em-sheet .em-more:hover { color: var(--champagne); }
-.em-sheet .em-more--arrow { color: var(--champagne); margin: 1.1rem auto .2rem; }
-.em-sheet .em-more--arrow:hover { color: var(--ivory); }
+.em-sheet .em-more--arrow { color: var(--champagne); margin: 1.1rem auto .2rem; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 5px; }
+.em-sheet .em-more--arrow:hover { color: var(--ivory); text-decoration-color: transparent; }
+/* dans la fiche, pas de flèche : celles du carrousel, juste au-dessus, suffisent ; le lien est souligné */
+.em-sheet .em-more--arrow .em-arrow { display: none; }
+/* le nom reçoit le focus à l'ouverture (lecteurs d'écran) : jamais de cadre autour */
+.em-sheet .em-sheet__name:focus, .em-sheet .em-sheet__name:focus-visible { outline: none; }
 .em-guides { display: flex; flex-direction: column; align-items: center; }
 .em-guides__list { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 .9rem; margin: 0; padding: 0; list-style: none; font-size: .78rem; letter-spacing: .02em; }
 .em-guides__list a { display: inline-block; padding: .25rem 0; color: var(--ink-soft); text-decoration: none; }
