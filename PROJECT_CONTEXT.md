@@ -489,4 +489,5 @@ The home menu (`.em-menu`, `TopNav.tsx`) and the content pages menu (`.dp-burger
 `src/seo/page.tsx`) show the same thing, in the same order and style: the logo on the left and a cross
 « Fermer » on the right, the title « Le site en détail », the seven pages (`siteTabs` / `MENU` + À propos), then
 « Écrire » as a framed champagne button and the language switch (globe, FR / EN), and « ← Retour à l'accueil ».
+The logo of the menu is a link back to the top of the home page (the garage).
 Change one, change the other.

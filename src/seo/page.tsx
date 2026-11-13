@@ -127,10 +127,11 @@ export function Header({ c, current, alternate }: { c: Ctx; current?: PageId; al
             <span className="dp-burger__label dp-burger__label--close">{t.close}</span>
           </summary>
           <div className="dp-burger__panel">
-            <p className="dp-burger__brand" aria-hidden="true">
+            {/* le logo ramène à l'accueil (le garage) */}
+            <a className="dp-burger__brand" href={href(c, homePath(c.l))} aria-label={`${site.name}, ${t.backHome}`}>
               <Monogram />
               <span className="dp-brand__word">{site.name}</span>
-            </p>
+            </a>
             <p className="dp-burger__title">{t.siteTitle}</p>
             <nav aria-label={t.menu}>
               <ul className="dp-burger__list">

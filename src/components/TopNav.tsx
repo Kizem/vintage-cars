@@ -152,13 +152,23 @@ export function TopNav() {
         onClick={(e) => e.target === e.currentTarget && setMenu(false)}
       >
         <div className="em-menu__bar">
-          <p className="em-menu__brand">
+          {/* le logo ramène au début de la page d'accueil (le garage) */}
+          <a
+            className="em-menu__brand"
+            href="#garage"
+            aria-label={`Époque Motors, ${t.nav.backHome}`}
+            onClick={(e) => {
+              e.preventDefault();
+              setMenu(false);
+              scrollToId('garage');
+            }}
+          >
             <span className="em-mono em-mono--sm" aria-hidden="true">
               <span>É</span>
               <span>M</span>
             </span>
             <span className="em-brand__word">Époque Motors</span>
-          </p>
+          </a>
           <button type="button" className="em-menu__close" onClick={() => setMenu(false)}>
             <span className="em-menu__x" aria-hidden="true" />
             {t.legal.close}
