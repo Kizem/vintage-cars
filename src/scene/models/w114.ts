@@ -30,11 +30,11 @@ export function details(k: CarKit) {
 
   /* Calandre : haute et large, en saillie sur la face ; cadre chromé, fond noir, mailles fines, barre centrale,
      chapeau chromé sur le dessus qui se fond dans le capot, petite étoile en haut de la grille */
-  const gy = .68; const gw = .56; const gh = .4; const gx = nx - .035;
+  const gy = .715; const gw = .64; const gh = .36; const gx = nx - .035;
   frame(gx + .03, gy, 0, gw, gh, .03, .028, .06);
   plate(gx + .01, gy, 0, gw - .05, gh - .05, .01, dark, .01);
   for (let i = 1; i < 12; i++) bar(gx - .012, gy - gh / 2 + .025 + i * (gh - .05) / 12, 0, .008, .006, gw - .06);
-  for (let i = -8; i <= 8; i++) bar(gx - .016, gy, i * .03, .006, gh - .06, .004);
+  for (let i = -9; i <= 9; i++) bar(gx - .016, gy, i * .031, .006, gh - .06, .004);
   bar(gx - .024, gy, 0, .014, gh - .05, .018);
   const cap = bar(gx + .045, gy + gh / 2 + .006, 0, .11, .022, gw + .01); cap.rotation.z = -.12;
   const badge = starRing(.022, .003); badge.position.set(gx - .03, gy + gh / 2 - .045, 0); body.add(badge);
@@ -45,13 +45,13 @@ export function details(k: CarKit) {
 
   [1, -1].forEach((sg) => {
     /* optique verticale aux angles : cadre chromé, clignotant orange, phare, antibrouillard jaune, verre */
-    const z = .74; const x = surfX(z, true) - .004; const ly = .69;
-    frame(x + .004, ly, sg * z, .21, .37, .035, .016, .03);
-    plate(x - .004, ly, sg * z, .18, .34, .025, dark, .008);
-    plate(x - .012, ly + .13, sg * z, .17, .06, .015, amber, .006);
-    plate(x - .012, ly - .125, sg * z, .17, .075, .015, mats.gold, .006);
-    plate(x - .014, ly + .005, sg * z, .17, .17, .04, lens, .006);
-    plate(x - .024, ly, sg * z, .18, .34, .025, lampGlass, .004);
+    const z = .735; const x = surfX(z, true) - .004; const ly = .715;
+    frame(x + .004, ly, sg * z, .2, .34, .05, .014, .03);
+    plate(x - .004, ly, sg * z, .172, .312, .04, dark, .008);
+    plate(x - .012, ly + .115, sg * z, .16, .06, .02, amber, .006);
+    plate(x - .012, ly - .115, sg * z, .16, .07, .02, mats.gold, .006);
+    plate(x - .014, ly + .003, sg * z, .16, .16, .05, lens, .006);
+    plate(x - .024, ly, sg * z, .172, .312, .04, lampGlass, .004);
     lampPoints.push([x - .03, ly, sg * z]);
     /* butoirs bas du double pare-chocs avant : chrome sur bande noire, de part et d'autre de la plaque,
        recourbés aux angles */
@@ -62,7 +62,7 @@ export function details(k: CarKit) {
     const cl: P3[] = []; for (let i = 0; i <= 18; i++) { const xx = lerp(-2.27, -.85, i / 18); const zz = hw(xx) * .86; cl.push([xx, topY(xx, zz) + .002, sg * zz]); }
     body.add(tube(cl, .003, crease));
     /* jonc de flanc : bande noire posée sur le jonc chromé, sur toute la longueur */
-    const st: P3[] = []; for (let i = 0; i <= 30; i++) { const xx = lerp(-2.29, 2.31, i / 30); st.push([xx, lerp(.775, .75, i / 30) + .002, sg * (hw(xx) + .012)]); }
+    const st: P3[] = []; for (let i = 0; i <= 30; i++) { const xx = lerp(-2.29, 2.31, i / 30); st.push([xx, lerp(.705, .695, i / 30) + .002, sg * (hw(xx) + .012)]); }
     body.add(tube(st, .007, rubber));
     /* poignées de portes chromées, à l'arrière de chaque porte */
     [-.16, .88].forEach((hx) => { const h = new Mesh(new CapsuleGeometry(.011, .1, 4, 8), chrome); h.rotation.z = Math.PI / 2; h.position.set(hx, be(hx) - .1, sg * (hw(hx) + .008)); body.add(h); });
@@ -74,10 +74,10 @@ export function details(k: CarKit) {
     });
   });
   /* pare-chocs chromés à bande noire, avant et arrière */
-  bumper(nx + .02, .475, .085, .046, .62, .5);
-  bumper(nx + .02, .475, .12, .012, 1, .5, rubber);
-  bumper(tx - .02, .465, .085, .044, .62, .5);
-  bumper(tx - .02, .465, .118, .012, 1, .5, rubber);
+  bumper(true, .475, .1, .04, .04, .5);
+  bumper(true, .475, .032, .014, .064, .5, rubber);
+  bumper(false, .465, .1, .04, .04, .5);
+  bumper(false, .465, .032, .014, .064, .5, rubber);
   /* plaques sans inscription : entre les butoirs avant, au centre du panneau arrière */
   bar(nx - .085, .365, 0, .012, .11, .52, black);
   bar(tx + .008, .645, 0, .012, .11, .52, black);

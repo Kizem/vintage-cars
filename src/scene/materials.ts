@@ -43,20 +43,8 @@ function hubTexture(style: CarSpec['hub'], tint: string) {
  * `be` : ligne de ceinture, pour dessiner les joints de portes dans la peinture.
  * La peinture découpe les passages de roues (shader), le reste est standard.
  */
-export function createMaterials(s: CarSpec, env: Texture, be: (x: number) => number) {
-  /* Lignes de carrosserie dessinées comme sur un plan */
-  const seamTex = canvasTex(2048, 512, (g, w, h) => {
-    g.fillStyle = '#fff'; g.fillRect(0, 0, w, h);
-    const X = (x: number) => (x / 6 + .5) * w; const Y = (y: number) => h - (y / 1.6) * h;
-    g.strokeStyle = 'rgba(10,12,12,.72)'; g.lineWidth = 2.6;
-    s.seams.forEach((x) => { g.beginPath(); g.moveTo(X(x), Y(.33)); g.lineTo(X(x + .02), Y(be(x) - .015)); g.stroke(); });
-    g.fillStyle = 'rgba(10,12,12,.85)';
-    [s.seams[0] + .78, s.seams[1] + .72].forEach((x) => { g.fillRect(X(x), Y(be(x) - .1), 26, 4); });
-    if (s.flap) { const [fx, fy, fr] = s.flap; g.beginPath(); g.ellipse(X(fx), Y(fy), fr / 6 * w, fr / 1.6 * h, 0, 0, 7); g.stroke(); }
-    /* bas de caisse */
-    g.fillStyle = 'rgba(6,8,8,.88)'; g.fillRect(0, Y(.325), w, h);
-  });
-  const paint = new MeshPhysicalMaterial({ ...s.paint, map: seamTex, clearcoat: 1, clearcoatRoughness: .07, envMap: env, envMapIntensity: .95, side: DoubleSide });
+export function createMaterials(s: CarSpec, env: Texture, _be?: (x: number) => number) {
+  const paint = new MeshPhysicalMaterial({ ...s.paint, clearcoat: 1, clearcoatRoughness: .07, envMap: env, envMapIntensity: .95, side: DoubleSide });
   const archU = { value: s.axles.map((x, i) => new Vector3(x, s.wheelR, s.arch[i][0])) };
   const archC = { value: s.arch.map((a) => a[1]) };
   /* Fenêtre de phare (DS) : la tôle n'est pas dessinée dans un prisme dont la section est le contour de la glace
@@ -92,11 +80,15 @@ export function createMaterials(s: CarSpec, env: Texture, be: (x: number) => num
     pillar: s.roof || s.pillarChrome ? new MeshStandardMaterial({ color: 0xcfd2d2, metalness: .95, roughness: .2, envMap: env }) : roof,
     dark: new MeshStandardMaterial({ color: 0x0b0d0c, roughness: .7, envMap: env, envMapIntensity: .3 }),
     black: new MeshBasicMaterial({ color: 0x050605 }),
+    /** cuves de passages de roues */
+    well: new MeshBasicMaterial({ color: 0x070807, side: DoubleSide }),
+    /** garniture intérieure du pavillon */
+    liner: new MeshStandardMaterial({ color: s.cabin?.liner ?? 0xcfc8b8, roughness: .9, side: DoubleSide }),
     rubber: new MeshStandardMaterial({ color: 0x111111, roughness: .55, envMap: env, envMapIntensity: .35 }),
     gold: new MeshStandardMaterial({ color: 0xc8a24c, metalness: 1, roughness: .26, envMap: env, envMapIntensity: 1.3 }),
     crease: new MeshBasicMaterial({ color: 0x2b2e2e }),
     /** Feux avant : partagé, pour pouvoir les allumer au survol */
-    lens: new MeshStandardMaterial({ color: s.lensColor || 0xf0e8d0, emissive: 0xf2b632, emissiveIntensity: 0, metalness: .85, roughness: .12, envMap: env, envMapIntensity: 1.5 }),
+    lens: new MeshStandardMaterial({ color: s.lensColor || 0xf0e8d0, emissive: 0xf2b632, emissiveIntensity: 0, metalness: .45, roughness: .12, envMap: env, envMapIntensity: 1.5 }),
     /** verre d'optique, transparent */
     lampGlass: new MeshPhysicalMaterial({ color: 0xffffff, roughness: .03, transparent: true, opacity: .28, clearcoat: 1, envMap: env, envMapIntensity: 1.6, depthWrite: false }),
     amber: new MeshStandardMaterial({ color: 0xc97d1c, roughness: .22, metalness: .3, envMap: env, emissive: 0x7a3d05, emissiveIntensity: .15 }),
@@ -105,6 +97,8 @@ export function createMaterials(s: CarSpec, env: Texture, be: (x: number) => num
     glass: s.cabin
       ? new MeshPhysicalMaterial({ side: DoubleSide, color: s.cabin.glass, roughness: .04, clearcoat: 1, clearcoatRoughness: .03, transparent: true, opacity: s.cabin.opacity, depthWrite: false, envMap: env, envMapIntensity: 1.1 })
       : new MeshPhysicalMaterial({ side: DoubleSide, color: 0x0d1513, metalness: .2, roughness: .08, clearcoat: 1, clearcoatRoughness: .05, envMap: env, envMapIntensity: .8 }),
+    /** rebord de jante : poli sur la Mercedes, peint argent sinon */
+    rim: new MeshStandardMaterial({ color: s.hub === 'mercedes' ? 0xeceeee : 0xb9bcbc, metalness: s.hub === 'mercedes' ? 1 : .7, roughness: s.hub === 'mercedes' ? .14 : .38, envMap: env, envMapIntensity: 1.3, side: DoubleSide }),
     tire: new MeshStandardMaterial({ color: 0x0c0c0c, roughness: .82 }),
     whitewall: new MeshStandardMaterial({ color: 0xe9e6dc, roughness: .7 }),
     /** enjoliveur ou jante dessinés, en métal poli */

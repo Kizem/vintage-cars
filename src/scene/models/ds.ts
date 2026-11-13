@@ -132,29 +132,29 @@ export function details(k: CarKit) {
     const guard = new Mesh(new BoxGeometry(.2, .055, .07, 2, 1, 1), rubber); guard.position.set(nx + .02, .34, sg * .4); guard.rotation.z = .55; body.add(guard);
 
     /* --- flancs : joint du capot contre la paroi des ailes, poignées à l'arrière des portes --- */
-    const cl: P3[] = []; for (let i = 0; i <= 20; i++) { const x = lerp(-2.39, -.9, i / 20); const z = Math.min(hw(x) * .78, (k.s.wingInner ?? 1) - .012); cl.push([x, topY(x, z) + .002, sg * z]); }
+    const cl: P3[] = []; for (let i = 0; i <= 20; i++) { const x = lerp(-2.39, -.9, i / 20); const z = hw(x) * .6; cl.push([x, topY(x, z) + .002, sg * z]); }
     body.add(tube(cl, .0035, crease));
     [.18, 1.08].forEach((x) => { const h = new Mesh(new CapsuleGeometry(.011, .09, 4, 8), chrome); h.rotation.z = Math.PI / 2; h.position.set(x, be(x) - .07, sg * (hw(x) + .008)); body.add(h); });
 
-    /* --- poupe : feu rouge cerclé de chrome à chaque coin, catadioptre dessous --- */
-    const zr = .47; const xr = surfX(zr, false) - .006;
-    const bez = plate(xr + .004, .64, sg * zr, .13, .15, .02, chrome, .012); bez.rotation.y = Math.PI / 2 - sg * .35;
-    const tl = plate(xr + .012, .64, sg * zr, .105, .125, .015, red, .012); tl.rotation.y = Math.PI / 2 - sg * .35;
-    const cat = new Mesh(new CylinderGeometry(.02, .02, .01, 16), red); cat.rotation.z = Math.PI / 2; cat.position.set(xr + .012, .53, sg * zr); body.add(cat);
+    /* --- poupe : feu rouge horizontal dans son boîtier chromé, de part et d'autre de la plaque ; catadioptre rond sur l'aile --- */
+    const zr = .4; const xr = tx + .004;
+    const bez = plate(xr, .535, sg * zr, .2, .085, .02, chrome, .014); bez.rotation.y = Math.PI / 2;
+    const tl = plate(xr + .01, .535, sg * zr, .17, .06, .012, red, .01); tl.rotation.y = Math.PI / 2;
+    const cat = new Mesh(new CylinderGeometry(.022, .022, .01, 16), red); cat.rotation.x = Math.PI / 2; cat.position.set(2.2, .6, sg * (k.sideZ(2.2, .6) + .002)); body.add(cat);
   });
 
   /* --- nez : jonc chromé au bord du capot, pointé au centre --- */
   const blade: P3[] = []; for (let i = 0; i <= 24; i++) { const z = lerp(-.56, .56, i / 24); const x = surfX(Math.max(.6, Math.abs(z)), true) + (.56 - Math.abs(z)) * .06 - .008; blade.push([Math.min(x, nx + .05), .555 - (1 - Math.abs(z) / .56) * .02, z]); }
   body.add(tube(blade, .009, chrome));
   /* pare-chocs avant enveloppant, prise d'air noire et plaque dessous */
-  bumper(nx + .05, .42, .06, .036, .65, .42);
+  bumper(true, .42, .075, .04, .03, .45);
   const intake = new Mesh(new BoxGeometry(.04, .07, 1.0), dark); intake.position.set(nx + .08, .345, 0); body.add(intake);
   const fplate = new Mesh(new BoxGeometry(.012, .11, .5), black); fplate.position.set(nx + .02, .33, 0); body.add(fplate);
 
   /* --- poupe : pare-chocs, plaque au centre, poignée de malle, chevrons et monogramme --- */
-  bumper(tx - .05, .45, .06, .034, .65, .38);
+  bumper(false, .45, .07, .04, .03, .4);
   const xp = surfX(.2, false);
-  const rplate = new Mesh(new BoxGeometry(.016, .11, .5), black); rplate.position.set(xp - .004, .6, 0); body.add(rplate);
+  const rplate = new Mesh(new BoxGeometry(.016, .1, .46), black); rplate.position.set(tx + .012, .535, 0); body.add(rplate);
   const handle = new Mesh(new CapsuleGeometry(.011, .05, 4, 8), chrome); handle.rotation.x = Math.PI / 2; handle.position.set(xp - .03, .7, 0); body.add(handle);
   const chev = new Shape(); chev.moveTo(.012, -.07); chev.lineTo(-.02, 0); chev.lineTo(.012, .07); chev.lineTo(.026, .07); chev.lineTo(-.006, 0); chev.lineTo(.026, -.07); chev.closePath();
   const chevG = new ExtrudeGeometry(chev, { depth: .004, bevelEnabled: false });
