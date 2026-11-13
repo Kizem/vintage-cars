@@ -482,3 +482,11 @@ FAQ), then, set apart by a vertical rule, « Écrire » as a framed button and t
 FR / EN, as on the home page). Below 1280 px: the logo and a « Menu » button (a <details>, no script) that
 opens a full-screen panel with every page (the tabs and À propos), « Écrire », the language and a link back
 to the home page.
+
+### The menu (phones, and content pages below 1280 px)
+
+The home menu (`.em-menu`, `TopNav.tsx`) and the content pages menu (`.dp-burger`, `Header` in
+`src/seo/page.tsx`) show the same thing, in the same order and style: the logo on the left and a cross
+« Fermer » on the right, the title « Le site en détail », the seven pages (`siteTabs` / `MENU` + À propos), then
+« Écrire » as a framed champagne button and the language switch (globe, FR / EN), and « ← Retour à l'accueil ».
+Change one, change the other.

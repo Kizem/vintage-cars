@@ -27,6 +27,7 @@ export const fr: Dictionary = {
     menu: 'Menu',
     closeMenu: 'Fermer le menu',
     siteTitle: 'Le site en détail',
+    backHome: 'Retour à l’accueil',
     otherLanguage: 'English',
     backToTop: 'Revenir en haut de la page',
   },

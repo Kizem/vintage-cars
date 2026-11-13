@@ -24,7 +24,10 @@ export function TopNav() {
   useEffect(() => {
     const d = menuRef.current;
     if (!d) return;
-    if (menu && !d.open) d.showModal();
+    if (menu && !d.open) {
+      d.showModal();
+      d.focus();
+    }
     if (!menu && d.open) d.close();
     setLock('dialog', menu);
     return () => setLock('dialog', false);
@@ -143,6 +146,7 @@ export function TopNav() {
       <dialog
         ref={menuRef}
         className="em-menu"
+        tabIndex={-1}
         aria-label={t.nav.siteTitle}
         onClose={() => setMenu(false)}
         onClick={(e) => e.target === e.currentTarget && setMenu(false)}
@@ -156,6 +160,7 @@ export function TopNav() {
             <span className="em-brand__word">Époque Motors</span>
           </p>
           <button type="button" className="em-menu__close" onClick={() => setMenu(false)}>
+            <span className="em-menu__x" aria-hidden="true" />
             {t.legal.close}
           </button>
         </div>
@@ -169,7 +174,7 @@ export function TopNav() {
         </ul>
         <div className="em-menu__tools">
           <a
-            className="em-action em-menu__write"
+            className="em-menu__write"
             href="#ecrire"
             onClick={(e) => {
               e.preventDefault();
@@ -182,6 +187,7 @@ export function TopNav() {
           {/* sur téléphone, la langue est ici : le coin droit tient le menu */}
           <a
             className="em-menu__lang"
+            aria-label={t.nav.otherLanguage}
             href={homeHref(other)}
             hrefLang={other}
             lang={other}
@@ -195,9 +201,25 @@ export function TopNav() {
               <ellipse cx="6.5" cy="6.5" rx="2.6" ry="6" stroke="currentColor" />
               <path d="M.5 6.5h12" stroke="currentColor" />
             </svg>
-            {t.nav.otherLanguage}
+            {(['fr', 'en'] as const).map((code, i) => (
+              <span key={code} className={code === locale ? 'em-lang__cur' : 'em-lang__other'} aria-hidden="true">
+                {i > 0 && <span className="em-lang__sep">/</span>}
+                {code.toUpperCase()}
+              </span>
+            ))}
           </a>
         </div>
+        <a
+          className="em-menu__home"
+          href="#garage"
+          onClick={(e) => {
+            e.preventDefault();
+            setMenu(false);
+            scrollToId('garage');
+          }}
+        >
+          ← {t.nav.backHome}
+        </a>
       </dialog>
       <button
         type="button"

@@ -26,6 +26,7 @@ export const en = {
     menu: 'Menu',
     closeMenu: 'Close the menu',
     siteTitle: 'The site in detail',
+    backHome: 'Back to the home page',
     otherLanguage: 'Français',
     backToTop: 'Back to the top of the page',
   },

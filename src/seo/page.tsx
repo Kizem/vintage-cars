@@ -124,8 +124,14 @@ export function Header({ c, current, alternate }: { c: Ctx; current?: PageId; al
               <span />
             </span>
             <span className="dp-burger__label">{t.menuShort}</span>
+            <span className="dp-burger__label dp-burger__label--close">{t.close}</span>
           </summary>
           <div className="dp-burger__panel">
+            <p className="dp-burger__brand" aria-hidden="true">
+              <Monogram />
+              <span className="dp-brand__word">{site.name}</span>
+            </p>
+            <p className="dp-burger__title">{t.siteTitle}</p>
             <nav aria-label={t.menu}>
               <ul className="dp-burger__list">
                 {[...MENU, 'about' as PageId].map((id) => (
