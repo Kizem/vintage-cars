@@ -61,7 +61,8 @@ export function stations(a: number, b: number, n: number) {
 /** Tube lisse le long de points ; `flatY` < 1 l'aplatit (pare-chocs). */
 export function tube(points: P3[], r: number, mat: Material, flatY = 1) {
   const c = new CatmullRomCurve3(points.map((p) => new Vector3(p[0], p[1], p[2])));
-  const m = new Mesh(new TubeGeometry(c, Math.max(24, points.length * 8), r, 8, false), mat);
+  /* les points sont déjà serrés là où le tracé tourne : trois segments par point suffisent */
+  const m = new Mesh(new TubeGeometry(c, Math.min(160, Math.max(12, points.length * 3)), r, 6, false), mat);
   if (flatY !== 1) {
     const P = m.geometry.attributes.position; const cy = points.reduce((a, p) => a + p[1], 0) / points.length;
     for (let i = 0; i < P.count; i++) P.setY(i, cy + (P.getY(i) - cy) * flatY);

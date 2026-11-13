@@ -31,12 +31,11 @@ export function buildBody(s: CarSpec, mats: CarMaterials, curves: CarCurves) {
   const sd = s.side;
   const NB = 3; const NL = 10; const NU = 8; const NT = 16; const NC = 5;
   /** Dessus de caisse à la fraction u de la demi-largeur (0 dans l'axe, 1 à l'épaule). */
-  const topAt = (b: number, d: number, u: number) => {
-    if (b > d) { const [u0, u1] = sd.valley ?? [.55, .9]; const t = Math.min(1, Math.max(0, (u - u0) / (u1 - u0))); return d + (b - d) * t * t * (3 - 2 * t); }
-    return d - (d - b) * Math.pow(u, sd.dome);
-  };
-  const halfSection = (x: number): Pt[] => {
-    const f = fl(x); const d = de(x); const b = Math.max(f + .02, s.wingRise ? be(x) : Math.min(be(x), d - .004)); const w = hw(x);
+  const topAt = (b: number, d: number, u: number) => d - (d - b) * Math.pow(u, sd.dome);
+  /** Coupes déjà calculées : les outils de pose (sideZ, topY) redemandent souvent la même abscisse. */
+  const memo = <T,>(f: (x: number) => T) => { const m = new Map<number, T>(); return (x: number) => { let v = m.get(x); if (v === undefined) { v = f(x); m.set(x, v); } return v; }; };
+  const halfSection = memo((x: number): Pt[] => {
+    const f = fl(x); const d = de(x); const b = Math.max(f + .02, Math.min(be(x), d - .004)); const w = hw(x);
     const e = Math.min(1, (b - f) / .4, w / .5);
     const tuck = sd.tuck * e; const sIn = sd.sIn * e; const wS = w - tuck; const ws = w - sIn;
     const yw = Math.min(Math.max(sd.waist, f + (b - f) * .3), b - Math.min(.05, (b - f) * .2));
@@ -44,7 +43,7 @@ export function buildBody(s: CarSpec, mats: CarMaterials, curves: CarCurves) {
     const upper = sd.ridge ? catmull([[w, yw], [lerp(w, ws, .5) + .003, lerp(yw, b, .5)], [ws, b]], 8) : catmull([[w, yw], [w - sIn * .3, lerp(yw, b, .6)], [ws, b]], 10);
     const top: Pt[] = []; for (let i = 0; i <= 24; i++) { const u = 1 - i / 24; top.push([ws * u, topAt(b, d, u)]); }
     return roundedPath([[[0, f], [wS, f]], lower, upper, top], [sd.rb * e, sd.ridge ?? .2, sd.rs * e], [NB, NL, NU, NT], NC);
-  };
+  });
   /* rangs de la coupe : le flanc commence après le dessous et son arc, le dessus après l'arc de l'épaule */
   const iFlank = NB + NC; const iTop = iFlank + NL + NC + NU + NC;
   /* Inclinaison de la face avant et de la poupe : près des extrémités, chaque point est décalé le long de X selon
@@ -54,7 +53,7 @@ export function buildBody(s: CarSpec, mats: CarMaterials, curves: CarCurves) {
   /* le point le plus avancé de chaque extrémité ne bouge pas : la longueur hors tout reste celle de la fiche */
   const pivN = rake[0] > 0 ? de(-s.L / 2) : fl(-s.L / 2); const pivT = rake[1] > 0 ? fl(s.L / 2) : de(s.L / 2);
   const shift = (x: number, y: number) => x - rake[0] * sm((-s.L / 2 + RL - x) / RL) * (y - pivN) - rake[1] * sm((x - s.L / 2 + RL) / RL) * (y - pivT);
-  body.add(new Mesh(loft(stations(-s.L / 2, s.L / 2, 110), halfSection, { shift }), mats.paint));
+  body.add(new Mesh(loft(stations(-s.L / 2, s.L / 2, 96), halfSection, { shift }), mats.paint));
 
   /** Demi-largeur du flanc à la hauteur y (du bas de caisse à l'épaule). */
   const sideZ = (x: number, y: number) => {
@@ -65,7 +64,7 @@ export function buildBody(s: CarSpec, mats: CarMaterials, curves: CarCurves) {
 
   /* Dessous sombre, visible à travers les passages de roues */
   body.add(new Mesh(loft(stations(-s.L / 2 + .2, s.L / 2 - .2, 30), (x) => {
-    const f = fl(x) + .01; const w = hw(x) * .78; const t = Math.min(be(x), de(x)) - (s.wingRise ? .25 : .03); /* plus bas sous les ailes hautes : il n'entre pas dans les phares */
+    const f = fl(x) + .01; const w = hw(x) * .78; const t = Math.min(be(x), de(x)) - .2; /* sous les ailes : il n'entre pas dans les phares */
     return [[0, f], [w, f], [w, t], [0, t]];
   }), mats.black));
 
@@ -130,14 +129,14 @@ export function buildBody(s: CarSpec, mats: CarMaterials, curves: CarCurves) {
   for (let i = 0; i <= GS; i++) GV.push(TS * i / GS);
   for (let i = 1; i < GC; i++) GV.push(lerp(TS, TC, i / GC));
   for (let i = 0; i <= GT; i++) GV.push(lerp(TC, 1, i / GT));
-  const ghSection = (x: number): Pt[] => {
+  const ghSection = memo((x: number): Pt[] => {
     const y0 = gBase(x); const w0 = gWidth(x); const zs = (y: number) => Math.max(.02, w0 - (y - y0) * tum);
     let yr = y0;
     if (ghTop(x, zs(y0)) > y0) { let a = y0; let b = gl.roofY + .02; for (let k = 0; k < 26; k++) { const m = (a + b) / 2; if (ghTop(x, zs(m)) > m) a = m; else b = m; } yr = (a + b) / 2; }
     const zr = zs(yr);
     const top: Pt[] = []; for (let i = 0; i <= 28; i++) { const z = zr * (1 - i / 28); top.push([z, i === 0 ? yr : ghTop(x, z)]); }
     return roundedPath([[[w0, y0], [zr, yr]], top], [gl.railR], [GS, GT], GC);
-  };
+  });
   /** Point du pavillon : [z, y] à l'abscisse x et au paramètre t (voir GV). */
   const gh = (x: number, t: number): Pt => {
     const sec = ghSection(x); const tt = Math.min(1, Math.max(0, t));
@@ -147,7 +146,7 @@ export function buildBody(s: CarSpec, mats: CarMaterials, curves: CarCurves) {
   };
   const gx0 = gl.xa - gl.bowF - .12; const gx1 = gl.xd + gl.bowR + .12;
   const gU = (x: number) => (x - gx0) / (gx1 - gx0);
-  const gxs = stations(gx0, gx1, 96).map((x, i, a) => lerp(x, lerp(gx0, gx1, i / (a.length - 1)), .6));
+  const gxs = stations(gx0, gx1, 76).map((x, i, a) => lerp(x, lerp(gx0, gx1, i / (a.length - 1)), .6));
   const rings = gxs.map((x) => { const h = ghSection(x); return [...h.map(([z, y]): P3 => [x, y, z]), ...h.slice(0, -1).reverse().map(([z, y]): P3 => [x, y, -z])]; });
   const shellG = gridGeometry(rings, gxs.map(gU), [...GV, ...GV.slice(0, -1).reverse()]);
   const mask = windowMask(s, { gx0, gx1, TS, TC, side: (x) => { const sec = ghSection(x); return { h: sec[GS][1] - sec[0][1], z: sec[GS + GC][0] }; }, header: (x, z) => screenY(x, z) - roofY(x, z), footer: (x, z) => rearY(x, z) - roofY(x, z) });
@@ -162,7 +161,9 @@ export function buildBody(s: CarSpec, mats: CarMaterials, curves: CarCurves) {
   const gp = (x: number, t: number, sg: number, lift = .004): P3 => { const [z, y] = gh(x, t - .005); const [z2, y2] = gh(x, t + .005); const dz = z2 - z; const dy = y2 - y; const n = Math.hypot(dz, dy) || 1; const [zc, yc] = gh(x, t); return [x, yc - dz / n * lift, sg * (zc + dy / n * lift)]; };
   /* tours de baies : joncs (chrome ou caoutchouc) le long du bord de chaque vitre */
   const frameMat = s.windows.rubber ? mats.rubber : chrome;
-  mask.sidePaths.forEach((path) => [1, -1].forEach((sg) => body.add(tube(path.map(([x, t]) => gp(x, t, sg)), s.windows.trim, chrome))));
+  /** Tracé allégé : un point sur `k`, en gardant le premier et le dernier. */
+  const thin = <T,>(path: T[], k: number) => path.filter((_, i) => i % k === 0 || i === path.length - 1);
+  mask.sidePaths.forEach((path) => { const p = thin(path, 3); [1, -1].forEach((sg) => body.add(tube(p.map(([x, t]) => gp(x, t, sg)), s.windows.trim, chrome))); });
   [mask.screenPath, mask.rearPath].forEach((path) => {
     const left = path.map(([x, t]) => gp(x, t, 1)); const right = path.map(([x, t]) => gp(x, t, -1)).reverse();
     body.add(tube([...left, ...right.slice(1)], s.windows.trim, frameMat));
@@ -182,14 +183,20 @@ export function buildBody(s: CarSpec, mats: CarMaterials, curves: CarCurves) {
     const steering = c.steering !== undefined ? new MeshStandardMaterial({ color: c.steering, roughness: .35 }) : trim;
     const floorMat = new MeshStandardMaterial({ color: 0x1d1514, roughness: .9, side: DoubleSide });
     const y0 = (x: number) => Math.max(be(x), de(x)) + .004;
-    body.add(new Mesh(loft(stations(gl.xa - .05, gl.xd + .05, 24), (x): Pt[] => { const y = y0(x); const w = gWidth(x) - .02; return [[w, y], [0, y]]; }, { caps: false }), floorMat));
+    /** Demi-largeur disponible sous le vitrage à la hauteur du plancher : rien ne dépasse du pare-brise ni de la lunette. */
+    const inW = (x: number) => {
+      const y = y0(x) + .03;
+      const wf = half * Math.sqrt(Math.max(0, (x - gl.xa - (y - gl.baseY) / slopeF) / gl.bowF)); const wr = half * Math.sqrt(Math.max(0, (gl.xd - x - (y - gl.tailY) / slopeR) / gl.bowR));
+      return Math.max(0, Math.min(gWidth(x) - .035, wf, wr));
+    };
+    body.add(new Mesh(loft(stations(gl.xa, gl.xd, 40), (x): Pt[] => [[inW(x), y0(x)], [0, y0(x)]], { caps: false }), floorMat));
     /** Coussin arrondi (dossier, appuie-tête, planche de bord) : largeur w (en travers), hauteur h, épaisseur d, incliné vers l'arrière. */
     const pad = (x: number, y: number, z: number, w: number, h: number, d: number, r: number, mat: Material, lean = 0) => {
       const g = new ExtrudeGeometry(rrect(w, h, r), { depth: d, bevelEnabled: true, bevelThickness: d * .3, bevelSize: Math.min(r * .5, .02), bevelSegments: 3, curveSegments: 8 });
       const m = new Mesh(g, mat); const grp = new Group(); grp.position.set(x, y, z); grp.rotation.z = -lean; m.rotation.y = -Math.PI / 2; m.position.set(d / 2, h / 2, 0); grp.add(m); body.add(grp); return grp;
     };
     /* planche de bord sous le pare-brise, casquette des compteurs devant le volant */
-    const xd = gl.xa + gl.bowF + .16; pad(xd, y0(xd) - .07, 0, gWidth(xd) * 1.8, .08, .22, .03, trim);
+    const xd = gl.xa + gl.bowF + .16; pad(xd, y0(xd) - .07, 0, inW(xd - .13) * 2 - .09, .08, .22, .03, trim);
     pad(xd + .06, y0(xd) - .02, .36, .32, .07, .12, .03, trim);
     /* volant, à gauche : jante, moyeu et branches */
     const sw = new Group(); sw.position.set(xd + .27, y0(xd) + .11, .36); sw.rotation.z = -.42; body.add(sw);
@@ -198,10 +205,10 @@ export function buildBody(s: CarSpec, mats: CarMaterials, curves: CarCurves) {
     [0, 1].forEach((i) => { const sp = new Mesh(new BoxGeometry(.012, .03, .19), steering); sp.position.set(.012, -.02, (i ? 1 : -1) * .095); sw.add(sp); });
     /* dossiers avant (avec appuie-tête si la fiche le dit) et banquette arrière */
     const xf = lerp(gl.xb, gl.xc, .3); const xr = gl.xc - .2;
-    [.34, -.34].forEach((z) => { pad(xf, y0(xf) - .1, z, .5, .44, .1, .07, seat, .22); if (c.headrest) pad(xf + .09, y0(xf) + .3, z, .24, .15, .08, .05, seat, .15); });
-    pad(xr, y0(xr) - .1, 0, gWidth(xr) * 1.8, .36, .11, .07, seat, .28);
+    [.34, -.34].forEach((z) => { pad(xf, y0(xf) - .1, z, .5, .44, .1, .07, seat, .22); if (c.headrest) pad(xf + .09, y0(xf) + .27, z, .24, .12, .08, .05, seat, .15); });
+    pad(xr, y0(xr) - .1, 0, gWidth(xr) * 1.7, .36, .11, .07, seat, .28);
     /* tablette arrière */
-    const xt = gl.xd - gl.bowR - .1; pad(xt - .2, y0(xt) - .012, 0, gWidth(xt) * 1.8, .02, .4, .008, trim);
+    const xt = gl.xc + .12; pad(xt, y0(xt) - .012, 0, inW(xt + .17) * 2 - .06, .02, .3, .008, trim);
   }
   const railT = TC;
 

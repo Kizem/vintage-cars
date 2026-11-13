@@ -109,20 +109,24 @@ construction and wheels are shared.
 
 ```
 carspecs.ts      Data sheet per car (no three.js): dimensions, profile curves
-                 (floor, belt, deck, half-width), glasshouse, pillars, seams,
-                 trims, cabin colours, paint. Also used by the SVG fallback.
-geometry.ts      Shared tools: catmull, loft, stations, tube, rrect, canvasTex,
-                 badgeTexture.
-materials.ts     Shared material library: clear-coated paint with door seams
-                 and wheel arches cut in the shader, chrome, glass (tinted when
-                 the cabin is modelled), rubber, lamp lenses, amber, red, hubs.
-kit.ts           Shared body builder: shell, underbody, cabin, glasshouse, roof,
-                 pillars, side trims, gutters, mirrors. Returns a CarKit with
-                 placement tools: surfX, topY, yawAt, lay, plate, bumper.
+                 (floor, belt, deck, half-width), flank section (`side`),
+                 raked ends (`rake`), greenhouse (`glass`), window openings
+                 (`windows`), seams, trims, cabin colours, paint.
+geometry.ts      Shared tools: catmull, loft, roundedPath (section made of
+                 lines joined by arcs), gridGeometry, offsetGeometry, blade,
+                 stations, tube, rrect, canvasTex, badgeTexture.
+windows.ts       Window openings drawn as a pattern on the greenhouse grid:
+                 the alpha mask of the shell and the outline of each window.
+materials.ts     Shared material library: clear-coated paint with wheel arches
+                 (and the DS lamp window) cut in the shader, chrome, glass,
+                 rubber, lamp lenses, amber, red, rims, hubs, liner.
+kit.ts           Shared body builder (see below). Returns a CarKit with
+                 placement tools: surfX, topY, sideZ, shift, face, gp, yawAt,
+                 lay, plate, bumper.
 models/ds.ts     Car-specific details only (face, tail, badges, lamps).
 models/p504.ts
 models/w114.ts
-wheels.ts        Shared wheels (tyre, chrome rim, hubcap style per car).
+wheels.ts        Shared wheels (tyre, turned rim lip, drawn disc, hubcap).
 carmodels.ts     Orchestration: spec → materials → body → details → wheels.
 presentation.ts  Shared renderer settings (sRGB, ACES, exposure 1.12, pixel
                  ratio ≤ 2), camera (FOV 30), studio lights, the bay light
@@ -131,6 +135,31 @@ studio.ts        PMREM studio environment for reflections; `release()`.
 parking.ts       The parking scene (uses presentation.ts and buildCar).
 viewer.ts        Dev-only workshop (ds.html), same presentation as the parking.
 ```
+
+How a body is built (`kit.ts`), second modelling (branch
+`claude/brave-galileo-s1s344`, to be tested before any merge into `main`):
+
+- **Shell**: one cross-section per station, lofted along X. A section is four
+  lines joined by arcs (`roundedPath`): underside, lower flank (sill tucked
+  in by `tuck`, widest at `waist`), upper flank (up to the shoulder, set in
+  by `sIn`), top (bonnet, cowl, boot; `dome` sets its camber). `rs` is the
+  shoulder radius (sharp on the Mercedes, round on the DS); `ridge` makes the
+  flank crease of the 504. `rake` leans the nose and the tail (the 504's
+  plunging nose and sloping boot) without changing the overall length.
+- **Wheel arches**: the paint shader cuts the opening; `kit.ts` adds the
+  rolled lip and a dark tub behind the wheel.
+- **Greenhouse**: a real shell made of four surfaces that intersect
+  (windscreen and rear window, both bowed in plan, roof, inclined side
+  glass). The A and C pillars are the edges where they meet. Three layers
+  share one grid: painted sheet metal with the windows cut out (alpha mask
+  from `windows.ts`), glass set back 7 mm, liner set back 16 mm. Window
+  surrounds, belt strip and gutter are tubes laid along the opening outlines.
+- **Cabin**: seen through the glass; floor, dashboard, steering wheel, seat
+  backs (head restraints when `cabin.headrest`), parcel shelf. Nothing may
+  stick out of the glass (`inW`).
+- **Details** (`models/*.ts`) are placed with the kit tools. `face(front)`
+  gives a frame leaning like the nose or the tail; `shift(x, y)` gives the
+  real X of a point on a raked end.
 
 Conventions:
 

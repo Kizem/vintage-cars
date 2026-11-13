@@ -13,9 +13,8 @@ export interface CarSpec {
   axles: number[]; arch: Pt[]; trackZ: number[];
   floor: Pt[]; belt: Pt[]; deck: Pt[]; hw: Pt[];
   /** Coupe du flanc : rentrée du bas de caisse (tuck), hauteur du ventre (waist), rentrée (sIn) et rayon (rs) de
-      l'épaule à la ceinture, rayon du bas de caisse (rb), exposant du bombé du dessus (dome : grand = plat puis tombant),
-      et, quand les ailes dominent le capot, fractions de la demi-largeur entre lesquelles le dessus remonte (valley). */
-  side: { tuck: number; waist: number; sIn: number; rs: number; rb: number; dome: number; valley?: Pt; /** rayon de l'arête du flanc à la hauteur waist (sans : flanc lisse) */ ridge?: number };
+      l'épaule à la ceinture, rayon du bas de caisse (rb), exposant du bombé du dessus (dome : grand = plat puis tombant). */
+  side: { tuck: number; waist: number; sIn: number; rs: number; rb: number; dome: number; /** rayon de l'arête du flanc à la hauteur waist (sans : flanc lisse) */ ridge?: number };
   /** Inclinaison de la face avant et de la poupe : avancée du haut, en mètre par mètre de hauteur. */
   rake?: Pt;
   /** Pavillon : pied (xa) et haut (xb) du pare-brise dans l'axe, haut (xc) et pied (xd) de la lunette ; hauteurs du
@@ -37,8 +36,6 @@ export interface CarSpec {
   cabin?: { glass: number; opacity: number; seat: number; trim: number; steering?: number; liner?: number; headrest?: boolean };
   /** Montants de pare-brise et de portes en inox plutôt que couleur caisse. */
   pillarChrome?: boolean;
-  /** Ailes avant plus hautes que le capot, qui plonge entre elles (la ceinture peut passer au-dessus du dessus de caisse). */
-  wingRise?: boolean;
   /** Pneus à flancs blancs. */
   whitewall?: boolean;
   /** Trappe ronde dessinée sur l'aile arrière : [x, y, rayon]. */
@@ -66,9 +63,10 @@ export const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 export const SPECS: Record<CarModelKey, CarSpec> = {
   /* Citroën DS 21 berline (1965-1972), d'après les photos de la voiture (references/DS21/modele) et ses cotes :
      longueur 4,87 m, largeur 1,79 m, hauteur 1,47 m, empattement 3,125 m, voie arrière plus étroite que l'avant.
-     Gris anthracite métallisé, toit du même gris. Nez bas et large, capot qui plonge entre les ailes (wingRise) ;
-     phares carénés à la pointe des ailes ; habitacle aux montants fins et chromés, lunette enveloppante sous le
-     pavillon qui la déborde ; poupe qui se rétrécit en plan ; roues arrière à demi couvertes par les ailes ;
+     Gris anthracite métallisé, pavillon plus sombre. Profil en coin : nez bas, capot en dalle bombée plus haut que les
+     ailes qui tombent de part et d'autre, crête des ailes qui descend du pare-brise à la poupe ; phares carénés à la
+     pointe des ailes ; vitres sans encadrement, montants fins en inox, lunette enveloppante sous le pavillon qui la
+     déborde ; poupe qui se rétrécit en plan ; roues arrière à demi couvertes par les ailes ;
      pneus à flancs blancs et grands enjoliveurs chromés ; habitacle en cuir fauve, planche de bord noire. */
   ds: {
     L: 4.87, H: 1.47, W: 1.79, wheelR: .33, wheelW: .17, hub: 'ds', hubTint: '#c9ccce',
@@ -93,8 +91,9 @@ export const SPECS: Record<CarModelKey, CarSpec> = {
     pillarChrome: true,
   },
   /* Peugeot 504 berline (1971), d'après les photos de la voiture (references/504/modele) : bleu vif, tricorps, capot
-     long et plat, face presque verticale, grand vitrage aux montants fins, ligne de caisse horizontale, malle longue,
-     ailes arrière légèrement galbées ; habitacle aux sièges gris clair et garnitures bleu marine. */
+     qui plonge vers un nez incliné (le haut en avant), arête à mi-flanc de l'aile avant au feu arrière, grand vitrage
+     aux montants fins avec petite custode, malle fuyante à la cassure marquée sous la lunette ; habitacle aux sièges
+     gris clair et garnitures bleu marine. */
   p504: {
     L: 4.49, H: 1.46, W: 1.69, wheelR: .315, wheelW: .17, hub: 'peugeot', hubTint: '#c3c4c0',
     paint: { color: 0x1f76b6, metalness: .35, roughness: .28 },
@@ -128,7 +127,7 @@ export const SPECS: Record<CarModelKey, CarSpec> = {
     belt: [[-2.34, .84], [-2.27, .875], [-1.6, .9], [-.8, .94], [0, .955], [1.3, .965], [2.1, .955], [2.3, .92], [2.34, .86]],
     deck: [[-2.34, .865], [-2.28, .895], [-1.6, .915], [-.95, .94], [-.75, .96], [0, .97], [1.45, .99], [2.15, .975], [2.29, .945], [2.33, .88], [2.34, .78]],
     hw: [[-2.34, .835], [-2.31, .865], [-2.2, .882], [-1.6, .885], [1.5, .885], [2.2, .878], [2.31, .862], [2.34, .83]],
-    side: { tuck: .045, waist: .66, sIn: .03, rs: .022, rb: .05, dome: 3, valley: [.5, .92] },
+    side: { tuck: .045, waist: .66, sIn: .03, rs: .022, rb: .05, dome: 3 },
     glass: { xa: -.88, xb: -.33, xc: .95, xd: 1.5, roofY: 1.44, baseY: .955, tailY: .995, tumble: .86, bowF: .2, bowR: .16, inset: .012, railR: .045, dropF: .02, dropR: .03, crown: .04, soft: .03 },
     /* portes avant (déflecteur), montant central, portes arrière, custode fixe, large montant arrière */
     windows: { frame: .04, r: .02, pillarA: .05, pillarC: .07, header: .05, footer: .06, side: [[-1.2, -1.2, -.52, -.4], [-.495, -.375, .09, .09], [.18, .18, .8, .8], [.825, .825, 1.1, .92]], trim: .007, gutter: true },
