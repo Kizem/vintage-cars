@@ -188,9 +188,10 @@ body.dp { margin: 0; background: var(--ivory); color: var(--ink); font-family: v
 /* tenue par ses quatre bords (pas de hauteur en vh) : elle suit la hauteur réellement visible, barre de
    Safari repliée ou non, sans laisser voir la page dessous */
 .dp-pop { position: fixed; inset: 0 0 0 auto; width: min(100%, 60rem); max-width: 100%; height: auto; max-height: none; margin: 0; padding: 0; border: 0; border-left: 1px solid var(--champagne); background: var(--ivory); color: var(--ink); overflow-y: auto; overscroll-behavior: contain; }
+.dp-pop:focus { outline: none; }
 .dp-pop::backdrop { background: color-mix(in srgb, var(--forest-deep) 72%, transparent); }
 .dp-pop[open] { animation: dp-in .45s cubic-bezier(.22,.61,.36,1); }
-@keyframes dp-in { from { transform: translateX(3rem); opacity: 0; } }
+@keyframes dp-in { from { transform: translateY(1.5rem); opacity: 0; } }
 .dp-pop__bar { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .3rem clamp(1.25rem, 4vw, 3rem); background: var(--ivory); border-bottom: 1px solid color-mix(in srgb, var(--ink) 18%, transparent); }
 .dp-pop__bar .dp-kicker { margin: 0; }
 .dp-pop__close { display: inline-flex; align-items: center; min-height: 44px; font-size: .75rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; text-decoration: none !important; border-bottom: 1px solid currentColor; }
@@ -203,6 +204,11 @@ body.dp { margin: 0; background: var(--ivory); color: var(--ink); font-family: v
 .dp-pop__body h4 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 1.35rem; line-height: 1.2; }
 .dp-pop__body section > p + p { margin-top: .8rem; }
 .dp-pop__photo img { aspect-ratio: 16 / 9; }
+/* tablette et ordinateur : centrée dans la page, de l'air tout autour */
+@media (min-width: 700px) {
+  .dp-pop { inset: clamp(1rem, 4vh, 2.5rem) 0; margin: 0 auto; width: min(calc(100% - 3rem), 60rem); border: 1px solid var(--champagne); }
+  .dp-pop__body { padding-bottom: clamp(2.5rem, 6vw, 4rem); }
+}
 @media (max-width: 699px) { .dp-pop { inset: 0; width: 100%; border-left: 0; } .dp-pop__photo img { aspect-ratio: 4 / 3; } }
 .dp-facts--route { margin-bottom: 0; }
 @media (min-width: 700px) { .dp-facts--route { grid-template-columns: repeat(3, minmax(0, 1fr)); } }

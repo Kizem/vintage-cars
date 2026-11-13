@@ -79,19 +79,6 @@ export function TopNav() {
     <>
       <nav ref={navRef} className={`em-nav em-nav--${tone} em-nav--fixed`} aria-label={t.nav.label}>
         <Brand className="em-brand--nav" />
-        {/* téléphone : le coin gauche ouvre le menu de tout le site (le nom de la maison est déjà au centre du garage) */}
-        <button
-          type="button"
-          className="em-nav__burger"
-          aria-haspopup="dialog"
-          aria-expanded={menu}
-          aria-label={t.nav.menu}
-          title={t.nav.menu}
-          onClick={() => setMenu(true)}
-        >
-          <span aria-hidden="true" />
-          <span aria-hidden="true" />
-        </button>
         <ul>
           {primaryNav.map((item, i) => (
             /* sur téléphone, « Écrire » laisse la place (les actions des chapitres mènent au formulaire) */
@@ -131,6 +118,19 @@ export function TopNav() {
             </a>
           </li>
         </ul>
+        {/* téléphone : le menu de tout le site, en haut à droite (avec la langue) */}
+        <button
+          type="button"
+          className="em-nav__burger"
+          aria-haspopup="dialog"
+          aria-expanded={menu}
+          aria-label={t.nav.menu}
+          title={t.nav.menu}
+          onClick={() => setMenu(true)}
+        >
+          <span aria-hidden="true" />
+          <span aria-hidden="true" />
+        </button>
         {/* la partie détaillée du site, ouverte sur la collection : on quitte la vitrine (sur téléphone, le menu) */}
         <a className="em-nav__site" href={asset(pageLinks.collection[locale])} title={t.nav.exploreHint}>
           <span className="em-nav__site-full">{t.nav.explore}</span>
@@ -167,17 +167,37 @@ export function TopNav() {
             </li>
           ))}
         </ul>
-        <a
-          className="em-action em-menu__write"
-          href="#ecrire"
-          onClick={(e) => {
-            e.preventDefault();
-            setMenu(false);
-            scrollToId('ecrire', { focusHeading: true });
-          }}
-        >
-          {t.nav.items.write}
-        </a>
+        <div className="em-menu__tools">
+          <a
+            className="em-action em-menu__write"
+            href="#ecrire"
+            onClick={(e) => {
+              e.preventDefault();
+              setMenu(false);
+              scrollToId('ecrire', { focusHeading: true });
+            }}
+          >
+            {t.nav.items.write}
+          </a>
+          {/* sur téléphone, la langue est ici : le coin droit tient le menu */}
+          <a
+            className="em-menu__lang"
+            href={homeHref(other)}
+            hrefLang={other}
+            lang={other}
+            onClick={(e) => {
+              switchLanguage(e);
+              setMenu(false);
+            }}
+          >
+            <svg className="em-lang__globe" width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+              <circle cx="6.5" cy="6.5" r="6" stroke="currentColor" />
+              <ellipse cx="6.5" cy="6.5" rx="2.6" ry="6" stroke="currentColor" />
+              <path d="M.5 6.5h12" stroke="currentColor" />
+            </svg>
+            {t.nav.otherLanguage}
+          </a>
+        </div>
       </dialog>
       <button
         type="button"

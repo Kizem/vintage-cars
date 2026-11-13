@@ -33,6 +33,12 @@ export function VehicleSheet({
         {name}
       </h2>
       {withPhotos && <PhotoCarousel ref={carouselRef} photos={[car.image, ...(car.gallery ?? [])]} label={fill(t.focus.photosOf, { name })} />}
+      {/* sa page détaillée : sous les photos, en italique avec une flèche, loin de l'action (le formulaire) */}
+      {carLink[car.slug] && (
+        <MoreLink to={carLink[car.slug]} arrow>
+          {fill(t.focus.page, { name })}
+        </MoreLink>
+      )}
       <h3 className="em-sr">{t.focus.specs}</h3>
       <dl className="em-specs">
         <div>
@@ -47,7 +53,6 @@ export function VehicleSheet({
         ))}
       </dl>
       <ActionLink onClick={onEnquire}>{t.focus.enquire}</ActionLink>
-      {carLink[car.slug] && <MoreLink to={carLink[car.slug]}>{t.focus.page}</MoreLink>}
     </div>
   );
 }

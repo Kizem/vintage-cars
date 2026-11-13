@@ -61,12 +61,11 @@ Seven full-screen sections, in this order (`sectionIds` in `src/data/site.ts`):
   `garage`, renamed so as not to repeat « La collection » of the detailed part of the site; Experiences,
   About, Write). At the right, a framed button « Explorer Époque Motors » (`.em-nav__site`: italic
   Cormorant, arrow, 1 px frame that fills on hover; « Explorer » on tablets) opens the detailed part of the
-  site on its collection page. On phones (≤ 699 px): the menu button (two lines, `.em-nav__burger`) in the
-  left corner opens a full-screen menu (`.em-menu`, a <dialog>) listing every page of the detailed part
-  (`siteTabs` in `src/data/links.ts`) and « Écrire »; then Le garage, Expériences, À propos centred on the
-  screen; the language switch in the right corner, 16 px from the edge like the menu button. « Écrire » and
-  the explore button are hidden on phones, and so is the monogram (the house name is already shown in the
-  garage). Then the
+  site on its collection page. On phones (≤ 699 px): the monogram in the left corner, Le garage, Expériences,
+  À propos centred on the screen, and the menu button (two lines, `.em-nav__burger`) in the right corner,
+  both corners 16 px from the edge. The menu (`.em-menu`, a full-screen <dialog>) lists every page of the
+  detailed part (`siteTabs` in `src/data/links.ts`), « Écrire » and the language switch (on phones the
+  language is only there). « Écrire » and the explore button are hidden on phones. Then the
   language switch: a thin-line globe and « FR / EN » (current language in
   full, the other dimmed) on desktop; the globe and the other language on
   phones; the globe alone below 341 px. Its accessible name is the other
@@ -76,6 +75,8 @@ Seven full-screen sections, in this order (`sectionIds` in `src/data/site.ts`):
   switch stays on the page (no reload) and replaces the address (`/` ↔ `/fr/`). Every file of `public/` is
   reached through `asset()` (`src/lib/paths.ts`), which starts from the site root (`<meta name="em-root">`,
   written at build time), so that `/fr/` finds `images/…`.
+- In the vehicle sheet, « Découvrir la {name} » (`focus.page`, the car's page) sits under the photos, in
+  champagne italic with an arrow, the specifications between it and « Demander cette voiture ».
 - The « learn more » link of each chapter sits under its text, not next to the action: italic Cormorant with an
   arrow, no rule (`MoreLink arrow`, `.em-more--arrow`), so that it never reads as a second action. Chapter N°2
   (Private Paris Tours) shows « Les Guides de Paris » there, with the five routes (`.em-guides`; the five route
@@ -451,6 +452,8 @@ pop-in of the guides page, at its anchor: `#paris-intemporel`, `#elegance-rive-g
 `#villages-est-parisien`, `#jardins-perspectives`, `#paris-boheme-confidentiel` (English: `#timeless-paris`,
 `#left-bank-elegance`, `#villages-of-east-paris`, `#gardens-and-perspectives`, `#bohemian-paris`).
 
+- On tablets and computers the pop-in is centred in the page (a margin all round); on phones it fills the
+  screen, held by its four edges.
 - The five sheets are `<dialog class="dp-pop">` elements written into the HTML of the guides page, so their text
   is read by search engines and AI assistants. `src/seo/guides.ts` (about 1 kB, the only script of the content
   pages; CSP `script-src 'self'` on this page only) opens a sheet on a click or from the address anchor,

@@ -66,6 +66,8 @@ button, input, select, textarea { font-variant-numeric: lining-nums; }
 .em-more--arrow:hover .em-arrow { transform: translateX(4px); }
 .em-exp__copy > .em-more--arrow { display: flex; width: fit-content; }
 .em-sheet .em-more:hover { color: var(--champagne); }
+.em-sheet .em-more--arrow { color: var(--champagne); margin: 1.1rem auto .2rem; }
+.em-sheet .em-more--arrow:hover { color: var(--ivory); }
 .em-guides { display: flex; flex-direction: column; align-items: center; }
 .em-guides__list { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 .9rem; margin: 0; padding: 0; list-style: none; font-size: .78rem; letter-spacing: .02em; }
 .em-guides__list a { display: inline-block; padding: .25rem 0; color: var(--ink-soft); text-decoration: none; }
@@ -134,25 +136,24 @@ button, input, select, textarea { font-variant-numeric: lining-nums; }
 @media (max-width: 699px) {
   /* téléphone : la collection, les expériences, à propos et la langue, rien d'autre ; le menu centré sur
      l'écran, un vide de la largeur du monogramme à droite fait contrepoids */
-  .em-nav a.em-nav__site, .em-nav__write, .em-nav .em-brand--nav { display: none; }
+  .em-nav a.em-nav__site, .em-nav__write, .em-nav--fixed .em-nav__lang { display: none; }
   .em-nav .em-nav__burger { display: flex; }
   .em-nav--fixed ul { flex: 1 1 auto; justify-content: center; }
   /* la langue dans le coin droit, au même retrait que le monogramme à gauche ; un vide de même largeur
      des deux côtés garde les trois entrées centrées sur l'écran */
   .em-nav--fixed::after { content: ''; flex: none; width: var(--em-corner); }
   .em-nav--fixed { --em-corner: 44px; }
-  .em-nav--fixed .em-nav__burger { width: var(--em-corner); }
-  .em-nav--fixed .em-nav__lang { position: absolute; top: 0; bottom: 0; right: max(16px, env(safe-area-inset-right, 0px)); display: flex; align-items: center; margin: 0; }
+  .em-nav--fixed .em-brand--nav { min-width: var(--em-corner); }
+  /* le menu en haut à droite, au même retrait que le monogramme à gauche ; la langue est dans le menu */
+  .em-nav--fixed .em-nav__burger { position: absolute; top: 0; bottom: 0; right: max(16px, env(safe-area-inset-right, 0px)); width: var(--em-corner); align-items: flex-end; }
 }
 @media (max-width: 409px) {
   .em-nav--fixed { --em-corner: 40px; }
-  /* le monogramme dessiné commence à 16 px du bord : la langue garde le même retrait à droite */
-  .em-nav--fixed .em-nav__lang { right: max(16px, env(safe-area-inset-right, 0px)); }
 }
 /* téléphone : le menu de tout le site, ouvert par deux traits dans le coin gauche */
 .em-nav__burger { display: none; flex: none; flex-direction: column; justify-content: center; gap: 7px; min-height: 44px; padding: 0; border: 0; background: none; color: inherit; cursor: pointer; pointer-events: auto; }
 .em-nav__burger span { display: block; width: 24px; height: 1px; background: currentColor; transition: width .35s; }
-.em-nav__burger span + span { width: 16px; }
+.em-nav__burger span + span { width: 16px; margin-left: auto; }
 .em-nav__burger:hover span + span { width: 24px; }
 .em-menu { width: 100%; max-width: 100%; height: auto; max-height: none; inset: 0; margin: 0; padding: 0 max(16px, env(safe-area-inset-right, 0px)) max(2rem, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); border: 0; background: var(--forest-deep); color: var(--ivory); font-family: var(--font-sans); overflow-y: auto; overscroll-behavior: contain; -webkit-font-smoothing: antialiased; }
 .em-menu[open] { display: flex; flex-direction: column; animation: em-menu-in .35s ease; }
@@ -166,7 +167,9 @@ button, input, select, textarea { font-variant-numeric: lining-nums; }
 .em-menu__list li { border-bottom: 1px solid color-mix(in srgb, var(--ivory) 18%, transparent); }
 .em-menu__list a { display: flex; align-items: center; min-height: 52px; font-family: var(--font-display); font-size: 1.55rem; font-weight: 300; color: inherit; text-decoration: none; }
 .em-menu__list a:hover, .em-menu__list a:focus-visible { color: var(--champagne); }
-.em-menu__write { align-self: flex-start; margin-top: 1.8rem; }
+.em-menu__tools { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 2rem; margin-top: 1.8rem; }
+.em-menu__lang { display: inline-flex; align-items: center; gap: .45em; min-height: 44px; font-size: .72rem; font-weight: 500; letter-spacing: .14em; color: inherit; text-decoration: none; }
+.em-menu__lang .em-lang__globe { width: 1.1em; height: 1.1em; }
 .em-menu :focus-visible { outline: 1px solid currentColor; outline-offset: 4px; }
 .em-nav--dark { color: var(--ivory); }
 .em-nav--light { color: var(--ink); }

@@ -56,7 +56,7 @@ export const en = {
     /** Label on the scene while the vehicle sheet is open. */
     rendering: 'Graphic rendering',
     /** Link to the car's own page. */
-    page: 'The full page of this car',
+    page: 'Discover the {name}',
   },
   service: {
     chauffeur: 'With chauffeur',

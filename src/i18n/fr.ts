@@ -56,7 +56,7 @@ export const fr: Dictionary = {
     nextCar: 'Voiture suivante\u00a0: {name}',
     /** Étiquette posée sur la scène pendant que la fiche est ouverte. */
     rendering: 'Représentation graphique',
-    page: 'Toute la fiche de cette voiture',
+    page: 'Découvrir la {name}',
   },
   service: {
     chauffeur: 'Avec chauffeur',
