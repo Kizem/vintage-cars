@@ -9,8 +9,8 @@ import type { MediaAsset } from './types';
 export const site = {
   name: 'Époque Motors',
   contact: {
-    // TODO: replace with confirmed contact details
-    email: 'hello@epoque-motors.example',
+    // TODO: replace the phone number with the confirmed one
+    email: 'epoquemotors@gmail.com',
     phone: '+33 (0)1 00 00 00 00',
     phoneHref: '+33100000000',
     location: { en: 'Paris, France', fr: 'Paris, France' } satisfies Localized,

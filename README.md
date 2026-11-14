@@ -25,8 +25,9 @@ npm run preview    # serve the production build
 
 ## Deployment (Cloudflare Workers)
 
-Production runs on **Cloudflare Workers** as static files only (no Worker
-script), at **https://epoquemotors.fr**. `wrangler.jsonc` serves `dist/`:
+Production runs on **Cloudflare Workers** at **https://epoquemotors.fr**: static
+files, plus one small Worker script (`src/worker/`) that only answers `/api/*`
+(the enquiry form, see below). `wrangler.jsonc` serves `dist/`:
 `not_found_handling: "404-page"` (unknown addresses get `404.html` with a 404
 status) and `html_handling: "auto-trailing-slash"` (`/fr` redirects to `/fr/`).
 `.node-version` pins Node 22 for the Cloudflare build.
@@ -34,6 +35,10 @@ status) and `html_handling: "auto-trailing-slash"` (`/fr` redirects to `/fr/`).
 - Cloudflare build: `npm ci`, then `npm run build`; deploy with `npx wrangler deploy`.
 - `VITE_SITE_URL=https://epoquemotors.fr` is set as a **build variable** in
   Cloudflare (canonical, hreflang, sitemap, Open Graph, llms.txt).
+- `VITE_ENQUIRY_ENDPOINT=/api/enquiry` is set as a **build variable** in Cloudflare
+  (the form posts to the Worker).
+- `RESEND_API_KEY` is a **secret** of the Worker (`npx wrangler secret put RESEND_API_KEY`,
+  or Cloudflare → Workers → epoque-motors → Settings → Variables and Secrets).
 - Local check of the production build: `npm run build`, then `npx wrangler dev`.
 
 The former GitHub Pages workflow (`.github/workflows/deploy.yml`) is still in
@@ -126,16 +131,24 @@ the bay count in `src/scene/parking.ts`. Only add verified facts in `details`.
 ## Enquiry form
 
 The form is a sentence to complete. Frontend validation and protections are
-described in PROJECT_CONTEXT (§ 6); the receiving service must validate again.
-Submissions are sent as JSON (POST) to `VITE_ENQUIRY_ENDPOINT` (see
-`.env.example`). **While no endpoint is set, the form never claims success**: it
-states that nothing was sent and offers a pre-filled email instead. A honeypot
-field filters basic bots.
+described in PROJECT_CONTEXT (§ 6). Submissions are sent as JSON (POST) to
+`VITE_ENQUIRY_ENDPOINT` (see `.env.example`), in production `/api/enquiry`: the
+Worker (`src/worker/enquiry.ts`) validates them again, rate-limits them and sends
+an email through **Resend** to **epoquemotors@gmail.com** (`ENQUIRY_TO` in
+`wrangler.jsonc`), from `formulaire@epoquemotors.fr` (`ENQUIRY_FROM`), with the
+visitor's address as Reply-To. **While no endpoint is set, or if sending fails,
+the form never claims success**: it says so and offers a pre-filled email to
+epoquemotors@gmail.com instead. A honeypot field filters basic bots.
+
+Resend setup (once): create the account, add and verify the domain
+`epoquemotors.fr` in Resend (DNS records in Cloudflare), create an API key with
+“Sending access”, store it as the `RESEND_API_KEY` secret of the Worker.
 
 ## Before launch: to do
 
-- Enquiry backend (form service, serverless function or CRM) + `VITE_ENQUIRY_ENDPOINT`.
-- Real contact details & Instagram URL in `src/data/site.ts`.
+- Resend: verify `epoquemotors.fr`, set the `RESEND_API_KEY` secret and the
+  `VITE_ENQUIRY_ENDPOINT=/api/enquiry` build variable in Cloudflare.
+- Real phone number & Instagram URL in `src/data/site.ts` (email set: epoquemotors@gmail.com).
 - Legal Notice & Privacy Policy texts (`legal` keys in `src/i18n/en.ts` and `fr.ts`).
 - Production domain `epoquemotors.fr`: attach it to the Worker in Cloudflare and set the
   `VITE_SITE_URL` build variable (canonical, hreflang, sitemap, Open Graph, llms.txt). See `docs/SEO-GEO.md`.

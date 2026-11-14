@@ -112,7 +112,8 @@ l’entreprise pour les moteurs.
    statiques), à la racine du domaine : `robots.txt` et `llms.txt` y sont lus. Dans Cloudflare, rattache le
    domaine au Worker `epoque-motors` et pose la variable de build `VITE_SITE_URL=https://epoquemotors.fr` :
    c’est elle qui donne l’adresse des balises canonical, hreflang, Open Graph, du sitemap et de `llms.txt`.
-2. **Les vraies coordonnées** dans `src/data/site.ts` : e-mail, téléphone, Instagram. Elles sont publiées
+2. **Les vraies coordonnées** dans `src/data/site.ts` : téléphone et Instagram (l’e-mail
+   `epoquemotors@gmail.com` est déjà en place). Elles sont publiées
    automatiquement dans les données structurées dès qu’elles ne sont plus fictives. Une adresse postale,
    même de siège, renforce aussi la fiche locale.
 3. **Google Search Console** et **Bing Webmaster Tools** : valide le domaine et soumets `sitemap.xml`.

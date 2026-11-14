@@ -11,8 +11,9 @@ import type { Locale } from '../i18n/locales';
  * - listes fermées : expérience et voiture ne peuvent valoir qu'une valeur connue, date au format AAAA-MM-JJ ;
  * - anti-robots : pot de miel et durée minimale de remplissage ; un robot reçoit « envoyé » sans que rien ne parte ;
  * - un envoi à la fois, et pas deux envois en moins de RESEND_MS ;
- * - point d'envoi en HTTPS uniquement (http seulement en local), sans cookie ni référent, sans redirection,
- *   avec un délai maximal ; seuls des champs connus et nettoyés sont envoyés.
+ * - point d'envoi sur le même domaine (/api/enquiry, le Worker Cloudflare de src/worker/) ou en HTTPS (http
+ *   seulement en local), sans cookie ni référent, sans redirection, avec un délai maximal ; seuls des champs
+ *   connus et nettoyés sont envoyés.
  */
 
 export interface EnquiryPayload {
@@ -129,10 +130,11 @@ export type SubmitResult =
   | { status: 'not-configured' }
   | { status: 'error'; reason: 'server' | 'network' | 'tooSoon' };
 
-/** Point d'envoi accepté : HTTPS, ou HTTP seulement en local ; sans identifiants dans l'adresse. */
+/** Point d'envoi accepté : chemin du même domaine (/api/enquiry), HTTPS, ou HTTP seulement en local ; sans identifiants. */
 export function safeEndpoint(raw: string | undefined | null): string | null {
   const s = raw?.trim();
   if (!s) return null;
+  if (s.startsWith('/')) return /^\/[\w-]+(\/[\w-]+)*\/?$/.test(s) ? s : null;
   try {
     const u = new URL(s);
     const local = u.hostname === 'localhost' || u.hostname === '127.0.0.1';

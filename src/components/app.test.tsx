@@ -124,7 +124,7 @@ describe('App', () => {
     const done = await screen.findByRole('alert');
     expect(done.textContent).toMatch(/pas encore partie/);
     const mail = within(done).getByText('Envoyer par e-mail') as HTMLAnchorElement;
-    expect(mail.href).toMatch(/^mailto:hello@epoque-motors\.example\?subject=/);
+    expect(mail.href).toMatch(/^mailto:epoquemotors@gmail\.com\?subject=/);
     expect(decodeURIComponent(mail.href)).toContain('Camille Martin');
     await user.click(within(done).getByText('Modifier ma demande'));
     expect((screen.getByLabelText('Nom et prénom') as HTMLInputElement).value).toBe('Camille Martin');

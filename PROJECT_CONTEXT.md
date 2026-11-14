@@ -21,8 +21,9 @@ Branches:
   they are. `3d-design` is never touched. Never force-push.
 - Repository settings are never changed from a session.
 
-Deployment: production is on **Cloudflare Workers**, static files only (no
-Worker script), at `https://epoquemotors.fr`. `wrangler.jsonc` serves `dist/`
+Deployment: production is on **Cloudflare Workers** at `https://epoquemotors.fr`:
+static files, plus a Worker script (`src/worker/index.ts`) that only receives
+`/api/*` (`run_worker_first`) and handles the enquiry form (§ 6). `wrangler.jsonc` serves `dist/`
 (`not_found_handling: "404-page"`, `html_handling: "auto-trailing-slash"`);
 `.node-version` pins Node 22; wrangler is a devDependency at an exact version.
 Cloudflare builds with `npm run build`, `VITE_SITE_URL=https://epoquemotors.fr`
@@ -338,7 +339,16 @@ Data lives in `src/data/*.ts` (`{ en, fr }` fields) and `src/i18n/{en,fr}.ts`.
 ## 6. Enquiry form
 
 - The form is a sentence to complete (`EnquirySentence.tsx`, `lib/enquiry.ts`).
-- Submissions are POSTed as JSON to `VITE_ENQUIRY_ENDPOINT`.
+- Submissions are POSTed as JSON to `VITE_ENQUIRY_ENDPOINT`: in production
+  `/api/enquiry` (Cloudflare build variable), a same-origin path.
+- The Worker (`src/worker/enquiry.ts`) sends each enquiry by email through
+  Resend (`RESEND_API_KEY` secret) to `ENQUIRY_TO` (epoquemotors@gmail.com),
+  from `ENQUIRY_FROM` (`formulaire@epoquemotors.fr`, domain verified in Resend),
+  Reply-To the visitor, plain text in French. It answers 200 only once Resend
+  has accepted the email; 4xx for a refused request, 502/503 when sending is
+  impossible (the form then shows its error state and the mailto fallback).
+- The site's email address is `epoquemotors@gmail.com` (`site.contact.email`):
+  footer, content pages, JSON-LD and the mailto fallback.
 - While no endpoint is set, the status is `not-configured`. The UI must never
   claim the enquiry was sent; it offers a pre-filled email instead.
 - A honeypot field (`company`) drops basic bots silently.
@@ -349,15 +359,19 @@ Data lives in `src/data/*.ts` (`{ en, fr }` fields) and `src/i18n/{en,fr}.ts`.
   submit button), so it stands apart from the title and the footer. On phones
   the panel runs edge to edge to keep the sentence's full width.
 
-- Security (`src/lib/enquiry.ts`; the site is static, so the receiving service
-  must still validate, rate-limit and filter on its side):
+- Security, server side (`src/worker/enquiry.ts`): same origin only (`Origin`
+  header), JSON only, body ≤ 16 KB, 5 requests per minute per IP (`ratelimits`
+  in `wrangler.jsonc`), every field type-checked, cleaned and validated again
+  with the same rules as the site (`validateEnquiry`), closed lists included.
+  The API key never reaches the browser.
+- Security, browser side (`src/lib/enquiry.ts`):
   - bounded fields (name 100, email 254, message 2 000, also as `maxLength`),
     control and invisible characters removed, no line breaks outside the
     message (no header injection), closed lists for experience and car, real
     date, not past, at most two years ahead;
   - honeypot and a minimum fill time (2.5 s): a bot is told « sent » and nothing
     leaves; one submission at a time, none within 20 s of the previous one;
-  - endpoint HTTPS only (HTTP on localhost only), no credentials in the URL;
+  - endpoint: a same-origin path (`/api/enquiry`), or HTTPS (HTTP on localhost only), no credentials in the URL;
     request without cookies or referrer, no redirects, 15 s timeout; only known,
     cleaned fields are sent; the mailto fallback is encoded and cleaned too;
   - a Content-Security-Policy `<meta>` is added at build time (`vite.config.ts`):
