@@ -23,13 +23,21 @@ npm run build      # typecheck + production build in /dist, with the pre-rendere
 npm run preview    # serve the production build
 ```
 
-## Deployment (GitHub Pages)
+## Deployment (Cloudflare Workers)
 
-`.github/workflows/deploy.yml` builds the site and publishes `dist/` at the
-site root on every push to `main` or `le-garage`: the last deployment wins.
-To switch versions, run the workflow on the branch you want (Actions tab,
-**Deploy to GitHub Pages**, **Run workflow**). In **Settings → Pages → Build and
-deployment → Source**, select **GitHub Actions**.
+Production runs on **Cloudflare Workers** as static files only (no Worker
+script), at **https://epoquemotors.fr**. `wrangler.jsonc` serves `dist/`:
+`not_found_handling: "404-page"` (unknown addresses get `404.html` with a 404
+status) and `html_handling: "auto-trailing-slash"` (`/fr` redirects to `/fr/`).
+`.node-version` pins Node 22 for the Cloudflare build.
+
+- Cloudflare build: `npm ci`, then `npm run build`; deploy with `npx wrangler deploy`.
+- `VITE_SITE_URL=https://epoquemotors.fr` is set as a **build variable** in
+  Cloudflare (canonical, hreflang, sitemap, Open Graph, llms.txt).
+- Local check of the production build: `npm run build`, then `npx wrangler dev`.
+
+The former GitHub Pages workflow (`.github/workflows/deploy.yml`) is still in
+the repository for now and still publishes on every push to `main` or `le-garage`.
 
 ## The page
 
@@ -129,8 +137,8 @@ field filters basic bots.
 - Enquiry backend (form service, serverless function or CRM) + `VITE_ENQUIRY_ENDPOINT`.
 - Real contact details & Instagram URL in `src/data/site.ts`.
 - Legal Notice & Privacy Policy texts (`legal` keys in `src/i18n/en.ts` and `fr.ts`).
-- Production domain: set it in GitHub Pages and, if needed, the `SITE_URL` repository
-  variable (canonical, hreflang, sitemap, Open Graph, llms.txt). See `docs/SEO-GEO.md`.
+- Production domain `epoquemotors.fr`: attach it to the Worker in Cloudflare and set the
+  `VITE_SITE_URL` build variable (canonical, hreflang, sitemap, Open Graph, llms.txt). See `docs/SEO-GEO.md`.
 - Citroën DS: the three-quarter rear sheet photo is small (1000 px wide); replace it
   with a full-resolution original when available.
 - Exact version of the DS (provisional name and partial specs in `src/data/vehicles.ts`).

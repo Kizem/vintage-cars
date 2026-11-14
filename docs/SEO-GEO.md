@@ -16,7 +16,7 @@ d’établissement, plateformes d’activités, articles, liens. La partie 4 les
 | Une seule page, rendue en JavaScript. Les robots des IA (ChatGPT, Claude, Perplexity…), qui n’exécutent pas le JavaScript, ne voyaient qu’une phrase. | L’accueil est pré-rendu en HTML, en français (`/fr/`) et en anglais (`/`). Tout le texte est lisible sans JavaScript. |
 | Une seule adresse, avec la langue en `?lang=fr` | Une adresse par langue, reliées par `hreflang` |
 | 1 page indexable | **42 pages** : 2 accueils et 20 pages de contenu, chacune en français et en anglais |
-| Balises sociales et canonical sur un domaine fictif | Adresse réelle du site injectée au déploiement (GitHub Pages ou domaine personnalisé) |
+| Balises sociales et canonical sur un domaine fictif | Adresse réelle du site (`https://epoquemotors.fr`) injectée au build sur Cloudflare (variable `VITE_SITE_URL`) |
 | Données structurées minimales | Graphe schema.org complet : entreprise (`AutoRental`), services, voitures (`Car`), itinéraires (`TouristTrip`), articles, FAQ, fil d’Ariane |
 | `robots.txt` minimal | `robots.txt` ouvert à tous, robots IA nommés explicitement, sitemap déclaré |
 | Pas de sitemap | `sitemap.xml` avec les deux langues et les images de chaque page |
@@ -108,11 +108,10 @@ l’entreprise pour les moteurs.
 
 ### Priorité 1 : le socle
 
-1. **Un domaine à toi** (par exemple `epoque-motors.fr` ou `.com`). Sur `kizem.github.io/vintage-cars/`,
-   `robots.txt` et `llms.txt` ne sont pas lus (ils doivent être à la racine du domaine) et l’autorité acquise
-   profite à github.io. Achète le domaine, puis GitHub → Settings → Pages → Custom domain, configure les DNS
-   et coche « Enforce HTTPS ». Le déploiement reprend l’adresse automatiquement. Pour la forcer, crée la
-   variable de dépôt `SITE_URL` (Settings → Secrets and variables → Actions → Variables).
+1. **Le domaine `epoquemotors.fr`**. Le site de production est hébergé sur Cloudflare Workers (fichiers
+   statiques), à la racine du domaine : `robots.txt` et `llms.txt` y sont lus. Dans Cloudflare, rattache le
+   domaine au Worker `epoque-motors` et pose la variable de build `VITE_SITE_URL=https://epoquemotors.fr` :
+   c’est elle qui donne l’adresse des balises canonical, hreflang, Open Graph, du sitemap et de `llms.txt`.
 2. **Les vraies coordonnées** dans `src/data/site.ts` : e-mail, téléphone, Instagram. Elles sont publiées
    automatiquement dans les données structurées dès qu’elles ne sont plus fictives. Une adresse postale,
    même de siège, renforce aussi la fiche locale.

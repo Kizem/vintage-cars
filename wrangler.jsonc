@@ -1,0 +1,11 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "epoque-motors",
+  "compatibility_date": "2026-11-14",
+  // Site entièrement statique : aucun script Worker, Cloudflare sert dist/ tel quel.
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash"
+  }
+}

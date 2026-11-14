@@ -21,9 +21,15 @@ Branches:
   they are. `3d-design` is never touched. Never force-push.
 - Repository settings are never changed from a session.
 
-Deployment: `.github/workflows/deploy.yml` builds and publishes `dist/` to
-GitHub Pages on every push to `main` or `le-garage`. The last deployment wins,
-so every push is a production release; the owner tests on the live site.
+Deployment: production is on **Cloudflare Workers**, static files only (no
+Worker script), at `https://epoquemotors.fr`. `wrangler.jsonc` serves `dist/`
+(`not_found_handling: "404-page"`, `html_handling: "auto-trailing-slash"`);
+`.node-version` pins Node 22; wrangler is a devDependency at an exact version.
+Cloudflare builds with `npm run build`, `VITE_SITE_URL=https://epoquemotors.fr`
+being a Cloudflare build variable. `npx wrangler dev` serves `dist/` locally
+as in production. The GitHub Pages workflow (`.github/workflows/deploy.yml`,
+every push to `main` or `le-garage`) is still in place for now; the owner
+tests on the live site.
 
 ## 2. Stack and technical decisions
 
@@ -36,7 +42,7 @@ so every push is a production release; the owner tests on the live site.
 | Fonts | Self-hosted woff2 (`src/assets/fonts`) | No third-party requests. |
 | Tests | Playwright, outside the repository (session scratchpad) | Playwright is **not** a dependency; never run `playwright install`. |
 | Pre-rendering | `npm run build` = client build, then an SSR build of `src/seo/build.tsx` (`.ssr/`, deleted after), then `scripts/prerender.mjs` | Crawlers that do not run JavaScript (most AI assistants) get the full text. No extra dependency. |
-| Site address | `VITE_SITE_URL` (set by the deploy workflow from GitHub Pages, or the `SITE_URL` repository variable) | Canonical, hreflang, sitemap, Open Graph and llms.txt need absolute URLs; links between pages stay relative. |
+| Site address | `VITE_SITE_URL` (Cloudflare build variable, `https://epoquemotors.fr`) | Canonical, hreflang, sitemap, Open Graph and llms.txt need absolute URLs; links between pages stay relative. |
 
 React rules used across the code:
 
@@ -465,10 +471,9 @@ and `WebSite`, then its own nodes: `WebPage` / `CollectionPage` / `AboutPage` / 
 
 ### Production address
 
-`VITE_SITE_URL` (absolute, e.g. `https://www.epoque-motors.fr`). The deploy workflow passes the repository
-variable `SITE_URL` when it exists, otherwise the GitHub Pages address. A local build without it uses
-`https://www.epoque-motors.example/` (placeholder). `robots.txt` and `llms.txt` only take effect at the root
-of a domain: on `github.io/vintage-cars/` they are not read, hence the custom domain in `docs/SEO-GEO.md`.
+`VITE_SITE_URL` (absolute): `https://epoquemotors.fr`, set as a build variable in Cloudflare (Workers, static
+files). A local build without it uses `https://www.epoque-motors.example/` (placeholder). `robots.txt` and
+`llms.txt` only take effect at the root of a domain, which `epoquemotors.fr` provides.
 
 ### Viewing the content pages
 
